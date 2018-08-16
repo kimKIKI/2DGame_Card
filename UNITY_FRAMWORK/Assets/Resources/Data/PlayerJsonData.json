@@ -1,0 +1,41 @@
+{
+    "PlayerInfo":
+     {
+        "SelectDek": 
+        [
+            {"item-id1": 1,"item-id2": 4,"item-id3": 8,"item-id4": 2 },
+            {"item-id1": 2,"item-id2": 4,"item-id3": 8,"item-id4": 5 },  
+            {"item-id1": 3,"item-id2": 4,"item-id3": 7,"item-id4": 1 }          
+        ],
+
+        "Info":
+        [
+          {"Join" :20180620,  "ID":"#34587",   "IdName":"mycol",
+           "PlayerName":"kim","telPhone": 1234, "Exprince Num": 9,
+           "Exprince count":3400 }
+        ],
+
+        "has":
+        [
+          { "hasNum":9,"coin":69600, "Jew" :5000 }
+        ],
+
+        "hasCard":
+        [
+            { "item-id":3, "hasNum":56,"hasLevel":1},
+            { "item-id":2, "hasNum":80,"hasLevel":1},
+            { "item-id":4, "hasNum":32,"hasLevel":1},
+            { "item-id":5, "hasNum":80,"hasLevel":2},
+            { "item-id":7, "hasNum":50,"hasLevel":1},
+            { "item-id":1, "hasNum":20,"hasLevel":2},
+            { "item-id":8, "hasNum":20,"hasLevel":2},
+            { "item-id":9, "hasNum":20,"hasLevel":2},
+            { "item-id":11, "hasNum":20,"hasLevel":2}
+        ],
+        "SelectTab":
+        [ 
+           {"Tab":0}
+        ]
+    }
+   
+}

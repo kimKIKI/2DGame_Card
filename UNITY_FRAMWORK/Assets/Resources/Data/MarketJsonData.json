@@ -1,0 +1,45 @@
+{
+	"Market":
+	{
+       "DaySale":
+       [
+          {"item-id1":5,"PriceCoin":200,"PriceJew":0,"EA":40},
+          {"item-id1":4,"PriceCoin":400,"PriceJew":0,"EA":40},
+          {"item-id1":1,"PriceCoin":1000,"PriceJew":0,"EA":10},
+          {"item-id1":8,"PriceCoin":1500,"PriceJew":0,"EA":15},
+          {"item-id1":2,"PriceCoin":2000,"PriceJew":0,"EA":2},
+          {"item-id1":6,"PriceCoin":0,"PriceJew":250,"EA":5}
+       ],
+       "RoyleSale":
+       [
+           {"RandomType":1,"PriceCoin":0,"PriceJew":250,"BoxName":"rareCase","case":1},
+           {"RandomType":1,"PriceCoin":0,"PriceJew":490,"BoxName":"giantCase","case":2},
+           {"RandomType":1,"PriceCoin":0,"PriceJew":750,"BoxName":"luckyCase","case":3},
+           {"RandomType":1,"PriceCoin":0,"PriceJew":2500,"BoxName":"legendaryCase","case":4}
+
+       ],
+       "JewSale":
+       [
+          {"Type":1,"EA":80,"PriceDeoll":1.09},
+          {"Type":2,"EA":80,"PriceDeoll":2.09},
+          {"Type":3,"EA":80,"PriceDeoll":4}
+       ],
+       "ItemBox":
+       [
+         {"Type":"legendaryCase","presentCoin":4200 ,"generalUnit":256,"rareUnit":55,"heroUnit":18,"legendaryUnit":1},
+         {"Type":"lightningCase","presentCoin":490 ,"generalUnit":80,"rareUnit":16,"heroUnit":1,"legendaryUnit":0},
+         {"Type":"luckyCase","presentCoin":1800 ,"generalUnit":192,"rareUnit":50,"heroUnit":8,"legendaryUnit":0}
+       ],
+       "SpecialSale":
+       [
+          {"Type":"giantCase","Case":2,"PriceDeoll":1.09},
+          {"Type":"luckyCase","Case":3,"PriceDeoll":2.09},
+          {"Type":"legendaryCase","Case":4,"PriceDeoll":4}
+       ],
+       "lunchyCase":
+       [
+           {"Gold":1800,"Jew":2,"generalNum":192,"rareNum":50,"heroNum":8,"lengendaryNum":1,"product":6}
+       ]
+	}
+
+}

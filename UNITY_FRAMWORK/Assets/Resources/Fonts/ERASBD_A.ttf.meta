@@ -1,0 +1,24 @@
+fileFormatVersion: 2
+guid: bff24f94059476344b681cc8d0446314
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Eras Bold ITC
+  fontNames:
+  - Eras Bold ITC
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 20843231002a75948a4f11c4120c6ef3, type: 3}
+  - {fileID: 12800000, guid: b08fbed65fe53ab45a8b405823b3e34e, type: 3}
+  - {fileID: 12800000, guid: 85f1037c2abbed74d862c455699dd68e, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
