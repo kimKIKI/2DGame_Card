@@ -32,7 +32,7 @@ public class UnityCard : MonoBehaviour {
     public Text   ownCards;     //레벨업 될때까지 남은 카드의 숫자를 표시 한다.
     public Image  mainICon;     //메인이미지
     public Slider slider;       //카드의 숫자를 받아 바 크기를 나타내 준다.
-    public Text   elixerNum;       //엘릭서 Num
+    public Text   elixerNum;    //엘릭서 Num
 
     int xPadding = 10;
     int yPadding = 40;
@@ -56,13 +56,13 @@ public class UnityCard : MonoBehaviour {
     //float up_atk;          //업글시 공격력 증가량
     //int   spwawnEA = 1;    //생성될 겟수 default = 1;
 
-    int CardNameID;           //카드의 Id에 따라 이미지가 달라짐
-    string icon_name;         //카드의icon Name;
+    int         CardNameID;   //카드의 Id에 따라 이미지가 달라짐
+    string      icon_name;    //카드의icon Name;
     public int  kindNum;      //Enum인덱스로  숫자로 구한다.
 
     //임시로 public 
-    public int iD;            //datas에서 고유아이디
-    public Text iconName;     //card의 이름
+    public int iD;          //datas에서 고유아이디
+    public Text iconName;   //card의 이름
 
     int hasCardNum;        //전체 카드 숫자
     int levelCardNum;      //현재레벨업된 카드숫자
@@ -76,14 +76,14 @@ public class UnityCard : MonoBehaviour {
     public int LevelCards;  //Level*필요한 카드숫자 ..즉 Leve[ 0,2,4,10,...]
 
 
-
     public int rootIndex; //설정된 부모 slot
+
     [HideInInspector]
     public float width;   //slot 의 widthf간결
     [HideInInspector]
     public float height;  //slot의   height간격
 
-    bool isSwitch;
+    bool    isSwitch;
     Vector3 localScale;
     Vector3 curScale;
 
@@ -95,15 +95,12 @@ public class UnityCard : MonoBehaviour {
     public int nextIndex;         //다음 이동할 인덱스                          
 
     //프로퍼티 ====================================================
-           int       cardNum;
-    public int       elixer;
-           string    kinds;          //카드종류 네임
-    private Vector3  vcGridPos;//그리드의 아이디를 적용해서 위치를 저장한다.
-            int      remainCardNum;     //레벨업빼고 남은 카드숫자
+            int       cardNum;
+    public  int       elixer;
+            string    kinds;             //카드종류 네임
+    private Vector3   vcGridPos;         //그리드의 아이디를 적용해서 위치를 저장한다.
+            int       remainCardNum;     //레벨업빼고 남은 카드숫자
     //============================================================
-
- 
-
     //float curPositionY;
     //float toPositionY;
 
@@ -126,9 +123,9 @@ public class UnityCard : MonoBehaviour {
     {
         //고유ID를 확인한다
         string cardName = GameData.Instance.UnityDatas[ID].Name;
-        int elixir = GameData.Instance.UnityDatas[ID].Elixir;
-        LevelNum.text = string.Format("" + elixir);
-        iconName.text = string.Format("" + cardName);
+        int elixir      = GameData.Instance.UnityDatas[ID].Elixir;
+        LevelNum.text   = string.Format("" + elixir);
+        iconName.text   = string.Format("" + cardName);
        
     }
 
@@ -179,12 +176,12 @@ public class UnityCard : MonoBehaviour {
 
                 Vector3 pos3 = new Vector3(rectPos.x, rectPos.y, 0);
 
-                iTween.MoveTo(gameObject, iTween.Hash("islocal", true,
-                                                     "position", pos3,
-                                                     "time", 0.3f,
-                                                     "oncomplete","ReachTransID",
-                                                     "easetype", "easeOutQuart"
-                                                     ));
+                iTween.MoveTo(gameObject, iTween.Hash("islocal", true, "position", pos3,
+                                                      "time", 0.3f, "oncomplete", "ReachTransID",
+                                                      "easetype", "easeOutQuart"));
+
+
+
         }
 
     }
@@ -329,7 +326,7 @@ public class UnityCard : MonoBehaviour {
         }
         set
         {
-            icon_name = value;
+            icon_name     = value;
             iconName.text = value;
         }
     }

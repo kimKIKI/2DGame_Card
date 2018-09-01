@@ -106,12 +106,12 @@ public sealed class GameData
     public int[] Level = { 0, 2, 4, 10, 20, 50, 100, 200, 400, 1000, 2000, 4000, 5000 };
     //유닛 고유의 데이터 ..이데이터를 바탕으로 player의 데이터와 
     //FileDataManager에서부터 데이터가 들어온다.
-    public IList<UnityInfo> UnityDatas = new List<UnityInfo>();
+    public IList<UnityInfo> UnityDatas       = new List<UnityInfo>();
 
     //현재 선택된 tab의 카드중 선택되어있지 않지만 정렬탭에 보여지는 카드 
-    public IList<UnityCard> panelSlots = new List<UnityCard>();
+    public IList<UnityCard> panelSlots       = new List<UnityCard>();
     //가려져 있는 슬롯 정렬의 슬록시 움직이기 때문에 필요하다.
-    public IList<UnityCard> panelBackSlots = new List<UnityCard>();
+    public IList<UnityCard> panelBackSlots   = new List<UnityCard>();
           
     public Dictionary<int, Card> hasCard = new Dictionary<int, Card>(); // ID , Card
     public PlayerInfo player = new PlayerInfo();
@@ -126,6 +126,15 @@ public sealed class GameData
     public Dictionary<int, MarketItemBoxInfo> itemBoxs = new Dictionary<int, MarketItemBoxInfo>();
     //상품별 수량을 기록하기 위해서 저장
     public Dictionary<string, ItemBoxInfo> dic_SetItems = new Dictionary<string, ItemBoxInfo>();
+    //TODO :리소스 메니져가 구성되어야 할부분
+    //REesourcs 의 오브젝트를 가져오기 위해 생성한다.                    
+    public IList<GameObject> prefabs = new List<GameObject>();
+
+    //승리한카드의 경험치및 보사을 판단하기 위해서 저장한다.
+    public Dictionary<int, IList<Card>> playerVic;
+    public Dictionary<int, IList<Card>> comVic;
+    // player vs  com 중 승리한 것을 받는다 . 3 :player 승리 ,2:무승부 ,1 :com 승리
+    public int vicResult = 0;
 
     public eGameState eGamestate = eGameState.NONE; // GameManager에 상태를 전달하기 위해서 설정한다.
 

@@ -92,6 +92,7 @@ public class DragSlot : GameCardSlot,IComparer<GameCardSlot>
     {
         //TODO: 활성화 시키기 전에 이미지를 바꾸어 줘야 한다.
         //자신의 오브젝트를 활성화 시킨다.
+ 
         this.gameObject.SetActive(true);
         //젤위에 그러지도록 맨밑으로 슬롯을 이동시킨다.
         this.transform.SetAsLastSibling();
@@ -102,7 +103,7 @@ public class DragSlot : GameCardSlot,IComparer<GameCardSlot>
       
         //pick아이템정보를 드래그 슬롯에 세팅
         SetCardInfo(itemSlot.GetUnityInfo(),eCardType.SLOT);
-        //아이템을 집은곳의 슬록헤는 빈칸으로 정보셋팅
+        //아이템을 집은곳의 슬록에는 빈칸으로 정보셋팅
         itemSlot.SetCardInfo(null,eCardType.SLOT);
 
       

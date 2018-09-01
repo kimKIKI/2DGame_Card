@@ -131,7 +131,7 @@ public class Formation : MonoBehaviour {
     public void FormationCardsArc(eGameCardSize eState,eBelong user)
     {    //카드의 숫자를 넘겨 받습니다.
         int num           = CardFindsNum();
-        if (num >= 1)
+        if (num >= 2)
         {
 
                 //value 는 길이 

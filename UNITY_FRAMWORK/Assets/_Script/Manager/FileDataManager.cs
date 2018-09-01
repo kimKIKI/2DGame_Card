@@ -48,7 +48,7 @@ public  class FileDataManager  {
         return jsondata;
     }
 
-    //UnityInfo
+    //UnityInfo 게임에서 사용되는 유닛카드의 정보 
     public void ParsingFirstUnitData()
     {
 
@@ -83,7 +83,7 @@ public  class FileDataManager  {
     }
 
     public void ParsingPlayerData()
-    {
+    {   //현재 플레이거가 가지고 있는 카드의 상태
         JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json"));
         #region tempData
         ////파싱하기전 개별 데이터를 입시로 작성한다.
@@ -141,13 +141,12 @@ public  class FileDataManager  {
         string PlayerName = jsonUnitydata["PlayerInfo"]["Info"][0]["PlayerName"].ToString();
        
         PlayerInfo playerLoad = new PlayerInfo(Id, IdName, PlayerName, JoinDay);
-
+        //플레이어 재정상태
         playerLoad.cardHas = (int)jsonUnitydata["PlayerInfo"]["has"][0]["hasNum"];
         playerLoad.coin    = (int)jsonUnitydata["PlayerInfo"]["has"][0]["coin"];
         playerLoad.jew     = (int)jsonUnitydata["PlayerInfo"]["has"][0]["Jew"];
 
        
- 
         playerLoad.telephone   = (int)jsonUnitydata["PlayerInfo"]["Info"][0]["telPhone"];
         playerLoad.exp         = (int)jsonUnitydata["PlayerInfo"]["Info"][0]["Exprince Num"];
         playerLoad.expCount    = (int)jsonUnitydata["PlayerInfo"]["Info"][0]["Exprince count"];

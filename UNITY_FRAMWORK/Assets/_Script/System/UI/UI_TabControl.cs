@@ -146,7 +146,7 @@ public class UI_TabControl : MonoBehaviour {
                          int []  a = pair.Value;
                         for (int i = 0; i < a.Length; i++)
                         {
-                            Debug.Log("000000--"+i+":"+a[i]);
+                           
                         }
                     }
 
@@ -155,7 +155,7 @@ public class UI_TabControl : MonoBehaviour {
                         int[] a = pair.Value;
                         for (int i = 0; i < a.Length; i++)
                         {
-                            Debug.Log("1111111--" + i + ":" + a[i]);
+                           
                         }
                     }
 
@@ -164,7 +164,7 @@ public class UI_TabControl : MonoBehaviour {
                         int[] a = pair.Value;
                         for (int i = 0; i < a.Length; i++)
                         {
-                            Debug.Log("2222222---" + i + ":" + a[i]);
+                           
                         }
                     }
                 }

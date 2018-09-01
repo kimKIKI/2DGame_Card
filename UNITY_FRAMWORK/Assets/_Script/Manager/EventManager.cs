@@ -11,7 +11,10 @@ public enum EVENT_TYPE
     GAME_END,
     AMMO_CHANGE,
     HEALTH_CHANGE,
-    SLOTNUMBER, //slot 즉 카드가 숫자가 얼마나 남아 있는지 판단하기위해서 리스너 등록
+    SLOTNUMBER,        //slot 즉 카드가 숫자가 얼마나 남아 있는지 판단하기위해서 리스너 등록
+    GOLD_CHANGE,       //어디서든 Top의Gold가 에 접근해서 자동으로 애니가 작동되게 한다. 
+    JEW_CHANGE,       
+    LEVEL_CHANGE,
     DEAD
 };
 

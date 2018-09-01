@@ -12,9 +12,8 @@ public class Game_Scene : MonoBehaviour {
         //System.GC.Collect();
         // !!!!!!!!!!!!!!!!!!!!!
 
-        //fadeOut = GameObject.Find("FadeOut").GetComponent<FadeOut>();
-        //zFoxFadeFilter.instance.FadeIn (Color.black, 1.0f);
-        //StartCoroutine(FADEOUT_FLASH());
+        fadeOut = GameObject.Find("FadeOut").GetComponent<FadeOut>();
+        StartCoroutine(FADEOUT_FLASH());
     }
 
     public void SceneChange()
@@ -26,10 +25,10 @@ public class Game_Scene : MonoBehaviour {
     //순간적으로 빨리 켜지고 꺼지는 효과 
     IEnumerator FADEOUT_FLASH()
     {
+        yield return new WaitForSeconds(3f);
         fadeOut.isFadeIN = true;
         fadeOut.StartFadeAnim();
         yield return new WaitForSeconds(0.1f);
     }
-
 
 }

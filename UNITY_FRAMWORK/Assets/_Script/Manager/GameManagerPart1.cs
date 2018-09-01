@@ -15,9 +15,15 @@ public partial class GameManager : MonoBehaviour {
             
             if (gameState == eGameState.STARTMOTION)
             {
+                //시작음향
+                AppSound.instance.SE_START.Play();
+                //시작이미지
                 eText.text = String.Format("{0} :", "STARTMOTION");
                 //시작시 보여지는 이펙트 
                 StartLabelEff(startLabel);
+                yield return new WaitForSeconds(1.3f);
+                //시작이미지 사라지는 음향
+                AppSound.instance.SE_START_SPR.Play();
                 yield return new WaitForSeconds(1f);
                 gameState = eGameState.START;
             }
@@ -27,8 +33,13 @@ public partial class GameManager : MonoBehaviour {
                 //배치가 완료된후 잠시 모든 카드의 상황과 배치 
                 //선공 후공을 랜덤으로 결정한다.
                 StartLabelEffClose(startLabel);
+                //TODO:kingT 레벨적용
+                //player의 저장 순번 1 = key
+                //player & com 타워레벨 데이터 설정
+                LevelSet();
+                //타워의 초기 체력값을 적용한다.
                 kingT2.Init();
-                kingT.Init(); //타워의 초기 체력값을 적용한다.
+                kingT.Init(); 
 
                 yield return new WaitForSeconds(2f);
                 gameState = eGameState.CARDDISTRIBUTION;
@@ -38,10 +49,10 @@ public partial class GameManager : MonoBehaviour {
                 eText.text = String.Format("{0} :", "CARDDISTRIBUTION");
                 //처음 시작시 com이 랜덤하게 주먹,가위,보 결정하게 한다.
 
-                //플레이어 가드정보를 받아온다
+                //플레이어 카드정보를 받아온다
                 PlayerCardInfoData();
                 ComCardInfoData();
-
+                AppSound.instance.SE_OpenCard2.Play();
                 //Player 자리 배치
                 for (int i = 0; i < 9; i++)
                 {
@@ -50,8 +61,11 @@ public partial class GameManager : MonoBehaviour {
                     yield return new WaitForSeconds(0.12f);
                 }
 
+                AppSound.instance.SE_CardOpenWidth.Play();
                 formation2.FormationCardsArcCom(eGameCardSize.BASE, eBelong.COM);
+
                 yield return new WaitForSeconds(0.5f);
+                AppSound.instance.SE_CardOpenWidth.Play();
                 formation.FormationCardsArc(eGameCardSize.BASE, eBelong.PLAYER);
 
                 gameState = eGameState.COM_CARDMOVE;
@@ -64,14 +78,17 @@ public partial class GameManager : MonoBehaviour {
                 //TODO:간헐적으로 에러발생
                 StartCoroutine(CardMove(1f));
                 yield return new WaitForSeconds(5f);
+
                 //컴퓨터의 랜덤한 숫자할당
                 InputRPS();
+                //컴가위바위보 수정
+                AppSound.instance.SE_CARD_COM.Play(); 
                 yield return new WaitForSeconds(1f);
                 gameState = eGameState.PLAYER_CARDDISTRIBUTION;
 
             }
             else if (gameState == eGameState.PLAYER_CARDDISTRIBUTION)
-            {       //player가 주먹가위보 선택
+            {   //player가 주먹가위보 선택
                 eText.text = String.Format("{0} :", "PLAYER_CARDDISTRIBUTION");
 
                 //누룰수 있게 표시 
@@ -113,38 +130,42 @@ public partial class GameManager : MonoBehaviour {
             }
             else if (gameState == eGameState.JUDGEMENT_ANI)
             {
-                //쑈타임 스테이트가 필요함.
+                //전투씬의 긴박한 음악시작
+                AppSound.instance.SE_COMBAT_START.Play();
                 //슬롯에 카드의 정보가 있을때 카드전투 애니실행
                 for (int i = 0; i < 3; i++)
                 {
                     ResultAniStart(i);
                     //1이 끝날때 까지 어떻게 기다리게 하는가?
                     yield return new WaitForSeconds(5.5f);
+                    //슬롯이 비어있지 안다면 판정및 삭제애니 실행됨
+                    // TODO : 타워의 인원이나 피가 다 됐는지 판단한다.
+                  
                     Victory_Result(Victory_pntEMPT(i));
                     yield return new WaitForSeconds(1f);
 
+                    //TODO:
+                    //게임중 게임이 KingTower의 상태를 체크한다.
+                    KingTowerCheck();
                 }
-               
-            
-              
                 gameState = eGameState.JUDGEMENT_RESULT;
 
             }
             else if (gameState == eGameState.JUDGEMENT_RESULT)
             {
+                AppSound.instance.SE_COMBAT_START.Stop();
                 yield return new WaitForSeconds(1f);
-                //실제 카드슬롯의 카드제거 결과 data 실행
-                Victory_Result(Victory_pntEMPT(0));
-                yield return new WaitForSeconds(1f);
-               // gameState = eGameState.JUDGEMENT_ANI;
-               // yield return new WaitForSeconds(10f);
+             
+               
+              
+              
                 gameState = eGameState.JUDGEMENT_NEXT;
 
             }
             else if (gameState == eGameState.JUDGEMENT_NEXT)
             {
 
-                //승리조건 판단 
+                //승리조건 한턴후 승리조건판단한다.
                 eText.text = String.Format("{0} :", "JUDGEMENT_NEXT");
 
                 //버튼부모 이미지의 칼라를 변경한다.버튼 칼라가 클릭후 적용되지 안아서 적용
@@ -166,6 +187,7 @@ public partial class GameManager : MonoBehaviour {
                     yield return new WaitForSeconds(0.5f);
                     gameState = eGameState.VICTORY_OR_DEFEAT;
                 }
+                
 
                 if (formation.CardFindsNum() <= 0 && RemainCenterCard() <= 0)
                 {
@@ -194,7 +216,7 @@ public partial class GameManager : MonoBehaviour {
             else if (gameState == eGameState.VICTORY_OR_DEFEAT)
             {
                 eText.text = String.Format("{0} :", "VICTORY_OR_DEFEAT");
-
+                GameData.Instance.vicResult = stageVictory;
                 switch (stageVictory)
                 {
                     case 1:
@@ -203,8 +225,11 @@ public partial class GameManager : MonoBehaviour {
                         labelText.text = string.Format("{0}", " DEFEATED ");
                         StartLabelEff(startLabel);
 
+                        yield return new WaitForSeconds(0.5f);
+                        //result Scene이동
+                        SceneChange();
                         gameState = eGameState.GAMERETREAT;
-
+                      
                         break;
                     case 2:
 
@@ -214,6 +239,10 @@ public partial class GameManager : MonoBehaviour {
                         startLabel.SetActive(true);
                         labelText.text = string.Format("{0}", " VICTORY");
                         StartLabelEff(startLabel);
+
+                        yield return new WaitForSeconds(0.5f);
+                        //result Scene이동
+                        SceneChange();
 
                         gameState = eGameState.GAMERETREAT;
 

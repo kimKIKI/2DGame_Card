@@ -14,7 +14,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - UI_EFF
   - 
   - 
   - 
@@ -47,4 +47,7 @@ TagManager:
     locked: 0
   - name: UIMiddle
     uniqueID: 4267410123
+    locked: 0
+  - name: UI_EFF
+    uniqueID: 2466465825
     locked: 0

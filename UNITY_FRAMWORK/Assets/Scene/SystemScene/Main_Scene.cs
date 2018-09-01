@@ -210,8 +210,6 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         SceneManager.LoadScene(jumpSceneName);
     }
 
-
-
     //계속 반복되는 코드 발생:Main_Scene,Game_Secne .
     //따로 쓰는 이유는 버튼OnClick에서 스크립트명과 오브젝트명이 같아야 되는 문제 때문임
     public void SceneChange()
@@ -223,8 +221,8 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     //순간적으로 빨리 켜지고 꺼지는 효과 
     IEnumerator FADEOUT_FLASH()
     {
-        //fadeOut.isFadeIN = true;
-        //fadeOut.StartFadeAnim();
+        fadeOut.isFadeIN = true;
+        fadeOut.StartFadeAnim();
         yield return new WaitForSeconds(0.1f);
     }
 
@@ -689,45 +687,9 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         //    // SetReFormCopy(InDexID);
         // }
         #endregion
-
     }
 
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            bool a = isSwitch;
-            Debug.Log("isSwitch ; "+a);
-            bool A = GameData.Instance.isSwitch;
-            Debug.Log(" isSwitch ! ;" + A);
-
-           
-
-            foreach (KeyValuePair<int, int[]> pair in GameData.Instance.playerSelectDecks)
-            {
-                if (pair.Key == 0)
-                {
-                    int[] aa;
-                     aa   = pair.Value;
-                    for (int i = 0; i < aa.Length; i++)
-                    {
-                        Debug.Log("=====" + aa[i]);
-                    }
-
-                }
-            }
-
-             int aaa = GameData.Instance. toSwitchCard;
-             int bb  = GameData.Instance.curSwitchCard;     //현재 교체하기 위해서 선택된 카드<------- 
-             int cc  = GameData.Instance.fromSwitchId;      //이동할 id 현재가 아니라 미리 저장해 놓아야 한다.
-             int dd  = GameData.Instance. fromSwitchCard;   //이동할 선택된 카드 
-
-            Debug.Log(" toSwitchCard :" + aaa);
-            Debug.Log(" curSwitchCard :" + bb);
-            Debug.Log(" fromSwitchId :" + cc);
-            Debug.Log("  fromSwitchCard:" +dd);
-        } 
-    }
+    
 
     public void SetTopMenu()
     {

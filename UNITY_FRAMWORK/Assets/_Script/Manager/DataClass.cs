@@ -21,13 +21,16 @@ public class DataClass {
 public class Card
 {
     public int     ID;
-    public int     level; //현재 카드별 가지고 있는 레벨
+    public int     level;    //현재 카드별 가지고 있는 레벨
     public int     hasCard;
-
-    public string  Name;   //카드이름
-    public string  Shap;   //카드 모양
-    public string  IconName;//카드이미지
-    public string  Spable; //현재 카드가 가지고 있는 특수한 능력
+    public int     Attack;   //man 피해량
+    public int     AtK_zone; //성벽Level 피해량
+    public string  atk_type; //이펙트의 타입을 결정해주기 위해서설정
+    public string  Name;     //카드이름
+    public string  Shap;     //카드 모양
+    public string  IconName; //카드이미지
+    public string  Spable;   //현재 카드가 가지고 있는 특수한 능력
+   
 
 }
 
@@ -121,8 +124,6 @@ public class PlayerInfo
     Dictionary<string,List<int>> dicCardNum;  //카드네임, 갯수  
     //1tab{4,5,6,8,9} tab2 z{5,6,8,1,10}
     Dictionary<int, int[]> selectCards = new Dictionary<int, int[]>();
-
-
 
 }
 

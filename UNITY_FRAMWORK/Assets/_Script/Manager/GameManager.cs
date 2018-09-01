@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.UI;
-
+using System.Linq;
+using UnityEngine.SceneManagement;
 
 public enum eGameState
 {
@@ -33,14 +34,20 @@ public enum ePlayer
   COMPUTER,
 }
 
+  struct  StCard
+  {
+    Card card;
+    int  RSP;   //가위,바위,보
+  }
+
 
 
 public partial class GameManager : MonoBehaviour {
 
     public  GameObject  startLabel;                    //시작시 시작을 알려주는 Start라벨
-    public  Text        eText;                               //현재 state상태를 알기 위해서 설정
+    public  Text        eText;                         //현재 state상태를 알기 위해서 설정
     public  Transform   buttonTurn;
-    public  Transform   playerCombatPos;                 //결전시 화면의 중앙으로 이동될 좌표
+    public  Transform   playerCombatPos;               //결전시 화면의 중앙으로 이동될 좌표
     //player----------------------------------
     public  Transform  playerForm;                     //카드슬롯에 카드를 배치하고 컨트롤할수 있게 위치에 연결할수 있게한다.
     public  CenterFormation centerformation;
@@ -49,6 +56,10 @@ public partial class GameManager : MonoBehaviour {
     IList<Card> SpriteSlot    = new List<Card>();
     IList<Card> SpriteSlotCom = new List<Card>();
     //IList<string> SpriteName = new List<String>();
+
+    //최종살아남은 카드와 그카드가 해치운 카드의 정보를 담는다.
+    
+   
 
     //computer---------------------------------
     public Transform playerForm2;
@@ -59,13 +70,15 @@ public partial class GameManager : MonoBehaviour {
 
     Formation        formation;                       //player의 base 카드세트 
     Formation        formation2;                      //computer의 base 카드세트
-    GameCardSlot[]   centerSlots;                     //중앙에 놓여질 카드 슬롯 위치
-    GameCardSlot2[]  centerSlots2;                    //computer의 센터카드 
+    static GameCardSlot[]   centerSlots;              //중앙에 놓여질 카드 슬롯 위치
+    static GameCardSlot2[]  centerSlots2;             //computer의 센터카드 
     GameCardSlot[]   cardSlots;                       //Player의 카드 세팅
     GameCardSlot[]   cardSlots2;                      //computer의 베이스세팅카드
     KingTower        kingT;                           //킹타워의 스크립트 
     KingTower        kingT2;
-    CombatShow       combatShowC;                     
+    CombatShow       combatShowC;
+    
+
 
     Text     labelText;                               //특정 글자 컨트롤 시자과 ending 때 사용할 문자 
     Button   btn;
@@ -81,22 +94,26 @@ public partial class GameManager : MonoBehaviour {
 
     int[] cards;                                     //현재 데이터에서 받아온 가지고있는 전체카드종류
 
-    int[] rock_paper_scissors = new int[3];          //컴퓨터의 설정된 가위바위보
+    int[] rock_paper_scissors       = new int[3];    //컴퓨터의 설정된 가위바위보
     int[] rock_paper_scissorsPlayer = new int[3];    //플레이어의 설정된 가위바위보
     int[] vicResult                 = new int[3];    //승리한 결과 value 
 
-    public delegate void  Rock_Paper_Scissors(int[] player,int[] com);
+    
+                                                      
+    public delegate void  Rock_Paper_Scissors(int[] player,int[] com); //델리게이트로 가위,바위로보냄
     public static   event Rock_Paper_Scissors sendEventRPS; //슬롯의 가위바위보를 전달한다.
+  
+    public delegate void  deg_Victory(int[] index);
+    public static   event deg_Victory evnt_Victory;  //슬롯의 이긴결과를 보낸다.
 
-
-    public delegate void deg_Victory(int[] index);
-    public static   event deg_Victory evnt_Victory;          //슬롯의 이긴결과를 보낸다.
 
     bool tem = false; //test bool ~~
     bool NotSlot = false;                            //빈 슬롯이 있는지 판단
+    bool particlesPlaying;
+
     int  stageVictory = 0;                           // 1패배  2무승부 3승리
     int  MaxSlotCount = 9;                           //기본최대 슬롯의 갯수는 9개이다.
-
+    int tempIntCoutinueCount = 0;
     private void Awake()
     {
         formation    = playerForm.GetComponent<Formation>();
@@ -109,21 +126,22 @@ public partial class GameManager : MonoBehaviour {
         centerSlots2 = centerformation2.GetComponentsInChildren<GameCardSlot2>();
         kingT2       = kingTower2.GetComponent<KingTower>();
 
-        combatShowC = combatShow.GetComponent<CombatShow>();
+        combatShowC  = combatShow.GetComponent<CombatShow>();
 
-        labelText   = startLabel.GetComponentInChildren<Text>();
+        labelText    = startLabel.GetComponentInChildren<Text>();
         btn          = buttonTurn.GetComponent<Button>();
         btnImg       = buttonTurn.GetComponent<Image>();
         imgbtnColor  = btnImg.color;
 
-        
 
+      GameData.Instance.prefabs  = Resources.LoadAll("RoadPrefabs", typeof(GameObject)).Cast<GameObject>().ToArray();
     }
 
 
 
     private void Start()
     {
+        particlesPlaying = false;
         cardSlots2 = formation2.cardsLength;
         // = cardSlots2 = playerForm2.GetComponentsInChildren<GameCardSlot>();
         cards = new int[GameData.Instance.hasCard.Count];
@@ -139,6 +157,15 @@ public partial class GameManager : MonoBehaviour {
         imgbtnColor = Color.black;
         //color을 컴포넌트에 적용
         btnImg.color = imgbtnColor;
+
+        //게임메니저가 실행될때마다 새로동적생성을 위해서 
+        GameData.Instance.playerVic = new Dictionary<int, IList<Card>>();
+        GameData.Instance.comVic = new Dictionary<int, IList<Card>>();
+
+        OverlayParticles.ShowParticles(10, gameObject.transform.position);
+
+
+      
     }
 
 
@@ -148,16 +175,19 @@ public partial class GameManager : MonoBehaviour {
         cardSlots2 = formation2.CardReNumCom();
     }
 
-    
-
-
     void StartLabelEff(GameObject obj)
     {
         iTween.Stop(obj);
         Vector3 cur = obj.transform.position; //540,1033
-        Debug.Log("position :" +cur);
+        
         //이렇게 하면  540,1033 ~> 0  현재 좌표로 이동한다.
-        iTween.MoveFrom(obj, iTween.Hash("position",cur,"time", 1, "islocal", true, "easetype", iTween.EaseType.easeInOutQuint));
+        iTween.MoveFrom(obj, iTween.Hash("position",cur,"time", 1, "islocal", true,  "oncomplete", "LabelEffEndEff", "oncompletetarget", this.gameObject, "easetype", iTween.EaseType.easeInOutQuint));
+    }
+
+    //TODO:효과 시작시 시작이 끝나고 효과를 주기 위한메소드 사운드 는 안됨.
+    void LabelEffEndEff()
+    {
+       
     }
 
     void EndingLavelEff(GameObject obj)
@@ -213,10 +243,7 @@ public partial class GameManager : MonoBehaviour {
         }
        
     }
-
-
-   
-            //GameData에서 현재 플레이어가 가지고 있는 카드정보를 리스트에 담는다.
+           //GameData에서 현재 플레이어가 가지고 있는 카드정보를 리스트에 담는다.
            //이때 UnitData와 연동시켜서 Card 를 완성시켜서 저장한다.
     void PlayerCardInfoData()
     {
@@ -227,8 +254,11 @@ public partial class GameManager : MonoBehaviour {
             // Name;  Shap; //카드이름IconName;//카드이미지Spable; //현재 카드가 가지고 있는 특수한 능력
             i.Value.IconName = GameData.Instance.UnityDatas[i.Key].Name;
             i.Value.Name     = GameData.Instance.UnityDatas[i.Key].Name;
-            i.Value.Spable   = GameData.Instance.UnityDatas[i.Key].SpAble;
-           
+            i.Value.Spable   = GameData.Instance.UnityDatas[i.Key].SpAble;  //특수 능력
+            i.Value.atk_type = GameData.Instance.UnityDatas[i.Key].Atk_Type;//공격타입
+            i.Value.Attack   = GameData.Instance.UnityDatas[i.Key].Attack;  //성안 군사 공격
+            i.Value.AtK_zone   = GameData.Instance.UnityDatas[i.Key].Atk_Zone;//성곽공격
+
             SpriteSlot.Add(i.Value); //id만 받아서 
            
         }
@@ -244,7 +274,9 @@ public partial class GameManager : MonoBehaviour {
             i.Value.IconName = GameData.Instance.UnityDatas[i.Key].Name;
             i.Value.Name     = GameData.Instance.UnityDatas[i.Key].Name;
             i.Value.Spable   = GameData.Instance.UnityDatas[i.Key].SpAble;
-
+            i.Value.atk_type = GameData.Instance.UnityDatas[i.Key].Atk_Type;
+            i.Value.Attack   = GameData.Instance.UnityDatas[i.Key].Attack;  //성안 군사 공격
+            i.Value.AtK_zone   = GameData.Instance.UnityDatas[i.Key].Atk_Zone;//성곽공격
             SpriteSlotCom.Add(i.Value); //id만 받아서 
 
         }
@@ -348,7 +380,7 @@ public partial class GameManager : MonoBehaviour {
 
     //void Receive
     //player와 컴퓨터의 결과값을 비교하여 승패를 출력한다. 슬롯의 인덱스에 접근할수있는 루트
-    //  index -->>슬롯위치 0,1,2
+    //index -->>슬롯위치 0,1,2
     int Victory_pnt(int index)
     {
         #region RPK설명
@@ -379,6 +411,10 @@ public partial class GameManager : MonoBehaviour {
                             {
                             //centerSlots2[index].GetComponentInChildren<GameCardSlot>().SetCardInfo(null);
                             //centerSlots2[index].GetComponentInChildren<GameCardSlot>().transform.SetParent(formation2.transform);
+
+                            //연기이펙트 생성
+                            EffCreate("EF_Smoke", centerSlots2[index].transform);
+                            AppSound.instance.SE_EXPLOSION.Play();
                             Destroy(centerSlots2[index].GetComponentInChildren<GameCardSlot>().gameObject);
                              }
                    
@@ -392,7 +428,10 @@ public partial class GameManager : MonoBehaviour {
 
                             if (centerSlots[index].GetComponentInChildren<GameCardSlot>() != null)
                             {
-                                centerSlots[index].GetComponentInChildren<GameCardSlot>().SetCardInfo(null, eCardType.CENTERSLOT);
+                           
+                            EffCreate("EF_Smoke", centerSlots[index].transform);
+                            AppSound.instance.SE_EXPLOSION.Play();
+                            centerSlots[index].GetComponentInChildren<GameCardSlot>().SetCardInfo(null, eCardType.CENTERSLOT);
                             }
                 
                            Victory_AddCard(index, ePlayer.COMPUTER);
@@ -407,6 +446,7 @@ public partial class GameManager : MonoBehaviour {
                             Debug.Log("패배했습니다..");
                             if (centerSlots[index].GetComponentInChildren<GameCardSlot>() != null)
                             {
+
                                 centerSlots[index].GetComponentInChildren<GameCardSlot>().SetCardInfo(null,eCardType.CENTERSLOT);
                             }
                            
@@ -426,15 +466,15 @@ public partial class GameManager : MonoBehaviour {
                             //적카드 제거
                             if (centerSlots2[index].GetComponentInChildren<GameCardSlot>() != null)
                             {
-                                //centerSlots2[index].GetComponentInChildren<GameCardSlot>().SetCardInfo(null);
-                                //centerSlots2[index].GetComponentInChildren<GameCardSlot>().transform.SetParent(formation2.transform);
-                                Destroy(centerSlots2[index].GetComponentInChildren<GameCardSlot>().gameObject);
+                            //centerSlots2[index].GetComponentInChildren<GameCardSlot>().SetCardInfo(null);
+                            //centerSlots2[index].GetComponentInChildren<GameCardSlot>().transform.SetParent(formation2.transform);
+                            EffCreate("EF_Smoke", centerSlots2[index].transform);
+                            AppSound.instance.SE_EXPLOSION.Play();
+                            Destroy(centerSlots2[index].GetComponentInChildren<GameCardSlot>().gameObject);
                             }
                          //카드의 특성에 따라 카드 추가 하기 
                           Victory_AddCard(index, ePlayer.PLAYER);
-                        
                     }
-
         }
         else if (rock_paper_scissorsPlayer[index] == 3)  //------------3----------------------------------------
         {
@@ -445,9 +485,10 @@ public partial class GameManager : MonoBehaviour {
                             //적카드 제거
                             if (centerSlots2[index].GetComponentInChildren<GameCardSlot>() != null)
                             {
-                                //centerSlots2[index].GetComponentInChildren<GameCardSlot>().SetCardInfo(null);
-                                //centerSlots2[index].GetComponentInChildren<GameCardSlot>().transform.SetParent(formation2.transform);
-                                Destroy(centerSlots2[index].GetComponentInChildren<GameCardSlot>().gameObject);
+
+                            EffCreate("EF_Smoke", centerSlots2[index].transform);
+                            AppSound.instance.SE_EXPLOSION.Play();
+                            Destroy(centerSlots2[index].GetComponentInChildren<GameCardSlot>().gameObject);
                             }
 
                           //카드의 특성에 따라 카드 추가 하기 
@@ -460,13 +501,15 @@ public partial class GameManager : MonoBehaviour {
                                //player  center의Card정보를 삭제한다. 
                             if (centerSlots[index].GetComponentInChildren<GameCardSlot>() != null)
                              {
+                                EffCreate("EF_Smoke", centerSlots[index].transform);
+                                AppSound.instance.SE_EXPLOSION.Play();
                                 centerSlots[index].GetComponentInChildren<GameCardSlot>().SetCardInfo(null,eCardType.CENTERSLOT);
                              }
                                 
                     
-                                Victory_AddCard(index, ePlayer.COMPUTER);
-                                //ShowAddCardCom();
-                                result = 1;
+                            Victory_AddCard(index, ePlayer.COMPUTER);
+                            //ShowAddCardCom();
+                            result = 1;
                     }
                     else if (rock_paper_scissors[index] == 3)
                     {
@@ -481,7 +524,7 @@ public partial class GameManager : MonoBehaviour {
      int Victory_pntEMPT(int index)
     {
        int result = 1;
-
+        //각각의 slot가 비었는지 확인한다. -1이면비었는상태임
        int emptIndexPlayer  = ReturnBlankSlotPlayer(index);
        int emptIndexCom     = ReturnBlankSlot(index);
 
@@ -504,8 +547,6 @@ public partial class GameManager : MonoBehaviour {
         {
             //player가 있고 컴이 비었을때 승리
             Debug.Log("승리했습니다...");
-          
-
             if (centerSlots2[index].GetComponentInChildren<GameCardSlot>() != null)
             {
                 //centerSlots2[index].GetComponentInChildren<GameCardSlot>().SetCardInfo(null);
@@ -531,8 +572,26 @@ public partial class GameManager : MonoBehaviour {
         return result;
     }
 
+    //Resources 에서 이팩트를 찾아서 생성한다.
+    GameObject EffCreate(string name,Transform parent)
+    {
+   
+        GameObject newObj = null;
+        // prefabs"EF_Smoke"
+        for (int i = 0; i < GameData.Instance.prefabs.Count; i++)
+        {
+            if (GameData.Instance.prefabs[i].name == name)
+            {
+                 newObj = Instantiate(GameData.Instance.prefabs[i]);
+                 newObj.transform.SetParent(parent);
+                 newObj.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
+                 break;
+            }
+        }
+        return newObj;
+    }
 
-    //승리시 해당 슬롯의 카들르 읽어서추가 한다.
+    //승리시 해당 슬롯의 카드를 읽어서추가 한다.
     //센터 슬롯에 카드가 모두 있을때
     void Victory_AddCard(int index , ePlayer player)
     {
@@ -551,6 +610,47 @@ public partial class GameManager : MonoBehaviour {
                           copySlot = playerForm.GetComponent<Formation>().card;
                           trans    = playerForm.transform;
 
+                          //com의 디마지값을 설정해주어야 한다. 시간오차 발생할수 있는 부분
+                          
+                          int attack = centerSlots[index].cardInfo.Attack;
+                          int atk_zone = centerSlots[index].cardInfo.AtK_zone;
+                          kingT2.Damage = atk_zone*-1;
+                          kingT2.DamageMan = attack*-1;
+                            //승리카드
+                          Card cardcur = centerSlots[index].cardInfo;
+                          Card defCard = null;
+                           //패배한 카드의 슬롯이 비었을때
+                           if (centerSlots2[index].GetComponentInChildren<GameCardSlot>() != null)
+                             { 
+                              defCard = centerSlots2[index].GetComponentInChildren<GameCardSlot>().cardInfo;
+                             }
+                            
+
+                    if (GameData.Instance.playerVic.Count == 0)
+                    {
+                        IList<Card> vicCar = new List<Card>();
+                        GameData.Instance.playerVic.Add(cardcur.ID, vicCar);
+                        GameData.Instance.playerVic[cardcur.ID].Add(defCard);
+                    }
+                    else if (GameData.Instance.playerVic.Count > 0)
+                    {
+                        for (int i = GameData.Instance.playerVic.Count - 1; i >= 0; i--)
+                        {   //승리 카드가 있는지 확인하고 리스트를 만들어등록한다.
+                            if (!GameData.Instance.playerVic.ContainsKey(cardcur.ID))
+                            {
+                                IList<Card> vicCar = new List<Card>();
+                                GameData.Instance.playerVic.Add(cardcur.ID, vicCar);
+                                GameData.Instance.playerVic[cardcur.ID].Add(defCard);
+                            }
+                            else
+                            {
+                                //만약 같은 카드가 있다면 패배한 카드를 리스트에 추가하다.
+                                //DEGUG:패배한 카드가 확실한지 확인필요함..헷갈림
+                                GameData.Instance.playerVic[cardcur.ID].Add(defCard);
+                            }
+                        }
+                    } //vicList에 추가 END
+                    
                     if (id == "AddCard")
                     {
                         int MaxCount = 1;
@@ -611,8 +711,48 @@ public partial class GameManager : MonoBehaviour {
                         id = centerSlots2[index].GetComponentInChildren<GameCardSlot>().cardInfo.Spable;
                         copySlot = playerForm2.GetComponent<Formation>().card;
                         trans = playerForm2.transform;
-             
-                        if (id == "AddCard")
+                        //TODO:playerTower의 피해량 설정
+                        int attack = centerSlots2[index].GetComponentInChildren<GameCardSlot>().cardInfo.Attack;
+                        int atk_zone = centerSlots2[index].GetComponentInChildren<GameCardSlot>().cardInfo.AtK_zone;
+                        kingT.Damage = atk_zone*-1;
+                        kingT.DamageMan = attack*-1;
+                    //승리카드
+                    Card cardcur = centerSlots2[index].GetComponentInChildren<GameCardSlot>().cardInfo;
+                    //패배카드
+                    Card defCard = null;
+
+                    if(centerSlots[index].cardInfo != null)
+                        defCard = centerSlots[index].cardInfo;
+
+
+                    if (GameData.Instance.comVic.Count == 0)
+                    {
+                        IList<Card> vicCar = new List<Card>();
+                        GameData.Instance.comVic.Add(cardcur.ID, vicCar);
+                        GameData.Instance.comVic[cardcur.ID].Add(defCard);
+                    }
+                    else if (GameData.Instance.comVic.Count > 0)
+                    {
+                        for (int i = GameData.Instance.comVic.Count - 1; i >= 0; i--)
+                        {   //승리 카드가 있는지 확인하고 리스트를 만들어등록한다.
+                            if (!GameData.Instance.comVic.ContainsKey(cardcur.ID))
+                            {
+                                IList<Card> vicCar = new List<Card>();
+                                GameData.Instance.comVic.Add(cardcur.ID, vicCar);
+                                GameData.Instance.comVic[cardcur.ID].Add(defCard);
+                            }
+                            else
+                            {
+                                //만약 같은 카드가 있다면 패배한 카드를 리스트에 추가하다.
+                                //DEGUG:패배한 카드가 확실한지 확인필요함..헷갈림
+                                GameData.Instance.comVic[cardcur.ID].Add(defCard);
+                            }
+                        }
+                    } //vicList에 추가 END
+
+
+
+                    if (id == "AddCard")
                         {
                                 //복제대상playerForm.GetComponent<Formation>().card
                                 GameObject newCardSlot = Instantiate(copySlot, trans);
@@ -644,7 +784,7 @@ public partial class GameManager : MonoBehaviour {
 
         int result = 1;
         int emptIndexPlayer = ReturnBlankSlotPlayer(index);
-        int emptIndexCom = ReturnBlankSlot(index);
+        int emptIndexCom    = ReturnBlankSlot(index);
 
 
         if (emptIndexPlayer > 0 && emptIndexCom < 0)
@@ -754,6 +894,13 @@ public partial class GameManager : MonoBehaviour {
         
     }
 
+    //버튼의 가위바위보 선택시 음향
+    public void SlotChoiceSound()
+    {
+        AppSound.instance.SE_SLOT_CHOICE.Play();
+    }
+
+
     IEnumerator coRemovePlayer(float t)
     {
         IList<int> temp = new List<int>();
@@ -782,7 +929,7 @@ public partial class GameManager : MonoBehaviour {
         }
     }
 
-    //판정결과에 따라 각각을 처리한다.
+    //판정결과에 따라 각각을 처리한다.성곽 결과값을 보여준다.
     //------------------------------------------------------
     // 3:플레이어승리        2:무승부      1:패배
     // 컴퓨터감소                         플레이어감소
@@ -793,6 +940,7 @@ public partial class GameManager : MonoBehaviour {
         switch (result)
         {
             case 3:
+                //player승리 data처리
                 //TODO: 승리시 이루어 져야할처리 
                 //com의 체력감소
                 //카드의 속성에 따라 더큰 데미지를 준다.
@@ -916,6 +1064,7 @@ public partial class GameManager : MonoBehaviour {
         return BankNum;
     }
 
+       // 슬롯이 비었다면 0,1,2 리턴하고 비었다면 -1리턴
     int ReturnBlankSlotPlayer(int index)
     {
         int BankNum = -1;
@@ -956,13 +1105,19 @@ public partial class GameManager : MonoBehaviour {
        
     }
 
+    public void SceneChange()
+    {
+        SceneManager.LoadScene("2_Main_Scene");
+        //nextScene = "2_Main_Scene";
+    }
+
 
     //여기서 숫자를 조절할수 있는가?
     IEnumerator CardMove(float ti)
     {
         int count    = 0;
         int MaxCount = 3;
-
+        
 
         while (true)
         {
@@ -981,9 +1136,11 @@ public partial class GameManager : MonoBehaviour {
             
 
             if (child >= 1 && index >= 0)
+            {
                 BatchSlot(cardSlots2[0], index);
-           
-           
+                AppSound.instance.SE_CARD_MOVE.Play();
+            }
+
             if (count >= MaxCount)
                 break;
             
@@ -1012,31 +1169,114 @@ public partial class GameManager : MonoBehaviour {
     void ResultAniStart(int idex)
     {
         //슬롯에 cardInfo가 모두 있을때의  인덱스를 넘겨준다.
-        if (centerSlots[idex].cardInfo != null && centerSlots2[idex].GetComponentInChildren<GameCardSlot>().cardInfo != null)
+        //centerSlots2[idex].GetComponentInChildren<GameCardSlot>() != null;
+       // centerSlots2[idex].GetComponentInChildren<GameCardSlot>().cardInfo != null
+        if (centerSlots[idex].cardInfo != null && centerSlots2[idex].GetComponentInChildren<GameCardSlot>() != null)
         {
 
             Card newSlot0 = centerSlots2[idex].GetComponentInChildren<GameCardSlot>().GetUnityInfo();
             Card newSlot1 = centerSlots[idex].GetUnityInfo();
             //결과를 보여주는 show애니실행시킨다.SetInfo 메소드 안에 auto코루틴이 있어서
             //호출과 동시에 애니가 실행된다;플레이 쇼가 끝난후 결과 처리가 이루어 져야 한다.
+            Debug.Log("슬롯 둘다 있습니다..");
             combatShowC.SetInfo(newSlot0, newSlot1, idex);
         }
-        else if (centerSlots[idex].cardInfo == null && centerSlots2[idex].GetComponentInChildren<GameCardSlot>().cardInfo != null)
+        else if (centerSlots[idex].cardInfo == null && centerSlots2[idex].GetComponentInChildren<GameCardSlot>() != null)
         {  //player의 슬롯에 카드정보가 없을때
             Card newSlot0 = centerSlots2[idex].GetComponentInChildren<GameCardSlot>().GetUnityInfo();
             //TODO: 정보가 없을때 ...수정해야될 부분
             Card newSlot1 = centerSlots[idex].GetUnityInfo();
             combatShowC.SetInfo(newSlot0, newSlot1, idex);
+            Debug.Log(" com 의 슬롯이 비었습니다.");
         }
-        else if (centerSlots[idex].cardInfo != null && centerSlots2[idex].GetComponentInChildren<GameCardSlot>().cardInfo == null)
+        else if (centerSlots[idex].cardInfo != null && centerSlots2[idex].GetComponentInChildren<GameCardSlot>() == null)
         {  //com의 슬롯에 카드정보가 없을때
-            //TODO:  슬롯에 없을때
-            Card newSlot0 = centerSlots2[idex].GetComponentInChildren<GameCardSlot>().GetUnityInfo();
+            //TODO:  슬롯에 없을때 newSlot0 :com <--->newSlot1 :player
+            Card newSlot0 = null;
             Card newSlot1 = centerSlots[idex].GetUnityInfo();
             combatShowC.SetInfo(newSlot0, newSlot1, idex);
+            Debug.Log("player   의 슬롯이 비었습니다.");
         }
 
     }
+
+    //player와 com의 타워 레벨을 세팅한다.
+    //TODO:좀더 정교한 레벨 조정이 필요함 타워가드의 인원수 조정필요
+    void LevelSet()
+    {
+        int playerLevel = GameData.Instance.players[1].exp;
+        int playerLevelCount = GameData.Instance.players[1].expCount;
+
+
+        int LevelMax = 3;
+        int max = playerLevel + LevelMax;
+        int min = playerLevel + LevelMax * -1;
+
+        int LevelMaxCount = 1000;
+        int maxCount = playerLevelCount + LevelMaxCount;
+        int minCount = playerLevelCount + LevelMaxCount * -1;
+
+        int Randomlevel = UnityEngine.Random.Range(min, max);
+        int RandomCount = UnityEngine.Random.Range(minCount, maxCount);
+
+        kingT.wallNum = playerLevel;
+        kingT.manNum = playerLevelCount;
+        kingT2.wallNum = Randomlevel;
+        kingT2.manNum = RandomCount;
+    }
+
+    void KingTowerCheck()
+    {
+        
+         //플레이어의 성과 인력을 모두 판단한다.
+        if (kingT.wallNum <= 0 || kingT.manNum <= 0 || kingT2.wallNum <= 0 || kingT2.manNum <= 0)
+        {
+            //게임을 중지하고 승리판정을 한다.
+            gameState = eGameState.VICTORY_OR_DEFEAT;
+
+            //만약  player 와 com이 동시에 승리 조건에 달했을때를 분리해야 한다.
+            //무승부조건 출력
+            if (kingT.wallNum <= 0 && kingT2.wallNum <= 0)
+            {//player가 성벽파워가0이 됐을때 동시에  com의 성벽파워가 0이 됐을때
+             //무승부
+                stageVictory = 2;
+            
+            }
+            else if (kingT.wallNum <= 0 && kingT2.manNum <= 0)
+            {//player가 성벽파워가0이 됐을때 동시에  com의 성벽수비수가 됐을때
+                //무승부
+                stageVictory = 2;
+              
+            }
+            else if (kingT.manNum <= 0 && kingT2.wallNum <= 0)
+            {
+                //무승부
+                stageVictory = 2;
+             
+            }
+            else if (kingT.manNum <= 0 && kingT2.manNum <= 0)
+            {
+                //무승부
+                stageVictory = 2;
+            
+            }
+            else if (kingT.manNum <= 0 || kingT.wallNum <= 0)
+            {//com승리
+                stageVictory = 1;
+             
+            }
+            else if (kingT2.manNum <= 0 || kingT2.wallNum <= 0)
+            { //player 승리
+
+                stageVictory = 3;
+             
+            }
+            //result Scene이동
+            SceneChange();
+        }
+        
+    }
+
 
     public void Update()
     {
@@ -1078,7 +1318,6 @@ public partial class GameManager : MonoBehaviour {
 
         }
 
-      
     }
 
   

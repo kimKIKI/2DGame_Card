@@ -45,6 +45,8 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
     private int       rpkNumber;         //가위바위보를 숫자로 출력
     private Text      rpk;               //주먹,가위,보의 문자출력
             string    Sp;                //특별한 장군능력 출력
+            bool      isPlayer2;         //player2 (com)의 카드가 드레깅되지 않게 한다.
+
     [HideInInspector]
     public  Card      cardInfo = null;
 
@@ -151,16 +153,26 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
     public void OnPointerDown(PointerEventData eventData)
     {
         if (cardInfo == null) return; //빈칸클릭
-        isPicked = true;
 
-        formation.FormationCardsArc(eGameCardSize.BASE,eBelong.PLAYER);
-        DragSlot.Instance.PickUp(this, eventData.position);
+       
+
+        if (!isPlayer2)
+        {
+            isPicked = true;
+            formation.FormationCardsArc(eGameCardSize.BASE, eBelong.PLAYER);
+         
+            AppSound.instance.SE_Card_Down.Play();
+            DragSlot.Instance.PickUp(this, eventData.position);
+        }
+       
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
         if (isPicked == false) return;
 
+
+        AppSound.instance.SE_Card_PickUp.Play();
         DragSlot.Instance.Drop();
         isPicked = false;
     }
@@ -175,7 +187,18 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
             CardSetSize(eGameCardSize.EXPAND);
         }
 
-       // throw new System.NotImplementedException();
+        float clampY = this.gameObject.transform.position.y;
+        Debug.Log("슬롯이 클릭다운되었습니다.");
+        if (clampY > 1300f)
+        {    //clampY 1300 컴의 상단위치
+            isPlayer2 = true;
+        }
+        else
+        {
+            isPlayer2 = false;
+        }
+
+        // throw new System.NotImplementedException();
     }
 
     public void OnPointerExit(PointerEventData eventData)
