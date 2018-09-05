@@ -36,10 +36,25 @@
           {"Type":"luckyCase","Case":3,"PriceDeoll":2.09},
           {"Type":"legendaryCase","Case":4,"PriceDeoll":4}
        ],
+        "NorSale":
+       [
+          {"Type":"LunchyCase","Case":1,"PriceGold":40000},
+          {"Type":"legendaryCase","Case":2,"PriceGold":20000},
+          {"Type":"HeroCase","Case":3,"PriceGold":10000}
+       ],
        "lunchyCase":
        [
-           {"Gold":1800,"Jew":2,"generalNum":192,"rareNum":50,"heroNum":8,"lengendaryNum":1,"product":6}
+           {"Jew":2,"generalNum":192,"rareNum":50,"heroNum":8,"lengendaryNum":1,"product":5}
+       ],
+         "HeroCase":
+       [
+           {"heroNum1":4,"heroNum2":3,"heroNum3":3,"product":3}
+       ],
+         "legendaryCase":
+       [
+           {"legendaryNum":1,"product":1}
        ]
+
 	}
 
 }

@@ -243,6 +243,7 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
     {
         return new Vector2(buttonBackGround.localScale.x, buttonBackGround.localScale.y);
     }
+
     //ButtonEvent------------------------
     public void SetCurPanelID_1()
     {
@@ -253,22 +254,18 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
         buttonBackGround.transform.localPosition = new Vector3(bottomPanelRect[0].anchoredPosition.x, -860, 0);
        
         Vector3 toScale = new Vector3(1,.4f,0);
-
-        iTween.ValueTo(buttonBackGround.gameObject, iTween.Hash("islocal", true,
-                                                              "from", fromSize(),
-                                                              "to",toScale,
-                                                              "easetype", iTween.EaseType.easeOutExpo,
-                                                              "onupdate", "ScaleButton",
-                                                              "time", .5f));
-
-
+      
+            //iTween.ValueTo(buttonBackGround.gameObject, iTween.Hash("islocal", true,
+            //                                                 "from", fromSize(),
+            //                                                 "to", toScale,
+            //                                                 "easetype", iTween.EaseType.easeOutExpo,
+            //                                                 "onupdate", "ScaleButton",
+            //                                                 "time", .5f));
+       
+           
         // 클릭된 버튼의 위치로 박스가 이동하기 위해서 next설정
         Vector3 selectNextBox = new Vector3(bottomPanelRect[0].anchoredPosition.x, -860, 0);
         
-       
-
-       
-
             if (curPanel != afterPanel)
             {
                 iTween.MoveTo(bottomMoveRect.gameObject, iTween.Hash("islocal", true,
@@ -287,7 +284,6 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
         curPanel = 2;
         // 클릭된 버튼의 위치로 박스가 이동하기 위해서 next설정
         Vector3 selectNextBox = new Vector3(bottomPanelRect[1].anchoredPosition.x, -860, 0);
-
         buttonBackGround.transform.localPosition = new Vector3(bottomPanelRect[1].anchoredPosition.x, -860, 0);
 
         if (curPanel != afterPanel)

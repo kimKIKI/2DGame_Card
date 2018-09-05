@@ -118,10 +118,14 @@ public sealed class GameData
     public Dictionary<int, PlayerInfo> players = new Dictionary<int, PlayerInfo>();
     //덱의 선택에 필요한 정보를 담는다.
     public Dictionary<int, int[]> playerSelectDecks = new Dictionary<int, int[]>();
-    public Dictionary<int, MarketInfo> dailys = new Dictionary<int, MarketInfo>();
-    //판매가격및 아이템카드의 오브젝트를 세팅한다.
 
+    public Dictionary<int, MarketInfo>  dailys = new Dictionary<int, MarketInfo>();
+    //판매가격및 아이템카드의 오브젝트를 세팅한다.
     public Dictionary<int, MarketRoyle> royles = new Dictionary<int, MarketRoyle>();
+
+    //아이템이 구매되어 열렸을때의 내용물을 세팅한다.
+    public Dictionary<int, NorInfo>    nors = new Dictionary<int, NorInfo>();
+   
     //아이템이 구매되어 열렸을때의 내용물을 세팅한다.
     public Dictionary<int, MarketItemBoxInfo> itemBoxs = new Dictionary<int, MarketItemBoxInfo>();
     //상품별 수량을 기록하기 위해서 저장
@@ -131,8 +135,10 @@ public sealed class GameData
     public IList<GameObject> prefabs = new List<GameObject>();
 
     //승리한카드의 경험치및 보사을 판단하기 위해서 저장한다.
-    public Dictionary<int, IList<Card>> playerVic;
-    public Dictionary<int, IList<Card>> comVic;
+    public Dictionary<int, IList<Card>> playerVic = new Dictionary<int, IList<Card>>();
+    public Dictionary<int, IList<Card>> comVic    = new Dictionary<int, IList<Card>>();
+    //패배했을때 카드가 이긴만큼 그 카드에 경험치를 주기위해서 기록한다.
+    public Dictionary<int, IList<Card>> defectPlayer = new Dictionary<int, IList<Card>>();
     // player vs  com 중 승리한 것을 받는다 . 3 :player 승리 ,2:무승부 ,1 :com 승리
     public int vicResult = 0;
 
@@ -173,9 +179,12 @@ public sealed class GameData
     public Vector3 fromSwitchPos;   //움직일 좌표
     public int toSwitchCard;
     public Vector3 toSwitchPos;
+    public Vector3 Effect_position; //Result에서 Eff를 발생시킬 월드좌표
+    
     public bool isSwitch;            //현재 바꿀수 있는 상태인지 판단
 
-    public eGameState gameState = eGameState.NONE; 
+    public eGameState gameState    = eGameState.NONE;
+    
 
     // temp.GetComponent<UnityCard>().mainICon.sprite = SpriteManager.GetSpriteByName("Sprite", "Sample_UI_1");
     //전체 테두리

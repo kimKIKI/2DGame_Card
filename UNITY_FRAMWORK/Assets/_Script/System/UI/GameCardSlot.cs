@@ -55,7 +55,7 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
     [HideInInspector]
     public int        ID;                //GetComponent했을때 카드의 정렬순서를 확인을 위해서 임시로 
 
-
+    public IList<Card> defectCards = new List<Card>();
     public eBelong eBelongState = eBelong.NON;
     //eCardType
 

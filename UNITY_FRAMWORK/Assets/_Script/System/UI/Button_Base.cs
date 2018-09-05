@@ -13,6 +13,18 @@ public class Button_Base : MonoBehaviour {
     float ScaleY;
     Vector2 pos;
     public float DelayTime;
+    [HideInInspector]
+    public string Name;
+    [HideInInspector]
+    public int Price;
+    [HideInInspector]
+    public string CaseName;
+    public Text txLabel;  //가격
+    public Text txLabel2; //상품명
+    NorInfo info = null;
+
+    public Image main;     //메인아이콘 이미지
+    string keyName = "";
 
     private void Awake()
     {
@@ -20,7 +32,6 @@ public class Button_Base : MonoBehaviour {
         OrigScale = new Vector2(btn.localScale.x, btn.localScale.y);
         pos = gameObject.transform.localPosition;
         Small();
-       
     }
 
     private void Start()
@@ -28,8 +39,42 @@ public class Button_Base : MonoBehaviour {
         StartCoroutine(coButtonEFF(DelayTime));
     }
 
+    //case 의 Item을 세팅한다.
+    public  void SetInfo(NorInfo info)
+    {
+
+       txLabel.text  = string.Format("{0}", info.PriceGold); 
+       txLabel2.text = string.Format("{0}", info.caseName);
+
+        if (info.caseName == "LunchyCase")
+        {
+            //sprite이름대입
+            name = "luckyCase";
+            main.sprite.name = name;
+            main.sprite = SpriteManager.GetSpriteByName("Sprite", main.sprite.name);
+            //GameData.Instance.dic_SetItems의 키값
+            keyName = "lunchyCase";
+        }
+        else if (info.caseName == "legendaryCase")
+        {
+            name = "legendaryCase";
+            main.sprite.name = name;
+            main.sprite = SpriteManager.GetSpriteByName("Sprite", main.sprite.name);
+            keyName = "legendaryCase";
+        }
+        else if (info.caseName == "HeroCase")
+        {
+            name = "giantCase";
+            main.sprite.name = name;
+            main.sprite = SpriteManager.GetSpriteByName("Sprite", main.sprite.name);
+            keyName = "HeroCase";
+        }
+
+    }
+   
     IEnumerator coButtonEFF(float delay)
     {
+       
         yield return new WaitForSeconds(delay);
         OnClick();
     }
@@ -41,6 +86,7 @@ public class Button_Base : MonoBehaviour {
 
     public void OnClick()
     {
+        CardEff_Open.keyName = keyName;
         iTween.ValueTo(gameObject, iTween.Hash("from",ScaleY, "to", OrigScale.y, "easetype", iTween.EaseType.easeOutBack, "onupdate", "ScaleButton", "time", .7));
         //움직임
         //iTween.MoveBy(gameObject, iTween.Hash("y", 90.0f, "time", 2.0f, "easetype", iTween.EaseType.easeInExpo));

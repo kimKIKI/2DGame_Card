@@ -276,12 +276,10 @@ public class CombatShow : MonoBehaviour
     {
                //카드 출현 사운드
                 AppSound.instance.SE_COMBAT_OUT.Play();
-
                 Vector3 to = endPos;
                 Vector3 to2 = new Vector3(endPos.x * -1, endPos.y, 1);
                 playerSlot.MoveTo(to);
                 comSlot.MoveTo(to2);
-
                 yield return new WaitForSeconds(0.8f);
 
                 Vector3 to3 = new Vector3(endPos.x, YPosArm, 1);
@@ -293,7 +291,6 @@ public class CombatShow : MonoBehaviour
                 //가위바위보 표시 
                 OpenCard(cur);
                 //가위바위보 충돌 짠하는 이펙트
-              
                 yield return new WaitForSeconds(0.5f);
                
                 //승리한 판정을 바탕으로 애니메이션을 실행한다.
@@ -431,11 +428,8 @@ public class CombatShow : MonoBehaviour
         switch (num)
         {
             case 1:
-
                 //player패배________________________
                 //이펙트의 state를 설정한다.
-              
-
                 yield return new WaitForSeconds(0.2f);
 
                 Vector3 to3 = new Vector3(start.x, endPos.y, endPos.z);
@@ -456,7 +450,8 @@ public class CombatShow : MonoBehaviour
                 DestroyEFF.transform.position = playerKingTower.transform.position;
                 StartCoroutine(ShotEffect(1.7f));
                 StartCoroutine(EndShow(1.6f));
-               
+                //카드가 소진되거나 킹타워가 Hp가 모두 소진됐다면 다음 애니가 실행되지 않고
+                //게임이 끝나게 한다.
 
                 break;
             case 2:
@@ -494,7 +489,10 @@ public class CombatShow : MonoBehaviour
                 DestroyEFF.transform.position = comKingTower.transform.position;
                 StartCoroutine(ShotEffect(1.7f));
                 StartCoroutine(EndShow(1.5f));
-               
+                //카드가 소진되거나 킹타워가 Hp가 모두 소진됐다면 다음 애니가 실행되지 않고
+                //게임이 끝나게 한다.
+
+
                 break;
         }
     }
@@ -518,7 +516,6 @@ public class CombatShow : MonoBehaviour
     IEnumerator ReturnSlot(float t)
     {
         yield return new WaitForSeconds(t);
-
         Vector3 tostart = start;
         playerSlot.MoveTo(tostart);
 
@@ -529,11 +526,6 @@ public class CombatShow : MonoBehaviour
         comArm.transform.localPosition = new Vector3(start.x * -1, YPosArm, 1);
     }
 
-  
-
-   
-
-     
 }
 
          

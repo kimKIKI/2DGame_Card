@@ -40,7 +40,13 @@ public class MarketInfo
     public int EA;
     public int Gold;
     public int Jew;
-  
+}
+
+//Nor상자의 케이스 세팅
+public class NorInfo
+{
+    public int    PriceGold;
+    public string caseName;
 }
 
 //보석상자 
@@ -81,6 +87,8 @@ public class ItemBoxInfo
     public int generalNum;
     public int RareNum;
     public int HeroNum;
+    public int HeroNum2;
+    public int HeroNum3;
     public int LengendaryNum;
     public int productNum;
     //num의 개별 숫자가 필요한가 ?

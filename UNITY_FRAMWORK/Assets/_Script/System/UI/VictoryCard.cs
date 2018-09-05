@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Animations;
 public class VictoryCard : MonoBehaviour {
 
-    public IList<Card> vicCards; //= new List<Card>();      //승리한 카드르 리스트로 가진다.
+    public IList<Card> vicCards = new List<Card>();      //승리한 카드르 리스트로 가진다.
     Card cardInfo = null;
     
     //Shape
@@ -17,6 +17,7 @@ public class VictoryCard : MonoBehaviour {
     public Slider     slider;         //카드의 숫자를 받아 바 크기를 나타내 준다.
     public Text       txElixerNum;    //엘릭서 Num
     public GameObject arrow;          //자동으로 컨트롤하기 위해서 
+    public Transform  hideCard;          //리스트에서 동작이 끝난후 보이지 않게 하기 위해서 
 
     Vector3 localScale;
    
@@ -133,6 +134,7 @@ public class VictoryCard : MonoBehaviour {
         if (cardInfo == null)
         {
         cardInfo = newCard;
+        iconName.text = string.Format("{0}", newCard.IconName);
         mainICon.sprite.name = newCard.IconName;
         mainICon.sprite = SpriteManager.GetSpriteByName("Sprite", mainICon.sprite.name);
         mainICon.enabled = true;
@@ -144,6 +146,13 @@ public class VictoryCard : MonoBehaviour {
            
         }
         //TODO: 카드의 특별한 능력을 추가할 것인가?
+
+    }
+
+    //패배한 유닛을 뽑을때 
+    public void PumpUnity()
+    {
+        AppSound.instance.SE_CARD_PUMP.Play();
 
     }
 	

@@ -77,7 +77,7 @@ public class CardEff_Open : MonoBehaviour {
     //임시로 이벤트발생시 아이템의 목록을 기입한다.
     bool isReOpen = false;  //상품을 바꾸어 줄때 이전상품을 hide하게 한다.
    
-    string keyName = "lunchyCase";
+    public static string keyName = "lunchyCase";
 
     int productNum;  //전체 상품수량
     //보석상자에서 입력받을 증가시킬value 
@@ -86,6 +86,8 @@ public class CardEff_Open : MonoBehaviour {
     int Addunits;
     int Addrarts;
     int Addheros;
+    int Addheros1;
+    int Addheros2;
     int Addlengends;
 
 
@@ -121,8 +123,6 @@ public class CardEff_Open : MonoBehaviour {
         openImglocalScale = ImgOpen.transform.localScale;
         rtImg.sizeDelta = new Vector2(100, height);
 
-       
-
     }
 
     private void Start()
@@ -131,15 +131,40 @@ public class CardEff_Open : MonoBehaviour {
         //dic_SetItems
         if (GameData.Instance.dic_SetItems.ContainsKey(keyName))
         {
-            // ItemBoxInfo 
-            var caseBox = GameData.Instance.dic_SetItems[keyName];
-            Addgold = caseBox.Gold;
-            AddJew = caseBox.Jew;
-            Addunits = caseBox.generalNum;
-            Addrarts = caseBox.RareNum;
-            Addheros = caseBox.HeroNum;
-            Addlengends = caseBox.LengendaryNum;
-            this.productNum = caseBox.productNum;
+            if (keyName == "lunchyCase")
+            {
+                // ItemBoxInfo 
+                var caseBox = GameData.Instance.dic_SetItems["lunchyCase"];
+               
+                AddJew          = caseBox.Jew;
+                Addunits        = caseBox.generalNum;
+                Addrarts        = caseBox.RareNum;
+                Addheros        = caseBox.HeroNum;
+                Addlengends     = caseBox.LengendaryNum;
+                this.productNum = caseBox.productNum;
+
+                Debug.Log("=====0000000000000000000===============" + this.productNum);
+            }
+            else if (keyName == "legendaryCase")
+            {
+                var caseBox = GameData.Instance.dic_SetItems["legendaryCase"];
+              
+                AddJew          = caseBox.Jew;
+                Addlengends     = caseBox.LengendaryNum;
+                this.productNum = caseBox.productNum;
+                Debug.Log("====1111111111111111111================" + this.productNum);
+            }
+            else if (keyName == "HeroCase")
+            {
+                var caseBox = GameData.Instance.dic_SetItems["HeroCase"];
+              
+                Addheros  = caseBox.HeroNum;
+                Addheros1 = caseBox.HeroNum2;
+                Addheros2 = caseBox.HeroNum3;
+                this.productNum = caseBox.productNum;
+                Debug.Log("=====222222222222222222222===============" + this.productNum);
+            }
+           
         }
 
       
@@ -172,29 +197,28 @@ public class CardEff_Open : MonoBehaviour {
 
        //상자 열림과 동시에 보여줘야할 카드 카운트량
         itemNum.text = string.Format("{0}", productNum);
-       
         //시작시 상자외에는 보여줘서는 안된다.
         SetActiviteTitleAllOFF();
         //카드 카운트는 따로 관리되어져야 한다.
         cardNum.SetActive(false);
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            SetCard();
-            SetActiviteTitleAllOFF();
-        }
+    //private void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.H))
+    //    {
+    //        SetCard();
+    //        SetActiviteTitleAllOFF();
+    //    }
 
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            SetActiviteTitle(false);
-            curGold = GameData.Instance.players[1].coin;
-            curJew = GameData.Instance.players[1].jew;
-        }
+    //    if (Input.GetKeyDown(KeyCode.S))
+    //    {
+    //        SetActiviteTitle(false);
+    //        curGold = GameData.Instance.players[1].coin;
+    //        curJew = GameData.Instance.players[1].jew;
+    //    }
      
-    }
+    //}
 
      int RandomRange(int max)
      {
@@ -323,81 +347,100 @@ public class CardEff_Open : MonoBehaviour {
     public  void ClickCount()
     {
         //상품이 나오는 순서를 정한다.
-       //TODO:상품의 갯수가 다를 경우 switch 코드가 다시 수정되어야 하는 문제 발생한다.
-       //이부분만 델리게이트로 수정할수 있는가?abstract로  clickCount 방법
-       //터치에 따른 인터페이스 설정을 가능하게 한다.
-        switch (productNum)
+        //TODO:상품의 갯수가 다를 경우 switch 코드가 다시 수정되어야 하는 문제 발생한다.
+        //이부분만 델리게이트로 수정할수 있는가?abstract로  clickCount 방법
+        //터치에 따른 인터페이스 설정을 가능하게 한다.
+
+        if (keyName == "lunchyCase")
         {
-            case 6:
-                AppSound.instance.SE_MENU_ITEMBOXOPEN.Play();
-                curOpen = eOpen.GOLD;
-                itemNum.text = string.Format("{0}", productNum);
-                OpenCase();  //중앙의 카드가 올라오게 한다. //OpenCards
+            switch (productNum)
+            {
                
-                isReOpen = true;
-               
-              
-              
-                break;
-            case 5:
-                curOpen = eOpen.JEW;
-               
-                OpenCase();
-              
-               
-                isReOpen = true;
-              
-             
-                break;
-            case 4:
-                curOpen = eOpen.UNITY;
-               
-                OpenCase();
-               
-              
-                isReOpen = true;
-              
-               
-                break;
-            case 3:
-                curOpen = eOpen.RARES;
-               
-                OpenCase();
-              
-              
-              
-                isReOpen = true;
-             
-             
-                break;
-            case 2:
-                curOpen = eOpen.HEROS;
-               
-                OpenCase();
-             
-             
-              
-                isReOpen = true;
-               
-               
-                break;
-            case 1:
-                curOpen = eOpen.LEGENDS;
-                OpenCase();
-              
-              
-                isReOpen = true;
-             
-                break;
+                case 5:
+                    curOpen = eOpen.JEW;
+                    OpenCase();
+                    isReOpen = true;
+                    break;
+                case 4:
+                    curOpen = eOpen.UNITY;
+                    OpenCase();
+                    isReOpen = true;
+                    break;
+                case 3:
+                    curOpen = eOpen.RARES;
+                    OpenCase();
+                    isReOpen = true;
+                    break;
+                case 2:
+                    curOpen = eOpen.HEROS;
+                    OpenCase();
+                    isReOpen = true;
+                    break;
+                case 1:
+                    curOpen = eOpen.LEGENDS;
+                    OpenCase();
+                    isReOpen = true;
+                    break;
+                case 0:
+                    curOpen = eOpen.CLOSE;
+                    isReOpen = false; //title작동되지 않음
 
-            case 0:
-                curOpen = eOpen.CLOSE;
-                isReOpen = false; //title작동되지 않음
+                    transform.root.gameObject.SetActive(false);
+                    break;
 
-                transform.root.gameObject.SetActive(false);
-                break;
-
+            }
         }
+        else if (keyName == "legendaryCase")
+        {
+            switch (productNum)
+            {
+                case 1:
+                    curOpen = eOpen.LEGENDS;
+                    OpenCase();
+                    isReOpen = true;
+                    break;
+
+                case 0:
+                    curOpen = eOpen.CLOSE;
+                    isReOpen = false; //title작동되지 않음
+                    transform.root.gameObject.SetActive(false);
+                    break;
+
+            }
+        }
+        else if (keyName == "HeroCase")
+        {
+
+            switch (productNum)
+            {
+               
+                case 3:
+                    curOpen = eOpen.HEROS;
+                    OpenCase();
+                    isReOpen = true;
+                    break;
+                case 2:
+                    curOpen = eOpen.HEROS;
+                    OpenCase();
+                    isReOpen = true;
+
+                    break;
+                case 1:
+                    curOpen = eOpen.HEROS;
+                    OpenCase();
+                    isReOpen = true;
+                    break;
+
+                case 0:
+                    curOpen = eOpen.CLOSE;
+                    isReOpen = false; //title작동되지 않음
+                    transform.root.gameObject.SetActive(false);
+                    break;
+
+            }
+        }
+       
+      
     }
     void IdleCase()
     {

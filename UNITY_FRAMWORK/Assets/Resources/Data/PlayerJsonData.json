@@ -3,9 +3,9 @@
      {
         "SelectDek": 
         [
-            {"item-id1": 1,"item-id2": 4,"item-id3": 8,"item-id4": 2 },
-            {"item-id1": 2,"item-id2": 4,"item-id3": 8,"item-id4": 5 },  
-            {"item-id1": 3,"item-id2": 4,"item-id3": 7,"item-id4": 1 }          
+            {"item-id1": 1,"item-id2": 4,"item-id3": 8,"item-id4": 2,"item-id5": 3,"item-id6": 5,"item-id7": 6,"item-id8": 2 },
+            {"item-id1": 2,"item-id2": 4,"item-id3": 8,"item-id4": 5 ,"item-id5": 1,"item-id6": 3,"item-id7": 7,"item-id8": 6 },  
+            {"item-id1": 3,"item-id2": 4,"item-id3": 7,"item-id4": 1 ,"item-id5": 2,"item-id6": 5,"item-id7": 8,"item-id8": 6 }          
         ],
 
         "Info":
@@ -17,7 +17,7 @@
 
         "has":
         [
-          { "hasNum":9,"coin":69600, "Jew" :5000 }
+          { "hasNum":10,"coin":69600, "Jew" :5000 }
         ],
 
         "hasCard":
@@ -25,6 +25,7 @@
             { "item-id":3, "hasNum":56,"hasLevel":1},
             { "item-id":2, "hasNum":80,"hasLevel":1},
             { "item-id":4, "hasNum":32,"hasLevel":1},
+            { "item-id":6, "hasNum":32,"hasLevel":1},
             { "item-id":5, "hasNum":80,"hasLevel":2},
             { "item-id":7, "hasNum":50,"hasLevel":1},
             { "item-id":1, "hasNum":20,"hasLevel":2},

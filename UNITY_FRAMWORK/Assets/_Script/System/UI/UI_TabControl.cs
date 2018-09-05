@@ -205,6 +205,7 @@ public class UI_TabControl : MonoBehaviour {
                 if (pair.Key == ( btnPos -1))
                 {
                     tem = pair.Value;
+                
                 }
             }
 
@@ -556,7 +557,7 @@ public class UI_TabControl : MonoBehaviour {
 
         int curTabb = GameData.Instance.CurTab;
         int num     = GameData.Instance.panelSlots.Count;
-       
+        
         switch (curTabb)
         {
             case 1:

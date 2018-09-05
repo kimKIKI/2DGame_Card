@@ -121,11 +121,16 @@ public  class FileDataManager  {
         for (int i = 0; i < selDeckNum; i++) 
         {   //json에 저장된 덱을 찾아서 GameData에 저장한다.
             // Dictionary<int, int[]> selectCards = new Dictionary<int, int[]>();
-                int[] temp = new int[4];
+                int[] temp = new int[8];
                 temp[0] = (int)jsonUnitydata["PlayerInfo"]["SelectDek"][i]["item-id1"];
                 temp[1] = (int)jsonUnitydata["PlayerInfo"]["SelectDek"][i]["item-id2"];
                 temp[2] = (int)jsonUnitydata["PlayerInfo"]["SelectDek"][i]["item-id3"];
                 temp[3] = (int)jsonUnitydata["PlayerInfo"]["SelectDek"][i]["item-id4"];
+                temp[4] = (int)jsonUnitydata["PlayerInfo"]["SelectDek"][i]["item-id5"];
+                temp[5] = (int)jsonUnitydata["PlayerInfo"]["SelectDek"][i]["item-id6"];
+                temp[6] = (int)jsonUnitydata["PlayerInfo"]["SelectDek"][i]["item-id7"];
+                temp[7] = (int)jsonUnitydata["PlayerInfo"]["SelectDek"][i]["item-id8"];
+             
             GameData.Instance.playerSelectDecks.Add(i, temp);
         }
          //tab에서 선택된것이 있는가 판단, 0 :없음   1,2,3 선택번호
@@ -135,9 +140,9 @@ public  class FileDataManager  {
         //플레이어가 가지고있는 코인, 경험치, TODO: 일단 풀어서 이벤트 음향효과 테스트후 하나의 세이브파이로
         //묶어야 한다.
 
-        int JoinDay = (int)jsonUnitydata["PlayerInfo"]["Info"][0]["Join"];
-        string Id = (string)jsonUnitydata["PlayerInfo"]["Info"][0]["ID"];
-        string IdName = jsonUnitydata["PlayerInfo"]["Info"][0]["IdName"].ToString();
+        int JoinDay       = (int)jsonUnitydata["PlayerInfo"]["Info"][0]["Join"];
+        string Id         = (string)jsonUnitydata["PlayerInfo"]["Info"][0]["ID"];
+        string IdName     = jsonUnitydata["PlayerInfo"]["Info"][0]["IdName"].ToString();
         string PlayerName = jsonUnitydata["PlayerInfo"]["Info"][0]["PlayerName"].ToString();
        
         PlayerInfo playerLoad = new PlayerInfo(Id, IdName, PlayerName, JoinDay);
@@ -187,11 +192,11 @@ public  class FileDataManager  {
         for (int i = 0; i < length2; i++)
         {
             MarketItemBoxInfo itemBoxs = new MarketItemBoxInfo();
-            itemBoxs.Type    =  (string) jsonUnitydata["Market"]["ItemBox"][i]["Type"];
-            itemBoxs.PGold   = (int) jsonUnitydata["Market"]["ItemBox"][i]["presentCoin"];
-            itemBoxs.General = (int)jsonUnitydata["Market"]["ItemBox"][i]["generalUnit"];
-            itemBoxs.Rare    = (int)jsonUnitydata["Market"]["ItemBox"][i]["rareUnit"];
-            itemBoxs.Hero    = (int)jsonUnitydata["Market"]["ItemBox"][i]["heroUnit"];
+            itemBoxs.Type      = (string) jsonUnitydata["Market"]["ItemBox"][i]["Type"];
+            itemBoxs.PGold     = (int) jsonUnitydata["Market"]["ItemBox"][i]["presentCoin"];
+            itemBoxs.General   = (int)jsonUnitydata["Market"]["ItemBox"][i]["generalUnit"];
+            itemBoxs.Rare      = (int)jsonUnitydata["Market"]["ItemBox"][i]["rareUnit"];
+            itemBoxs.Hero      = (int)jsonUnitydata["Market"]["ItemBox"][i]["heroUnit"];
             itemBoxs.Legendary = (int)jsonUnitydata["Market"]["ItemBox"][i]["legendaryUnit"];
 
             GameData.Instance.itemBoxs.Add(i, itemBoxs);
@@ -199,20 +204,46 @@ public  class FileDataManager  {
         // "lunchyCase":
         // {"Gold":1800,"Jew":2,"generalNum":192,"rareNum":50,"heroNum":8,"lengendaryNum":1}
 
-        int length3 = (int)jsonUnitydata["Market"]["lunchyCase"].Count;
+      
 
-        ItemBoxInfo newItemBox = new ItemBoxInfo();
+        ItemBoxInfo newItemBox    = new ItemBoxInfo();
         newItemBox.boxName     = "lunchyCase";
-        newItemBox.Gold        =  (int)jsonUnitydata["Market"]["lunchyCase"][0]["Gold"];
-        newItemBox.Jew         = (int)jsonUnitydata["Market"]["lunchyCase"][0]["Jew"];
-        newItemBox.generalNum  = (int)jsonUnitydata["Market"]["lunchyCase"][0]["generalNum"];
-        newItemBox.RareNum     = (int)jsonUnitydata["Market"]["lunchyCase"][0]["rareNum"];
-        newItemBox.HeroNum     = (int)jsonUnitydata["Market"]["lunchyCase"][0]["heroNum"];
-        newItemBox.LengendaryNum = (int)jsonUnitydata["Market"]["lunchyCase"][0]["lengendaryNum"];
-        newItemBox.productNum = (int)jsonUnitydata["Market"]["lunchyCase"][0]["product"]; //상품품목의 갯수
+      
+        newItemBox.Jew            = (int)jsonUnitydata["Market"]["lunchyCase"][0]["Jew"];
+        newItemBox.generalNum     = (int)jsonUnitydata["Market"]["lunchyCase"][0]["generalNum"];
+        newItemBox.RareNum        = (int)jsonUnitydata["Market"]["lunchyCase"][0]["rareNum"];
+        newItemBox.HeroNum        = (int)jsonUnitydata["Market"]["lunchyCase"][0]["heroNum"];
+        newItemBox.LengendaryNum  = (int)jsonUnitydata["Market"]["lunchyCase"][0]["lengendaryNum"];
+        newItemBox.productNum     = (int)jsonUnitydata["Market"]["lunchyCase"][0]["product"]; //상품품목의 갯수
 
         //여기 문제 
         GameData.Instance.dic_SetItems.Add("lunchyCase", newItemBox);
+
+        ItemBoxInfo newItemBox2 = new ItemBoxInfo();
+        newItemBox2.boxName   = "HeroCase";
+        newItemBox2.HeroNum   = (int)jsonUnitydata["Market"]["HeroCase"][0]["heroNum1"];
+        newItemBox2.HeroNum   = (int)jsonUnitydata["Market"]["HeroCase"][0]["heroNum2"];
+        newItemBox2.HeroNum   = (int)jsonUnitydata["Market"]["HeroCase"][0]["heroNum3"];
+        newItemBox.productNum = (int)jsonUnitydata["Market"]["HeroCase"][0]["product"]; 
+        GameData.Instance.dic_SetItems.Add("HeroCase", newItemBox2);
+
+        ItemBoxInfo newItemBox3   = new ItemBoxInfo();
+        newItemBox3.boxName       = "legendaryCase";
+        newItemBox3.LengendaryNum = (int)jsonUnitydata["Market"]["legendaryCase"][0]["legendaryNum"];
+        newItemBox.productNum     = (int)jsonUnitydata["Market"]["legendaryCase"][0]["product"];
+        GameData.Instance.dic_SetItems.Add("legendaryCase", newItemBox3);
+
+
+        int length4 = (int)jsonUnitydata["Market"]["NorSale"].Count;
+      
+        for (int i = 0; i < length4; i++)
+        {   //버튼의또는 케이스의 세팅을위한 Data
+            NorInfo newNor   = new NorInfo();
+            newNor.caseName  = (string)jsonUnitydata["Market"]["NorSale"][i]["Type"];
+            newNor.PriceGold = (int)jsonUnitydata["Market"]["NorSale"][i]["PriceGold"];
+            GameData.Instance.nors.Add(i,newNor);
+        }
+
     }
 
 }

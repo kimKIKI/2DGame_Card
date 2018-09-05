@@ -21,10 +21,20 @@ public class DailySale : MonoBehaviour {
     public Text  dollar ;  //gold 가격
     public Text  levelNum; //해당 카드의 업데이트까지의 숫자/전체숫자 *
     public Text  itemNum;  //클릭시 습득될 카드숫자
-    public Text  charName; //Item의 네임 ID 를 확인해서 얻어와햐 한다.
-    public Image bar;      //바탕
-    public Image arrow;    //화살표
-    public Image icon;     //coinImage
+   
+    public float timeCost  ;     //시간별 줄어들 량
+    public float _coolTime ;//실제로 카운트 되는 시간
+    public Text  charName;    //Item의 네임 ID 를 확인해서 얻어와햐 한다.
+    public Image bar;         //바탕
+    public Image arrow;       //화살표
+    public Image icon;        //coinImage
+    public Image imgTime;     //구매후 타임을 보여주기 위한 타이밍
+    public Image imgTimeFill; //구매후타임을 보여주기 위한 타이밍
+         
+  
+
+           bool  isPurchase; //한번 구매했는지 판단
+
     Button btn;
 
     //이미 오브젝트가 생성된후 데이터 대입방법이므로 프로퍼티화 한다.
@@ -32,6 +42,7 @@ public class DailySale : MonoBehaviour {
     {
         btn = GetComponent<Button>();
     }
+
     public int ID
     {
         get { return itemId; }
@@ -64,26 +75,35 @@ public class DailySale : MonoBehaviour {
         if (GameData.Instance.hasCard.ContainsKey(itemId))
         {
             //가지고 있는 카드라면 찾아서 추가 한다.
-            var reMode = GameData.Instance.hasCard[itemId];
-            reMode.hasCard += ea;
-            GameData.Instance.curAddGold = priceCoin;
+            var reMode                        = GameData.Instance.hasCard[itemId];
+            reMode.hasCard                   += ea;
+            GameData.Instance.curAddGold      = priceCoin;
             GameData.Instance.players[1].coin -= priceCoin;
             //TODO:전체 레벨업을 위한 계산식 필요함
-           
-
         }
         else
         {
-            GameData.Instance.curAddGold = priceCoin;
+            GameData.Instance.curAddGold       = priceCoin;
             GameData.Instance.players[1].coin -= priceCoin;
             //가지고 있는 카드가 아니라면 새로운 확보카드에 새로 추가한다.
-            Card newInfo = new Card();
-            newInfo.level = CardLevel(ea);
+            Card newInfo    = new Card();
+            newInfo.level   = CardLevel(ea);
             newInfo.hasCard = ea;
             newInfo.ID      = itemId; //고유아이디 
             GameData.Instance.hasCard.Add(itemId, newInfo);
         }
     }
+
+    //구매후 대기 상태의 아이템 표시 
+    void SetItemDelay()
+    {
+        imgTime.gameObject.SetActive(true);
+        imgTimeFill.gameObject.SetActive(true);
+        isPurchase = true;
+        StartCoroutine(MatketTime(1f));
+    }
+
+   
 
     //Main_Scene에 있는데 중복되 코드 델리게이트로 or 인터페이스화 실습
     int CardLevel(int cardNum)
@@ -108,15 +128,45 @@ public class DailySale : MonoBehaviour {
     {
         //구매가 완료됐을때의 표시 
         //코인표시,갯수 표시 이미지 변경, 버튼 효과 false;
-        charName.text = string.Format("{0}", "구매완료");
+        charName.text    = string.Format("{0}", "구매완료");
       
-        btn.enabled   = false;    //버튼컴포넌트
-        dollar.enabled = false;   //text
-        levelNum.enabled = false; //text
-        bar.enabled = false;      //img
-        arrow.enabled = false;    //img
-        icon.enabled = false;     //img
-        itemNum.enabled = false;       
+        btn.enabled      = false;   //버튼컴포넌트
+        dollar.enabled   = false;   //text
+        levelNum.enabled = false;   //text
+        bar.enabled      = false;   //img
+        arrow.enabled    = false;   //img
+        icon.enabled     = false;   //img
+        //itemNum.enabled  = false;   //시간표시와겸용할수 있다.
+
+        SetItemDelay();
+     }
+
+    
+
+    IEnumerator MatketTime(float t)
+    {
+        //fillAmount 감소될량
+      
+        float  reUseTime      = 100f;
+        float  amount         = 1/reUseTime*t;
+        int hours, minute, second;
+
+        while (reUseTime > 0)
+        {
+            reUseTime -= Time.deltaTime;
+            imgTimeFill.fillAmount -= amount;
+            float data = imgTimeFill.fillAmount*100; //소수2번째 자리 없애기 위해곱함
+            data   = Mathf.Ceil(data);               //정수만 남긴다.
+            int dataInt = Mathf.RoundToInt(data);
+
+            hours = dataInt / 3600;    //시 공식
+            minute = dataInt % 3600 / 60;//분을 구하기위해서 입력되고 남은값에서 또 60을 나눈다.
+            second = dataInt % 3600 % 60;//마지막 남은 시간
+
+            itemNum.text = string.Format(" {0} : {1} : {2}",hours,minute,second);
+            yield return new WaitForSeconds(t);
+            
+        }
     }
 
 }

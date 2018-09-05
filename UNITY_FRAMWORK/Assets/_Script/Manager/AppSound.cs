@@ -56,6 +56,10 @@ public class AppSound : MonoBehaviour {
     [System.NonSerialized] public AudioSource SE_COMBAT_IMPACT;  //전투카드 충돌음
     [System.NonSerialized] public AudioSource SE_COMBAT_OUT;     //전투카드 출현음
     [System.NonSerialized] public AudioSource SE_SLOT_CHOICE;     //슬롯 선택음
+    [System.NonSerialized] public AudioSource SE_CARD_APPERMOVE;  //카드가 첫등장이동한다.
+    [System.NonSerialized] public AudioSource SE_RESULT_START;    //승패후 상품결과창시작음
+    [System.NonSerialized] public AudioSource SE_CARD_PUMP;       //패배한 카드 출현
+    [System.NonSerialized] public AudioSource SE_CARD_DEFECTSHOOT;       //패배한 카드 출현
 
     // === 내부 파라미터 ======================================
     string sceneName = "non";
@@ -132,7 +136,10 @@ public class AppSound : MonoBehaviour {
         SE_COMBAT_DEFECT        = fm.LoadResourcesSound("SE", "SE_COMBAT_DEFECT");
         SE_COMBAT_IMPACT        = fm.LoadResourcesSound("SE", "SE_COMBAT_IMPACT");
         SE_SLOT_CHOICE          = fm.LoadResourcesSound("SE", "SE_SLOT_CHOICE");
-
+        SE_CARD_APPERMOVE       = fm.LoadResourcesSound("SE", "SE_CARD_APPERMOVE");
+        SE_RESULT_START         = fm.LoadResourcesSound("SE", "Angry_Bird");
+        SE_CARD_PUMP            = fm.LoadResourcesSound("SE", "SE_CARD_PUMP");
+        SE_CARD_DEFECTSHOOT     = fm.LoadResourcesSound("SE", "SE_CARD_DEFECTSHOOT");
         instance = this;
 	}
 	
