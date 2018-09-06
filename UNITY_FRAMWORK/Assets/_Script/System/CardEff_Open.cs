@@ -127,7 +127,10 @@ public class CardEff_Open : MonoBehaviour {
 
     private void Start()
     {
+    }
 
+    private void OnEnable()
+    {
         //dic_SetItems
         if (GameData.Instance.dic_SetItems.ContainsKey(keyName))
         {
@@ -135,39 +138,39 @@ public class CardEff_Open : MonoBehaviour {
             {
                 // ItemBoxInfo 
                 var caseBox = GameData.Instance.dic_SetItems["lunchyCase"];
-               
-                AddJew          = caseBox.Jew;
-                Addunits        = caseBox.generalNum;
-                Addrarts        = caseBox.RareNum;
-                Addheros        = caseBox.HeroNum;
-                Addlengends     = caseBox.LengendaryNum;
+
+                AddJew = caseBox.Jew;
+                Addunits = caseBox.generalNum;
+                Addrarts = caseBox.RareNum;
+                Addheros = caseBox.HeroNum;
+                Addlengends = caseBox.LengendaryNum;
                 this.productNum = caseBox.productNum;
 
-                Debug.Log("=====0000000000000000000===============" + this.productNum);
+
             }
             else if (keyName == "legendaryCase")
             {
                 var caseBox = GameData.Instance.dic_SetItems["legendaryCase"];
-              
-                AddJew          = caseBox.Jew;
-                Addlengends     = caseBox.LengendaryNum;
+
+                AddJew = caseBox.Jew;
+                Addlengends = caseBox.LengendaryNum;
                 this.productNum = caseBox.productNum;
-                Debug.Log("====1111111111111111111================" + this.productNum);
+
             }
             else if (keyName == "HeroCase")
             {
                 var caseBox = GameData.Instance.dic_SetItems["HeroCase"];
-              
-                Addheros  = caseBox.HeroNum;
+
+                Addheros = caseBox.HeroNum;
                 Addheros1 = caseBox.HeroNum2;
                 Addheros2 = caseBox.HeroNum3;
                 this.productNum = caseBox.productNum;
-                Debug.Log("=====222222222222222222222===============" + this.productNum);
+
             }
-           
+
         }
 
-      
+
         //데이터에서 분류함 시작과 동시에 나올카드를 랜덤하게 정해야 된다.
         //datas 이므로 아직 가지지 않은 카드도 포함하고 있다.
         foreach (UnityInfo cardKind in GameData.Instance.UnityDatas)
@@ -176,7 +179,7 @@ public class CardEff_Open : MonoBehaviour {
             {
                 //일반
                 units.Add(cardKind);
-          
+
             }
             else if (cardKind.Kinds == "Rarity")
             {
@@ -195,14 +198,13 @@ public class CardEff_Open : MonoBehaviour {
             }
         }
 
-       //상자 열림과 동시에 보여줘야할 카드 카운트량
+        //상자 열림과 동시에 보여줘야할 카드 카운트량
         itemNum.text = string.Format("{0}", productNum);
         //시작시 상자외에는 보여줘서는 안된다.
         SetActiviteTitleAllOFF();
         //카드 카운트는 따로 관리되어져야 한다.
         cardNum.SetActive(false);
     }
-
     //private void Update()
     //{
     //    if (Input.GetKeyDown(KeyCode.H))
@@ -217,10 +219,10 @@ public class CardEff_Open : MonoBehaviour {
     //        curGold = GameData.Instance.players[1].coin;
     //        curJew = GameData.Instance.players[1].jew;
     //    }
-     
+
     //}
 
-     int RandomRange(int max)
+    int RandomRange(int max)
      {
         int random = Random.Range(1, max);
         return random;
@@ -301,12 +303,10 @@ public class CardEff_Open : MonoBehaviour {
         curGold = GameData.Instance.players[1].coin;
         curJew  = GameData.Instance.players[1].jew;
 
-
         opImg.enabled    = true;
         closeImg.enabled = false;
 
         CaseCardShow(true);
-
         float dur = 0.8f;
 
         //TODO: 이곳에 카드를 열리게 한다.
@@ -343,12 +343,10 @@ public class CardEff_Open : MonoBehaviour {
 
     }
 
-    ///--------------------------****************************----------------------------------------------------
+    ///--------------------------------------------------
     public  void ClickCount()
     {
         //상품이 나오는 순서를 정한다.
-        //TODO:상품의 갯수가 다를 경우 switch 코드가 다시 수정되어야 하는 문제 발생한다.
-        //이부분만 델리게이트로 수정할수 있는가?abstract로  clickCount 방법
         //터치에 따른 인터페이스 설정을 가능하게 한다.
 
         if (keyName == "lunchyCase")
@@ -384,8 +382,11 @@ public class CardEff_Open : MonoBehaviour {
                 case 0:
                     curOpen = eOpen.CLOSE;
                     isReOpen = false; //title작동되지 않음
-
+                                      //다시 클릭됐을때를 위해서 카드이미지가 안보이게 세팅한다.
+                    iconImg.enabled = false;
+                    cardbase.enabled = false;
                     transform.root.gameObject.SetActive(false);
+                   
                     break;
 
             }
@@ -403,7 +404,11 @@ public class CardEff_Open : MonoBehaviour {
                 case 0:
                     curOpen = eOpen.CLOSE;
                     isReOpen = false; //title작동되지 않음
+                                      //다시 클릭됐을때를 위해서 카드이미지가 안보이게 세팅한다.
+                    iconImg.enabled = false;
+                    cardbase.enabled = false;
                     transform.root.gameObject.SetActive(false);
+                   
                     break;
 
             }
@@ -434,7 +439,11 @@ public class CardEff_Open : MonoBehaviour {
                 case 0:
                     curOpen = eOpen.CLOSE;
                     isReOpen = false; //title작동되지 않음
+                                      //다시 클릭됐을때를 위해서 카드이미지가 안보이게 세팅한다.
+                    iconImg.enabled = false;
+                    cardbase.enabled = false;
                     transform.root.gameObject.SetActive(false);
+                   
                     break;
 
             }
@@ -526,9 +535,9 @@ public class CardEff_Open : MonoBehaviour {
             case eOpen.LEGENDS:
 
                 int[] level4 = new int[2]; //level Amount
-                level4 = ShowTitle();
-                int cur4 = level4[0];
-                baseLevel = level4[1];  //level Amount
+                level4       = ShowTitle();
+                int cur4     = level4[0];
+                baseLevel    = level4[1];  //level Amount
 
                 iTween.ValueTo(gameObject, iTween.Hash("from", cur4, "to", cur4 + Addlengends, "time", .6, "onUpdate", "UpdateGoldDisplay", "oncompletetarget", gameObject));
                 productNum--;
@@ -554,8 +563,7 @@ public class CardEff_Open : MonoBehaviour {
                                                         , "oncomplete", "ShowImg", "oncompletetarget", this.gameObject));
        
     }
-
-
+  
     void SetCard()
     {
         cardbase.enabled = false;

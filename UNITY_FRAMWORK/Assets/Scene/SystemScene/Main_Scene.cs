@@ -15,7 +15,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
 
 
 
-    public RectTransform[] panelItems; // UI의 bottom메뉴  Item고유ID설정
+    public RectTransform[] panelItems;   // UI의 bottom메뉴  Item고유ID설정
     public GameObject cardObj;           //선택되어 tab1의 위치로 이동하기 전에 보여줘야 할 오브젝트 
     public GameObject itemSample1;       //카드가 선택되서 복제될 오브젝트 ,하단의선택 Tab
     public GameObject itemSample2;       //선택되어 보여지는 버튼
@@ -50,21 +50,21 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     public UnityEvent FADEBUTTON;
     public PlayerSaveJsonData saveJsonData;
 
-    List<DataClass> list = new List<DataClass>();       //?
-    IList<RectTransform> lsSlots = new List<RectTransform>();   //slot의 위치 
+    List<DataClass> list = new List<DataClass>();                   //?
+    IList<RectTransform> lsSlots = new List<RectTransform>();      //slot의 위치 
     IList<RectTransform> lsSlotsBack = new List<RectTransform>();   //slotBack
 
     IList<RectTransform> lsSwtichSlots = new List<RectTransform>(); //swtichSlots
 
-    List<UnityCard> lsCards = new List<UnityCard>();          //찾은 카드를 선택별로 정렬하기위해 담는다.
+    List<UnityCard> lsCards = new List<UnityCard>();                //찾은 카드를 선택별로 정렬하기위해 담는다.
     List<UnityCard> lsSwitchCards = new List<UnityCard>();          //찾은 카드를 선택별로 정렬하기위해 담는다.
 
-    List<UnityCard> tempCards = new List<UnityCard>();          //tab 버튼이 실행됐을때 생성해 주는 unityCards
-    List<UnityCard> tempCards2 = new List<UnityCard>();          //tab 버튼이 실행됐을때 생성해 주는 unityCards
+    List<UnityCard> tempCards = new List<UnityCard>();              //tab 버튼이 실행됐을때 생성해 주는 unityCards
+    List<UnityCard> tempCards2 = new List<UnityCard>();             //tab 버튼이 실행됐을때 생성해 주는 unityCards
 
     public Dictionary<int, Vector2> switchGrid = new Dictionary<int, Vector2>();
     //switch의 anchor의 좌표를 순서대로 기록한다.
-    List<int> InDexID = new List<int>();                      //항상 바뀔수 있는 정렬 이므로 이벤트 발생때마다 생성정렬
+    List<int> InDexID = new List<int>();                            //항상 바뀔수 있는 정렬 이므로 이벤트 발생때마다 생성정렬
 
 
     int ArrayNum = 0;  // 0 :기본시작정렬 1:엘릭서  -1:엘릭서+ratial

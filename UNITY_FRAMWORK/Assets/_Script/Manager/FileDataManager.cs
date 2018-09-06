@@ -220,17 +220,17 @@ public  class FileDataManager  {
         GameData.Instance.dic_SetItems.Add("lunchyCase", newItemBox);
 
         ItemBoxInfo newItemBox2 = new ItemBoxInfo();
-        newItemBox2.boxName   = "HeroCase";
-        newItemBox2.HeroNum   = (int)jsonUnitydata["Market"]["HeroCase"][0]["heroNum1"];
-        newItemBox2.HeroNum   = (int)jsonUnitydata["Market"]["HeroCase"][0]["heroNum2"];
-        newItemBox2.HeroNum   = (int)jsonUnitydata["Market"]["HeroCase"][0]["heroNum3"];
-        newItemBox.productNum = (int)jsonUnitydata["Market"]["HeroCase"][0]["product"]; 
+        newItemBox2.boxName     = "HeroCase";
+        newItemBox2.HeroNum     = (int)jsonUnitydata["Market"]["HeroCase"][0]["heroNum1"];
+        newItemBox2.HeroNum     = (int)jsonUnitydata["Market"]["HeroCase"][0]["heroNum2"];
+        newItemBox2.HeroNum     = (int)jsonUnitydata["Market"]["HeroCase"][0]["heroNum3"];
+        newItemBox2.productNum  = (int)jsonUnitydata["Market"]["HeroCase"][0]["product"]; 
         GameData.Instance.dic_SetItems.Add("HeroCase", newItemBox2);
 
-        ItemBoxInfo newItemBox3   = new ItemBoxInfo();
-        newItemBox3.boxName       = "legendaryCase";
-        newItemBox3.LengendaryNum = (int)jsonUnitydata["Market"]["legendaryCase"][0]["legendaryNum"];
-        newItemBox.productNum     = (int)jsonUnitydata["Market"]["legendaryCase"][0]["product"];
+        ItemBoxInfo newItemBox3    = new ItemBoxInfo();
+        newItemBox3.boxName        = "legendaryCase";
+        newItemBox3.LengendaryNum  = (int)jsonUnitydata["Market"]["legendaryCase"][0]["legendaryNum"];
+        newItemBox3.productNum     = (int)jsonUnitydata["Market"]["legendaryCase"][0]["product"];
         GameData.Instance.dic_SetItems.Add("legendaryCase", newItemBox3);
 
 
