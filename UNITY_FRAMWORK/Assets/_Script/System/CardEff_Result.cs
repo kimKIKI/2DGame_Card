@@ -447,75 +447,79 @@ public class CardEff_Result : MonoBehaviour {
         AppSound.instance.SE_CARD_DEFECTSHOOT.Play();
     }
 
-     private void Update()
-      {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            OnCoinAnime(5);
-        }
-        #region AATemp
-        //if (Input.GetKeyDown(KeyCode.L))
-        //{
-
-        //    //임시로 카드를 넣고 테스트 하기 위해서 작성
-        //    int[] temp = { 2, 5, 4, 7 }; //일단 같은 카드가 없도록 한다.                     
-        //    int[] temp2 = { 9, 8 };
-        //    int[] temp3 = { 1, 6 };
-        //    int[] victemp = { 3, 4, 1 };    //최종 승리한 카드 
-
-        //    vicCard = new Dictionary<int, IList<Card>>();
 
 
-        //    IList<Card> newList = new List<Card>();
+     // TEST   Dictionary<int, IList<Card>> vicCard;
+     //private void Update()
+     // {
+     //   if (Input.GetKeyDown(KeyCode.A))
+     //   {
+     //       OnCoinAnime(5);
+     //   }
+     //   #region AATemp
+     //   if (Input.GetKeyDown(KeyCode.L))
+     //   {
 
-        //    for (int i = 0; i < temp.Length; i++)
-        //    {
-        //        Card newCard = new Card();
-        //        newCard.ID = GameData.Instance.UnityDatas[temp[i]].Id;
-        //        newList.Add(newCard);
-        //    }
-        //    vicCard.Add(victemp[0], newList);
+     //       //임시로 카드를 넣고 테스트 하기 위해서 작성
+     //       int[] temp = { 2, 5, 4, 7 }; //일단 같은 카드가 없도록 한다.                     
+     //       int[] temp2 = { 9, 8 };
+     //       int[] temp3 = { 1, 6 };
+     //       int[] victemp = { 3, 4, 1 };    //최종 승리한 카드 
 
-        //    IList<Card> newList2 = new List<Card>();
-        //    for (int i = 0; i < temp2.Length; i++)
-        //    {
-        //        Card newCard = new Card();
-        //        newCard.ID = GameData.Instance.UnityDatas[temp2[i]].Id;
-        //        newList2.Add(newCard);
-        //    }
-        //    vicCard.Add(victemp[1], newList2);
+     //       vicCard = new Dictionary<int, IList<Card>>();
 
-        //    IList<Card> newList3 = new List<Card>();
-        //    for (int i = 0; i < temp3.Length; i++)
-        //    {
-        //        Card newCard = new Card();
-        //        newCard.ID = GameData.Instance.UnityDatas[temp3[i]].Id;
-        //        newList3.Add(newCard);
-        //    }
-        //    vicCard.Add(victemp[2], newList3);
 
-        //if (Input.GetKeyDown(KeyCode.K))
-        //{
-        //    FormationCard();
-        //}
+     //       IList<Card> newList = new List<Card>();
 
-        //if (Input.GetKeyDown(KeyCode.S))
-        //{
-        //    StartCoroutine(ResultAnimation());
-        //}
-        #endregion
+     //       for (int i = 0; i < temp.Length; i++)
+     //       {
+     //           Card newCard = new Card();
+     //           newCard.ID = GameData.Instance.UnityDatas[temp[i]].Id;
+     //           newList.Add(newCard);
+     //       }
+     //       vicCard.Add(victemp[0], newList);
 
-        if (Input.GetKeyDown(KeyCode.P))
-          {
-       
-             // public Dictionary<int, IList<Card>> playerVic;
-             // public Dictionary<int, IList<Card>> comVic;
-             //public Dictionary<int, IList<Card>> defectPlayer;
-            // GameData.Instance.playerVic
+     //       IList<Card> newList2 = new List<Card>();
+     //       for (int i = 0; i < temp2.Length; i++)
+     //       {
+     //           Card newCard = new Card();
+     //           newCard.ID = GameData.Instance.UnityDatas[temp2[i]].Id;
+     //           newList2.Add(newCard);
+     //       }
+     //       vicCard.Add(victemp[1], newList2);
 
-          }
-      } //UPdate END
-}
+     //       IList<Card> newList3 = new List<Card>();
+     //       for (int i = 0; i < temp3.Length; i++)
+     //       {
+     //           Card newCard = new Card();
+     //           newCard.ID = GameData.Instance.UnityDatas[temp3[i]].Id;
+     //           newList3.Add(newCard);
+     //       }
+     //       vicCard.Add(victemp[2], newList3);
+
+     //       if (Input.GetKeyDown(KeyCode.K))
+     //       {
+     //           FormationCard();
+     //       }
+
+     //       if (Input.GetKeyDown(KeyCode.S))
+     //       {
+     //           //StartCoroutine(ResultAnimation());
+     //       }
+     //       #endregion
+
+     //       if (Input.GetKeyDown(KeyCode.P))
+     //       {
+
+     //           // public Dictionary<int, IList<Card>> playerVic;
+     //           // public Dictionary<int, IList<Card>> comVic;
+     //           //public Dictionary<int, IList<Card>> defectPlayer;
+     //           // GameData.Instance.playerVic
+
+     //       }
+     //     }
+     //    }//UPdate END
+     }
 
 
 

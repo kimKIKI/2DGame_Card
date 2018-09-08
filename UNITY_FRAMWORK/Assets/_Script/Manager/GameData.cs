@@ -102,6 +102,7 @@ public sealed class GameData
         }
     }
 
+
   
     public int[] Level = { 0, 2, 4, 10, 20, 50, 100, 200, 400, 1000, 2000, 4000, 5000 };
     //유닛 고유의 데이터 ..이데이터를 바탕으로 player의 데이터와 
@@ -173,6 +174,7 @@ public sealed class GameData
     private int curSlotID;         //현재 선택된 아이템의 slot 인덱스 번호
     public int curSlotIndex;       //Tab 에서 선택됐을때의 Tab내의 인덱스 번호
     public int fromSwitchId;       //이동할 id 현재가 아니라 미리 저장해 놓아야 한다.
+    //TODO: 게임데이터에서  프로퍼티로 이벤트를 발생시킨다면 연구 과제..
     public int curAddGold;         // 스코어의 애니를 위해서 증가분의 금액을 저장한다.
 
     public int fromSwitchCard;      //이동할 선택된 카드 

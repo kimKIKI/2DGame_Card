@@ -6411,7 +6411,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8529be433c72b284d83b6a9371c449a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DelayTime: 1
+  Name: 
+  Price: 0
+  CaseName: 
+  txLabel: {fileID: 0}
+  txLabel2: {fileID: 0}
+  btnImg: {fileID: 0}
+  main: {fileID: 0}
 --- !u!1 &284873103
 GameObject:
   m_ObjectHideFlags: 0
@@ -10694,7 +10700,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8529be433c72b284d83b6a9371c449a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DelayTime: 1.4
+  Name: 
+  Price: 0
+  CaseName: 
+  txLabel: {fileID: 0}
+  txLabel2: {fileID: 0}
+  btnImg: {fileID: 0}
+  main: {fileID: 0}
 --- !u!114 &449895474
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15241,10 +15253,15 @@ MonoBehaviour:
   dollar: {fileID: 420875490}
   levelNum: {fileID: 1110051925}
   itemNum: {fileID: 1683525091}
+  timeCost: 0
+  _coolTime: 0
   charName: {fileID: 2102675987}
   bar: {fileID: 1946200985}
   arrow: {fileID: 1725592453}
   icon: {fileID: 1179504937}
+  imgTime: {fileID: 0}
+  imgTimeFill: {fileID: 0}
+  btnImg: {fileID: 0}
 --- !u!114 &632255565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18223,6 +18240,8 @@ MonoBehaviour:
   arrowJew: {fileID: 1162490202}
   arrow: {fileID: 54852437}
   cardNum: {fileID: 1180209750}
+  FadeOut: {fileID: 0}
+  panel: {fileID: 0}
   curOpen: 0
 --- !u!114 &764751430
 MonoBehaviour:
@@ -21370,10 +21389,15 @@ MonoBehaviour:
   dollar: {fileID: 1742555189}
   levelNum: {fileID: 1757851785}
   itemNum: {fileID: 1630565733}
+  timeCost: 0
+  _coolTime: 0
   charName: {fileID: 1368606012}
   bar: {fileID: 332026662}
   arrow: {fileID: 1314232561}
   icon: {fileID: 749495167}
+  imgTime: {fileID: 0}
+  imgTimeFill: {fileID: 0}
+  btnImg: {fileID: 0}
 --- !u!114 &879866332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24347,7 +24371,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -154, y: 306}
+  m_AnchoredPosition: {x: -150, y: 323}
   m_SizeDelta: {x: 160, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1078855954
@@ -25278,7 +25302,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8529be433c72b284d83b6a9371c449a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DelayTime: 1.2
+  Name: 
+  Price: 0
+  CaseName: 
+  txLabel: {fileID: 0}
+  txLabel2: {fileID: 0}
+  btnImg: {fileID: 0}
+  main: {fileID: 0}
 --- !u!114 &1107801811
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27187,10 +27217,15 @@ MonoBehaviour:
   dollar: {fileID: 1568400540}
   levelNum: {fileID: 378224314}
   itemNum: {fileID: 372103546}
+  timeCost: 0
+  _coolTime: 0
   charName: {fileID: 1696986764}
   bar: {fileID: 537899064}
   arrow: {fileID: 1866352101}
   icon: {fileID: 396410883}
+  imgTime: {fileID: 0}
+  imgTimeFill: {fileID: 0}
+  btnImg: {fileID: 0}
 --- !u!114 &1206279452
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34912,10 +34947,15 @@ MonoBehaviour:
   dollar: {fileID: 754698093}
   levelNum: {fileID: 1157003458}
   itemNum: {fileID: 240484317}
+  timeCost: 0
+  _coolTime: 0
   charName: {fileID: 1333090680}
   bar: {fileID: 468332189}
   arrow: {fileID: 1823379506}
   icon: {fileID: 1235258739}
+  imgTime: {fileID: 0}
+  imgTimeFill: {fileID: 0}
+  btnImg: {fileID: 0}
 --- !u!114 &1545558371
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37302,10 +37342,15 @@ MonoBehaviour:
   dollar: {fileID: 676275295}
   levelNum: {fileID: 1038361915}
   itemNum: {fileID: 1672937507}
+  timeCost: 0
+  _coolTime: 0
   charName: {fileID: 157996528}
   bar: {fileID: 812244120}
   arrow: {fileID: 750313953}
   icon: {fileID: 2010470663}
+  imgTime: {fileID: 0}
+  imgTimeFill: {fileID: 0}
+  btnImg: {fileID: 0}
 --- !u!114 &1664906057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43411,10 +43456,15 @@ MonoBehaviour:
   dollar: {fileID: 409821950}
   levelNum: {fileID: 347826217}
   itemNum: {fileID: 763226924}
+  timeCost: 0
+  _coolTime: 0
   charName: {fileID: 1428236632}
   bar: {fileID: 1225373325}
   arrow: {fileID: 104600629}
   icon: {fileID: 1155173156}
+  imgTime: {fileID: 0}
+  imgTimeFill: {fileID: 0}
+  btnImg: {fileID: 0}
 --- !u!114 &1897361347
 MonoBehaviour:
   m_ObjectHideFlags: 0

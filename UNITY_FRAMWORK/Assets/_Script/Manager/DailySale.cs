@@ -29,18 +29,21 @@ public class DailySale : MonoBehaviour {
     public Image arrow;       //화살표
     public Image icon;        //coinImage
     public Image imgTime;     //구매후 타임을 보여주기 위한 타이밍
-    public Image imgTimeFill; //구매후타임을 보여주기 위한 타이밍
-         
-  
+    public Image imgTimeFill; //구매후타임을 보여주기 위한 타
+    public Image btnImg;      //구매할수 없을때 색깔변경을 위해서 
 
            bool  isPurchase; //한번 구매했는지 판단
 
-    Button btn;
+   
+   
+    int curhasGold;        //현재 플레이어가 가지고 있는 코인량
+    Button button;         
+    Color imgbtnColor;
 
     //이미 오브젝트가 생성된후 데이터 대입방법이므로 프로퍼티화 한다.
     private void Awake()
     {
-        btn = GetComponent<Button>();
+        button = GetComponent<Button>();
     }
 
     public int ID
@@ -57,8 +60,42 @@ public class DailySale : MonoBehaviour {
         }
     }
 
-     //TODO: 현재 카드가 가지고 있는 수량확인
-     IEnumerator SetItem()
+    private void Start()
+    {
+        curhasGold = GameData.Instance.players[1].coin;
+    }
+
+    private void OnEnable()
+    {
+        ItemDisplayer.goldEvent += ReCollBackGold;
+    }
+
+    void ReCollBackGold()
+    {  //바뀐값을 콜백으로 GameData에서 부터 받도록한다.
+        curhasGold = GameData.Instance.players[1].coin;
+        CheckAmount();
+    }
+
+    void CheckAmount()
+    {
+      
+        curhasGold = GameData.Instance.players[1].coin;
+        Debug.Log("curhasGold:"+curhasGold +"  priceCoin:"+priceCoin);
+        if (priceCoin > curhasGold)
+        {
+            //구매가 되지 않도록한다.
+            button.enabled = false;
+            //color를 설정
+            btnImg.color = Color.black;
+        }
+        else
+        {
+           // btnImg.color = imgbtnColor;
+        }
+    }
+
+    //TODO: 현재 카드가 가지고 있는 수량확인
+    IEnumerator SetItem()
     {
         yield return new WaitForSeconds(0.2f);
         dollar.text  = priceCoin.ToString();
@@ -68,9 +105,7 @@ public class DailySale : MonoBehaviour {
 
     public void PurchaseSend()
     {
-        //itemId;priceCoin;ea;
-        // hasCard
-        // newInfo.hasCard = (int)jsonUnitydata["PlayerInfo"]["hasCard"][i]["hasNum"];
+       
        
         if (GameData.Instance.hasCard.ContainsKey(itemId))
         {
@@ -103,7 +138,24 @@ public class DailySale : MonoBehaviour {
         StartCoroutine(MatketTime(1f));
     }
 
-   
+    public void OnClick()
+    {
+        //AppSound.instance.SE_MENU_OPEN.Play();
+        //다른 클래스에서 변경됐을때 그 값을 적용받기 위해서 
+        //한번더 값을 받아 온다. 
+        if (curhasGold >= priceCoin)
+        {   //UI topGold에서 차감후 Ga
+            curhasGold = GameData.Instance.players[1].coin;
+
+            ItemDisplayer.instance_ItemDisplayer.decreaseItem(priceCoin);
+        }
+
+        //TODO: 완전삭제 가능
+        //GameData.Instance.curAddGold = priceCoin;
+        //GameData.Instance.players[1].coin -= priceCoin;
+        //curhasGold -= priceCoin;
+        //Debug.Log("DailySale:" + curhasGold);
+    }
 
     //Main_Scene에 있는데 중복되 코드 델리게이트로 or 인터페이스화 실습
     int CardLevel(int cardNum)
@@ -130,7 +182,7 @@ public class DailySale : MonoBehaviour {
         //코인표시,갯수 표시 이미지 변경, 버튼 효과 false;
         charName.text    = string.Format("{0}", "구매완료");
       
-        btn.enabled      = false;   //버튼컴포넌트
+        button.enabled      = false;   //버튼컴포넌트
         dollar.enabled   = false;   //text
         levelNum.enabled = false;   //text
         bar.enabled      = false;   //img
@@ -141,7 +193,7 @@ public class DailySale : MonoBehaviour {
         SetItemDelay();
      }
 
-    
+   
 
     IEnumerator MatketTime(float t)
     {
@@ -167,6 +219,13 @@ public class DailySale : MonoBehaviour {
             yield return new WaitForSeconds(t);
             
         }
+    }
+
+    //자신의 프로퍼티값을 호출하지 못한다.따라서 메니저에서대신호출해서 보내주는 역할을함
+    void OnGoldChange(Component purchaseCard, int gold)
+    {
+      
+        if (this.GetInstanceID() != purchaseCard.GetInstanceID()) return;
     }
 
 }

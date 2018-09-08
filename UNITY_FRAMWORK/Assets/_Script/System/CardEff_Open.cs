@@ -6,6 +6,9 @@ using UnityEngine.UI;
 
 public class CardEff_Open : MonoBehaviour {
 
+    public delegate void CardEff();
+    public static event CardEff eff;
+
     enum eState
     {
         NONE,
@@ -29,58 +32,60 @@ public class CardEff_Open : MonoBehaviour {
     }
 
     //----드레깅-----------------------
-    public Transform   Image;
-    public GameObject  iconImgGM;
-    public GameObject  ImgOpen;
-    public GameObject  ImgClose;
-    public Transform   title;       //카드의 이름
-    public GameObject  arrowLevel;  //card amount 증가
-    public GameObject  arrowGold;   //골드 증가
-    public GameObject  arrowJew;    //보석 증가
-    public GameObject  arrow;       //화살표의 위로올라가는 애니
-    public GameObject  cardNum;     //상자가 열렸을때  몇개의 상품항목이 있는지 보여줄 것
-
+    public Transform    Image;
+    public GameObject   iconImgGM;
+    public GameObject   ImgOpen;
+    public GameObject   ImgClose;
+    public Transform    title;       //카드의 이름
+    public GameObject   arrowLevel;  //card amount 증가
+    public GameObject   arrowGold;   //골드 증가
+    public GameObject   arrowJew;    //보석 증가
+    public GameObject   arrow;       //화살표의 위로올라가는 애니
+    public GameObject   cardNum;     //상자가 열렸을때  몇개의 상품항목이 있는지 보여줄 것
+    public GameObject   FadeOut;     //fadeOut
+    public Transform    panel;       //활성화시 꺼놓은 것을 활성화 시키기 위해서 사용
   
     
-    float        openImgScAmount = 5f;    //크기를 조절할수있게 
-    Vector3      openImglocalScale;  //openImage원래 크기 
+    float        openImgScAmount = 5f;//크기를 조절할수있게 
+    Vector3      openImglocalScale;   //openImage원래 크기 
 
-    Image iconImg;                 //바뀌어 보이는 이미지
+    Image iconImg;                    //바뀌어 보이는 이미지
     Image opImg;
     Image closeImg;
     // Use this for initialization
-    Image icon;     //카드의 케릭터 이미지 
-    Image cardbase; //카드의 테두리 이미지 
+    Image icon;                      //카드의 케릭터 이미지 
+    Image cardbase;                  //카드의 테두리 이미지 
     int   Gold;
-    RectTransform rtImg;  //default  width:200  height:240
+    RectTransform rtImg;             //default  width:200  height:240
    // Vector2 rtImg;
     Vector3 initScale;
     float height;
     float width;
+   
 
     //public Transform[] path;
 
     int    curGold;
-    int    curJew;       //현재 까지저장된 jew
-    int    cuItemID;     //현재 선택된 카드 ID
+    int    curJew;                 //현재 까지저장된 jew
+    int    cuItemID;               //현재 선택된 카드 ID
 
-    int    curItemNum;   //현재 서택된 카드의 수량
+    int    curItemNum;             //현재 서택된 카드의 수량
 
-    int    baseLevel;    //레벨숫자를 공통으로 사용하게 한다.
+    int    baseLevel;              //레벨숫자를 공통으로 사용하게 한다.
 
     Text   txGold;
     Text   txJew;
     Text   txLevel;
-    Text   itemNum; //상자내 표시 카운트 
+    Text   itemNum;                //상자내 표시 카운트 
     Text[] titleNames;
-    bool   isOpen = false;  //처음 실행인지 판단하기 위해서 
-    //임시로 이벤트발생시 아이템의 목록을 기입한다.
-    bool isReOpen = false;  //상품을 바꾸어 줄때 이전상품을 hide하게 한다.
+    bool   isOpen = false;         //처음 실행인지 판단하기 위해서 
+                                   //임시로 이벤트발생시 아이템의 목록을 기입한다.
+    bool isReOpen = false;         //상품을 바꾸어 줄때 이전상품을 hide하게 한다.
    
-    public static string keyName = "lunchyCase";
+    public static string keyName = "";
 
-    int productNum;  //전체 상품수량
-    //보석상자에서 입력받을 증가시킬value 
+    int productNum;                //전체 상품수량
+                                   //보석상자에서 입력받을 증가시킬value 
     int Addgold;
     int AddJew;
     int Addunits;
@@ -122,15 +127,23 @@ public class CardEff_Open : MonoBehaviour {
       
         openImglocalScale = ImgOpen.transform.localScale;
         rtImg.sizeDelta = new Vector2(100, height);
-
+        
     }
 
-    private void Start()
-    {
-    }
+  
 
     private void OnEnable()
     {
+        Create_FADEOUT(FadeOut,transform.parent.parent);
+        StartCoroutine(SetCardOpen());
+    }
+
+    IEnumerator SetCardOpen()
+    {
+        yield return new WaitForSeconds(0.4f);
+
+        panel.gameObject.SetActive(true);
+
         //dic_SetItems
         if (GameData.Instance.dic_SetItems.ContainsKey(keyName))
         {
@@ -204,7 +217,9 @@ public class CardEff_Open : MonoBehaviour {
         SetActiviteTitleAllOFF();
         //카드 카운트는 따로 관리되어져야 한다.
         cardNum.SetActive(false);
+
     }
+
     //private void Update()
     //{
     //    if (Input.GetKeyDown(KeyCode.H))
@@ -228,6 +243,13 @@ public class CardEff_Open : MonoBehaviour {
         return random;
      }
 
+    //호출부분
+    void OnDisable()
+    {
+        panel.gameObject.SetActive(false);
+        eff();
+    }
+
     //Title 의 내용물
     void SetActiviteTitleAllOFF()
     {
@@ -236,6 +258,8 @@ public class CardEff_Open : MonoBehaviour {
         arrowLevel.SetActive(false);
         arrowGold.SetActive(false);
         arrowJew.SetActive(false);
+        // 한동작의 애니가 끝났을때 false로 바꾼다.
+        
     }
 
      void SetActiviteTitle(bool isEnable)
@@ -299,6 +323,8 @@ public class CardEff_Open : MonoBehaviour {
     //상자가 클릭될때 마다 실행되게 한다. 중앙의 카드의 애니메이션 
     public void OpenCase()
     {
+        //애니가 실행중 클릭이 되지 않게 한다.
+        isClick = true;
         //TODO: 플레이어의 가지고 있는 정보를 담는다.
         curGold = GameData.Instance.players[1].coin;
         curJew  = GameData.Instance.players[1].jew;
@@ -331,7 +357,6 @@ public class CardEff_Open : MonoBehaviour {
     //상자에서 카드가 나오는 애니
     void PullCardBase()
     {
-
         if (isReOpen)
         {
             //두번 클릭됐을때 위로 점프하면서 카드를 위로 올릴때 상자 애니
@@ -340,117 +365,127 @@ public class CardEff_Open : MonoBehaviour {
             iTween.MoveFrom(ImgOpen, iTween.Hash("position", a, "time", .5f, "islocal", true, "easetype", iTween.EaseType.easeInOutQuint));
             ShowCard();
         }
-
     }
 
-    ///--------------------------------------------------
+
+    bool isClick = false;
     public  void ClickCount()
     {
         //상품이 나오는 순서를 정한다.
         //터치에 따른 인터페이스 설정을 가능하게 한다.
-
-        if (keyName == "lunchyCase")
+        //애니 중간에 작동하지 않게 하거나 속도를 빠르게 조절가능할수 있게 한다.
+        if (isClick != true)
         {
-            switch (productNum)
-            {
+
+                if (keyName == "lunchyCase")
+                {
+                    switch (productNum)
+                    {
                
-                case 5:
-                    curOpen = eOpen.JEW;
-                    OpenCase();
-                    isReOpen = true;
-                    break;
-                case 4:
-                    curOpen = eOpen.UNITY;
-                    OpenCase();
-                    isReOpen = true;
-                    break;
-                case 3:
-                    curOpen = eOpen.RARES;
-                    OpenCase();
-                    isReOpen = true;
-                    break;
-                case 2:
-                    curOpen = eOpen.HEROS;
-                    OpenCase();
-                    isReOpen = true;
-                    break;
-                case 1:
-                    curOpen = eOpen.LEGENDS;
-                    OpenCase();
-                    isReOpen = true;
-                    break;
-                case 0:
-                    curOpen = eOpen.CLOSE;
-                    isReOpen = false; //title작동되지 않음
-                                      //다시 클릭됐을때를 위해서 카드이미지가 안보이게 세팅한다.
-                    iconImg.enabled = false;
-                    cardbase.enabled = false;
-                    transform.root.gameObject.SetActive(false);
+                        case 5:
+                            curOpen = eOpen.JEW;
+                            OpenCase();
+                            isReOpen = true;
+                            break;
+                        case 4:
+                            curOpen = eOpen.UNITY;
+                            OpenCase();
+                            isReOpen = true;
+                            break;
+                        case 3:
+                            curOpen = eOpen.RARES;
+                            OpenCase();
+                            isReOpen = true;
+                            break;
+                        case 2:
+                            curOpen = eOpen.HEROS;
+                            OpenCase();
+                            isReOpen = true;
+                            break;
+                        case 1:
+                            curOpen = eOpen.LEGENDS;
+                            OpenCase();
+                            isReOpen = true;
+                            break;
+                        case 0:
+                            curOpen = eOpen.CLOSE;
+                            isReOpen = false; //title작동되지 않음
+                            //다시 클릭됐을때를 위해서 카드이미지가 안보이게 세팅한다.
+                            iconImg.enabled = false;
+                            cardbase.enabled = false;
+                            isOpen = false;
+                            transform.root.gameObject.SetActive(false);
                    
-                    break;
+                            break;
 
-            }
-        }
-        else if (keyName == "legendaryCase")
-        {
-            switch (productNum)
-            {
-                case 1:
-                    curOpen = eOpen.LEGENDS;
-                    OpenCase();
-                    isReOpen = true;
-                    break;
+                    }
+                }
+                else if (keyName == "legendaryCase")
+                {
+           
+                    switch (productNum)
+                    {
+                        case 1:
+                            curOpen = eOpen.LEGENDS;
+                            OpenCase();
+                            isReOpen = true;
+                            break;
 
-                case 0:
-                    curOpen = eOpen.CLOSE;
-                    isReOpen = false; //title작동되지 않음
-                                      //다시 클릭됐을때를 위해서 카드이미지가 안보이게 세팅한다.
-                    iconImg.enabled = false;
-                    cardbase.enabled = false;
-                    transform.root.gameObject.SetActive(false);
+                        case 0:
+                            curOpen = eOpen.CLOSE;
+                            isReOpen = false; //title작동되지 않음
+                            //다시 클릭됐을때를 위해서 카드이미지가 안보이게 세팅한다.
+                            iconImg.enabled = false;
+                            cardbase.enabled = false;
+                            isOpen = false;
+                            transform.root.gameObject.SetActive(false);
                    
-                    break;
+                            break;
 
-            }
-        }
-        else if (keyName == "HeroCase")
-        {
+                    }
+                }
+                else if (keyName == "HeroCase")
+                {
 
-            switch (productNum)
-            {
+                    switch (productNum)
+                    {
                
-                case 3:
-                    curOpen = eOpen.HEROS;
-                    OpenCase();
-                    isReOpen = true;
-                    break;
-                case 2:
-                    curOpen = eOpen.HEROS;
-                    OpenCase();
-                    isReOpen = true;
+                        case 3:
+                            curOpen = eOpen.HEROS;
+                            OpenCase();
+                            isReOpen = true;
+                            break;
+                        case 2:
+                            curOpen = eOpen.HEROS;
+                            OpenCase();
+                            isReOpen = true;
 
-                    break;
-                case 1:
-                    curOpen = eOpen.HEROS;
-                    OpenCase();
-                    isReOpen = true;
-                    break;
+                            break;
+                        case 1:
+                            curOpen = eOpen.HEROS;
+                            OpenCase();
+                            isReOpen = true;
+                            break;
 
-                case 0:
-                    curOpen = eOpen.CLOSE;
-                    isReOpen = false; //title작동되지 않음
-                                      //다시 클릭됐을때를 위해서 카드이미지가 안보이게 세팅한다.
-                    iconImg.enabled = false;
-                    cardbase.enabled = false;
-                    transform.root.gameObject.SetActive(false);
+                        case 0:
+                            curOpen = eOpen.CLOSE;
+                            isReOpen = false; //title작동되지 않음
+                            //다시 클릭됐을때를 위해서 카드이미지가 안보이게 세팅한다.
+                            iconImg.enabled = false;
+                            cardbase.enabled = false;
+                            isOpen = false;
+                            transform.root.gameObject.SetActive(false);
                    
-                    break;
+                            break;
 
-            }
-        }
+                    }
+                }
+        }// isClik END
+
        
       
     }
+
     void IdleCase()
     {
         //상자 아이들링 ani 
@@ -463,8 +498,8 @@ public class CardEff_Open : MonoBehaviour {
         iTween.MoveAdd(obj, iTween.Hash("x", -8, "time", .2, "looptype", iTween.LoopType.loop, "easetype", iTween.EaseType.easeOutExpo));
 
     }
+   
 
-    //상자가 열리자 마자 바로 같이 표시되어야 하는 카드카운트
     void CaseCardShow(bool isEnable)
     {
         cardNum.SetActive(isEnable);
@@ -491,6 +526,7 @@ public class CardEff_Open : MonoBehaviour {
                 titleNames[2].text = "내골드";
                 productNum--;
                 itemNum.text = string.Format("{0}", productNum);
+                isClick = false;
                 break;
             case eOpen.JEW:                                    
                 iTween.ValueTo(gameObject, iTween.Hash("from", curJew, "to", curJew + AddJew, "time", .6, "onUpdate", "UpdateGoldDisplay", "oncompletetarget", gameObject));
@@ -499,6 +535,7 @@ public class CardEff_Open : MonoBehaviour {
                 titleNames[2].text = "내보석";
                 productNum--;
                 itemNum.text = string.Format("{0}", productNum);
+                isClick = false;
                 break;
             case eOpen.UNITY:
                                            
@@ -510,6 +547,7 @@ public class CardEff_Open : MonoBehaviour {
                 iTween.ValueTo(gameObject, iTween.Hash("from", cur1, "to", cur1 + Addunits, "time", .6, "onUpdate", "UpdateGoldDisplay", "oncompletetarget", gameObject));
                 productNum--;
                 itemNum.text = string.Format("{0}", productNum);
+                isClick = false;
                 break;
             case eOpen.RARES:
                 int[] level2 = new int[2];
@@ -519,6 +557,7 @@ public class CardEff_Open : MonoBehaviour {
                 iTween.ValueTo(gameObject, iTween.Hash("from", cur2, "to", cur2 + Addrarts, "time", .6, "onUpdate", "UpdateGoldDisplay", "oncompletetarget", gameObject));
                 productNum--;
                 itemNum.text = string.Format("{0}", productNum);
+                isClick = false;
                 break;
             case eOpen.HEROS:
 
@@ -530,6 +569,7 @@ public class CardEff_Open : MonoBehaviour {
                 iTween.ValueTo(gameObject, iTween.Hash("from", cur3, "to", cur3 + Addheros, "time", .6, "onUpdate", "UpdateGoldDisplay", "oncompletetarget", gameObject));
                 productNum--;
                 itemNum.text = string.Format("{0}", productNum);
+                isClick = false;
                 break;
 
             case eOpen.LEGENDS:
@@ -542,6 +582,8 @@ public class CardEff_Open : MonoBehaviour {
                 iTween.ValueTo(gameObject, iTween.Hash("from", cur4, "to", cur4 + Addlengends, "time", .6, "onUpdate", "UpdateGoldDisplay", "oncompletetarget", gameObject));
                 productNum--;
                 itemNum.text = string.Format("{0}", productNum);
+                //다시 버튼이 클릭될수 있도록한다.
+                isClick = false;
                 break;
 
             case eOpen.CLOSE:
@@ -601,8 +643,6 @@ public class CardEff_Open : MonoBehaviour {
                 break;
             case eOpen.GOLD:
                 //스크린에 text가 보이게 한다.
-               
-
                 txGold.text = string.Format("{0:0,0}",Value);
                 if (Addgold <= Value)
                 {
@@ -657,9 +697,9 @@ public class CardEff_Open : MonoBehaviour {
     {
         //-----------showTitle-------------------
         //랜덤한 인덱스를 통해서 카드의 ID 를 구한다.
-        int max   = units.Count;
-        int index = RandomRange(max);
-        int ID    = units[index].Id;
+        int max          = units.Count;
+        int index        = RandomRange(max);
+        int ID           = units[index].Id;
         string titleName = GameData.Instance.UnityDatas[ID].Name;
         string kinds     = GameData.Instance.UnityDatas[ID].Kinds;
 
@@ -670,13 +710,13 @@ public class CardEff_Open : MonoBehaviour {
         // 레벨을 0으로 적용한다. hasCard
         if (GameData.Instance.hasCard.ContainsKey(ID))
         {
-            int level = GameData.Instance.hasCard[ID].level;
+            int level       = GameData.Instance.hasCard[ID].level;
             int hasCardNums = GameData.Instance.hasCard[ID].hasCard;
             int levelremain = GameData.Instance.Level[level];
 
             titleNames[2].text = string.Format("{0}", level);
-            leve[0] = hasCardNums; //가지고 있는 카드
-            leve[1] = levelremain; //업레벨까지의 카드량 
+            leve[0]            = hasCardNums; //가지고 있는 카드
+            leve[1]            = levelremain; //업레벨까지의 카드량 
         }
         else
         {
@@ -684,6 +724,30 @@ public class CardEff_Open : MonoBehaviour {
         }
 
         return leve;
+    }
+
+
+    //순간적으로 빨리 켜지고 꺼지는 효과 
+    //IEnumerator FADEOUT_FLASH()
+    //{
+    //    fadeOut.isFadeIN = true;
+    //    fadeOut.StartFadeAnim();
+    //    yield return new WaitForSeconds(0.1f);
+    //}
+    //public void FADEOUT_FLASHClick()
+    //{
+    //    fadeOut.isFadeIN = true;
+    //    fadeOut.StartFadeAnim();
+    //}
+    //상자가 열리자 마자 바로 같이 표시되어야 하는 카드카운트
+
+
+    void Create_FADEOUT(GameObject ob,Transform t)
+    {
+        GameObject fadeObj         = Instantiate(ob, t);
+        fadeObj.GetComponent<FadeOut>().animTime = 0.5f;
+        ob.transform.localScale    = new Vector3(1, 1, 1);
+        ob.transform.localPosition = new Vector3(0, 0, 0);
     }
 
 }

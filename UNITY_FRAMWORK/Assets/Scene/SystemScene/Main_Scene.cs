@@ -10,16 +10,19 @@ using System.IO;
 using System.Linq;
 using System;
 
+
+ 
 public class Main_Scene : MonoBehaviour, IPointerClickHandler
 {
 
 
-
+   
     public RectTransform[] panelItems;   // UI의 bottom메뉴  Item고유ID설정
     public GameObject cardObj;           //선택되어 tab1의 위치로 이동하기 전에 보여줘야 할 오브젝트 
     public GameObject itemSample1;       //카드가 선택되서 복제될 오브젝트 ,하단의선택 Tab
     public GameObject itemSample2;       //선택되어 보여지는 버튼
     public GameObject[] CaseItem;        //상품이 선택됐을때 열리게 하기
+    public GameObject fadeOut;           //fadeOut 를 복제하기 위함
 
     public Transform marketTop;          //market Top메뉴
     public Transform marketSpecial;      //daily 
@@ -75,7 +78,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     Slider slider;
     string jumpSceneName;
-    FadeOut fadeOut;
+    //FadeOut fadeOut;
     public delegate void ButtonClick();
     public static event ButtonClick OnButtonHandler;
     public UnityEvent ARRAYCARDS;
@@ -97,7 +100,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     //tab에 이미선택되어 있는지판단
     bool isTabIN;
     Text[] experinceText;
-    Text coinText;
+    //Text coinText;
     Text jewText;
     int curGold;  //현재의Gold 를 기록하고 증가시킬때  From의 역할을 한다.
     int addGold;  //증가시키너가 감소시킬 값
@@ -120,8 +123,10 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
             panelItems[i].GetComponentInChildren<UI_Icon>().PanelItem = i + 1;
         }
 
+        //fadeOut = GameObject.Find("FadeOut").GetComponent<FadeOut>();
+
         experinceText = TopLabel_experience.GetComponentsInChildren<Text>();
-        coinText = TopLabel_Coins.GetComponentInChildren<Text>();
+        //coinText = TopLabel_Coins.GetComponentInChildren<Text>();
         jewText = TopLabel_Jews.GetComponentInChildren<Text>();
     }
 
@@ -131,9 +136,9 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         // !!!!!!!!!!!!!!!!!!!!!
         stroll = GetComponent<ScrollViewController>();
         //시작과 동시에 item 에 필요한 json데이터를파싱한다.
+      
+       // StartCoroutine(FADEOUT_FLASH());
 
-
-        //시작시 Fade 버튼을 실행시킨다.
 
         // slot 리스트 좌표임
         //lsSlots       = buttonPanel.GetComponent<UI_GridGroup>().lsrcTransforms;
@@ -148,7 +153,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
 
             experinceText[0].text = string.Format("{0}/{1}", Num, defaultExp);
             experinceText[1].text = string.Format("{0}", GameData.Instance.players[1].exp);
-            coinText.text = string.Format("{0}", GameData.Instance.players[1].coin);
+            //coinText.text = string.Format("{0}", GameData.Instance.players[1].coin);
             curGold = GameData.Instance.players[1].coin;
             jewText.text = string.Format("{0}", GameData.Instance.players[1].jew);
             //시작과동시에 다시 자신의 골드를 프로퍼티로 사용학 위해서  데이터에 저장한다.
@@ -158,6 +163,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         //StartCoroutine(FADEOUT_FLASH());
         //카드의 Icon Imag를 바꿔주기 위해서 시작시 로드한다.
 
+        Create_FADEOUT(marketRoyal.parent.parent,0.8f);
         //----------
         //Tab 에 위치하게될 카드
         //isSelectDeck();
@@ -205,6 +211,16 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     //	Invoke ("SceneJump",1.2f);
     //}
 
+    void OnEnable()
+    {
+        CardEff_Open.eff += FadeOutA;
+    }
+
+    void FadeOutA()
+    {
+        Create_FADEOUT(marketRoyal.parent.parent,0.5f);
+    }
+
     void SceneJump()
     {
         Debug.Log(string.Format("Start Game : {0}", jumpSceneName));
@@ -219,14 +235,27 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         //nextScene = "2_Main_Scene";
     }
 
-    //순간적으로 빨리 켜지고 꺼지는 효과 
-    IEnumerator FADEOUT_FLASH()
-    {
-        fadeOut.isFadeIN = true;
-        fadeOut.StartFadeAnim();
-        yield return new WaitForSeconds(0.1f);
-    }
+    //  //순간적으로 빨리 켜지고 꺼지는 효과 
+    //  IEnumerator FADEOUT_FLASH()
+    //  {
+    //      fadeOut.isFadeIN = true;
+    //      fadeOut.StartFadeAnim();
+    //      yield return new WaitForSeconds(0.1f);
+    //  }
 
+    //public void  FADEOUT_FLASHClick()
+    //  {
+    //      fadeOut.isFadeIN = true;
+    //      fadeOut.StartFadeAnim();
+
+    //  }
+
+    void Create_FADEOUT(Transform t,float delay)
+    {
+
+        GameObject fadeObj = Instantiate(fadeOut,t);
+        fadeObj.GetComponent<FadeOut>().animTime = delay;
+    }
 
     #region NotNeedCode1
 
@@ -705,9 +734,12 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         jewText.text = string.Format("{0}", GameData.Instance.players[1].jew);
     }
 
+    //-----TODO:개별적으로 작동하게 함
     void UpdateGoldDisplay(int curGold)
     {
-        coinText.text = string.Format("{0}", curGold);
+        //직접 top의 프러퍼티에 수정한다.이벤트를 위해서 임
+        ItemDisplayer.instance_ItemDisplayer.CurhasGold = curGold;
+        //coinText.text = string.Format("{0}", curGold);
     }
 
     void MarketSetDaily()
