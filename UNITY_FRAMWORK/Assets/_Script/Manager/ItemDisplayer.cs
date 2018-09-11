@@ -37,7 +37,6 @@ public class ItemDisplayer : MonoBehaviour {
     private void Start()
     {
         instance_ItemDisplayer = this;
-        curhasGold = GameData.Instance.players[1].coin;
         EventManager.Instance.AddListener(EVENT_TYPE.GOLD_CHANGE, OnEvent);
         init();
     }

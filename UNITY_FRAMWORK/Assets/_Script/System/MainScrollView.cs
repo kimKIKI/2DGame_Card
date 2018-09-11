@@ -29,14 +29,14 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
 
     struct PanelNUM
     {  //PanelRect로 드레그된 정보를 컨트롤할수 있게 구조체배열로 저장한다.
-       public int index;
-       public float Width;
-       public float posX;                //원래의 위치를
-       public float curPosX;             //현재 이동좌표
-       public float nextPos;             //다음 이동좌표
-       public float posY;
-       public float curPosY;
-       public bool  bIsActive;          //현재 작업중인지 판단.
+       public int    index;
+       public float  Width;
+       public float  posX;                //원래의 위치를
+       public float  curPosX;             //현재 이동좌표
+       public float  nextPos;             //다음 이동좌표
+       public float  posY;
+       public float  curPosY;
+       public bool   bIsActive;          //현재 작업중인지 판단.
        
     } 
 
@@ -53,7 +53,7 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
         //그래픽레이캐스터에서의 마우스 포인터 위치를 나타낸다.
         ped = new PointerEventData(null);
         //Debug발생으로 처리한 코드부분 만약 한칸 건너서 없은곳 보일때 다시수정필요
-       // StartCoroutine(coReConFirm());
+        // StartCoroutine(coReConFirm());
     }
 
     private void Update()
@@ -155,8 +155,8 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
             float moveX = stPanels[i].curPosX + stPanels[i].Width;
             StartCoroutine(coMove(panelRECT[i], stPanels[i].curPosX, moveX, 3f));
         }
-
     }
+
     public void PanleMove()
     {
         //panelItem의 Id를 얻어서 이동시킬 좌표를 구한다. endx좌표

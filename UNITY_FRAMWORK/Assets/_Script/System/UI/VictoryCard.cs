@@ -17,7 +17,7 @@ public class VictoryCard : MonoBehaviour {
     public Slider     slider;         //카드의 숫자를 받아 바 크기를 나타내 준다.
     public Text       txElixerNum;    //엘릭서 Num
     public GameObject arrow;          //자동으로 컨트롤하기 위해서 
-    public Transform  hideCard;          //리스트에서 동작이 끝난후 보이지 않게 하기 위해서 
+    public Transform  hideCard;       //리스트에서 동작이 끝난후 보이지 않게 하기 위해서 
 
     Vector3 localScale;
    

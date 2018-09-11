@@ -15,8 +15,6 @@ using System;
 public class Main_Scene : MonoBehaviour, IPointerClickHandler
 {
 
-
-   
     public RectTransform[] panelItems;   // UI의 bottom메뉴  Item고유ID설정
     public GameObject cardObj;           //선택되어 tab1의 위치로 이동하기 전에 보여줘야 할 오브젝트 
     public GameObject itemSample1;       //카드가 선택되서 복제될 오브젝트 ,하단의선택 Tab
@@ -53,27 +51,28 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     public UnityEvent FADEBUTTON;
     public PlayerSaveJsonData saveJsonData;
 
-    List<DataClass> list = new List<DataClass>();                   //?
-    IList<RectTransform> lsSlots = new List<RectTransform>();      //slot의 위치 
+    List<DataClass> list             = new List<DataClass>();                   //?
+    IList<RectTransform> lsSlots     = new List<RectTransform>();    //slot의 위치 
     IList<RectTransform> lsSlotsBack = new List<RectTransform>();   //slotBack
 
     IList<RectTransform> lsSwtichSlots = new List<RectTransform>(); //swtichSlots
 
-    List<UnityCard> lsCards = new List<UnityCard>();                //찾은 카드를 선택별로 정렬하기위해 담는다.
-    List<UnityCard> lsSwitchCards = new List<UnityCard>();          //찾은 카드를 선택별로 정렬하기위해 담는다.
+    List<UnityCard> lsCards           = new List<UnityCard>();      //찾은 카드를 선택별로 정렬하기위해 담는다.
+    List<UnityCard> lsSwitchCards     = new List<UnityCard>();      //찾은 카드를 선택별로 정렬하기위해 담는다.
 
-    List<UnityCard> tempCards = new List<UnityCard>();              //tab 버튼이 실행됐을때 생성해 주는 unityCards
-    List<UnityCard> tempCards2 = new List<UnityCard>();             //tab 버튼이 실행됐을때 생성해 주는 unityCards
+    List<UnityCard> tempCards         = new List<UnityCard>();      //tab 버튼이 실행됐을때 생성해 주는 unityCards
+    List<UnityCard> tempCards2        = new List<UnityCard>();      //tab 버튼이 실행됐을때 생성해 주는 unityCards
 
     public Dictionary<int, Vector2> switchGrid = new Dictionary<int, Vector2>();
     //switch의 anchor의 좌표를 순서대로 기록한다.
-    List<int> InDexID = new List<int>();                            //항상 바뀔수 있는 정렬 이므로 이벤트 발생때마다 생성정렬
+    List<int>      InDexID = new List<int>();                       //항상 바뀔수 있는 정렬 이므로 이벤트 발생때마다 생성정렬
+                                                                    //public으로 등록된 DailySale스크립트를 리스트화 한다.
+   
 
-
-    int ArrayNum = 0;  // 0 :기본시작정렬 1:엘릭서  -1:엘릭서+ratial
-    int arrayPos = -1;  //gridGroup에 순차적으로 들어갈 순서
+    int ArrayNum     = 0;   // 0 :기본시작정렬 1:엘릭서  -1:엘릭서+ratial
+    int arrayPos     = -1;  //gridGroup에 순차적으로 들어갈 순서
     int curTabButton = 1;
-    int levelCount;  //레벨업까지 필요한 카드의 숫자를 계산한다.
+    int levelCount;         //레벨업까지 필요한 카드의 숫자를 계산한다.
 
     [SerializeField]
     Slider slider;
@@ -83,7 +82,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     public static event ButtonClick OnButtonHandler;
     public UnityEvent ARRAYCARDS;
 
-    ScrollViewController stroll;
+    //ScrollViewController stroll;
 
     //Tab버튼 3개
     int[] cur = new int[3];
@@ -134,7 +133,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         // !!! 가비지 컬렉션 강제 실행 !!!
         // System.GC.Collect();
         // !!!!!!!!!!!!!!!!!!!!!
-        stroll = GetComponent<ScrollViewController>();
+        //stroll = GetComponent<ScrollViewController>();
         //시작과 동시에 item 에 필요한 json데이터를파싱한다.
       
        // StartCoroutine(FADEOUT_FLASH());
@@ -147,6 +146,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
 
         if (GameData.Instance.players.ContainsKey(1))
         {
+           
             string exp = GameData.Instance.players[1].exp.ToString();
             string Num = GameData.Instance.players[1].expCount.ToString();
             string defaultExp = playerLevel[GameData.Instance.players[1].exp].ToString();
@@ -744,7 +744,6 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
 
     void MarketSetDaily()
     {
-        //public으로 등록된 DailySale스크립트를 리스트화 한다.
         IList<DailySale> days = new List<DailySale>();
         days = marketSpecial.gameObject.GetComponentsInChildren<DailySale>();
 
@@ -756,9 +755,12 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
             //TODO: Image
             string name = GameData.Instance.UnityDatas[i].Name;
             days[i].priceCoin = GameData.Instance.dailys[i].Gold;
+            Debug.Log("priceCoin :"+ days[i].priceCoin);
             days[i].priceJew = GameData.Instance.dailys[i].Jew;
             days[i].ea = GameData.Instance.dailys[i].EA;
             days[i].main.sprite = SpriteManager.GetSpriteByName("Sprite", name);
+
+            Debug.Log("Start Daily --" + GameData.Instance.dailys[i].ID);
 
             //index 와 스크립트를 어떻게 연결할 것인가?
         }

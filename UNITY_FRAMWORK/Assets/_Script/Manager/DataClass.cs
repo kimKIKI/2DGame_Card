@@ -45,8 +45,8 @@ public class MarketInfo
 //Nor상자의 케이스 세팅
 public class NorInfo
 {
-    public int    PriceGold;
-    public string caseName;
+    public   int      PriceGold;
+    public   string   caseName;
 }
 
 //보석상자 
@@ -97,13 +97,13 @@ public class ItemBoxInfo
 
 public class PlayerInfo
 {
-    string id;        //고유ID
-    int    JoinData;  //가입일
-    string idName; //게임닉네임
-    string name;   //플레이어이름
+    string id;              //고유ID
+    int    JoinData;        //가입일
+    string idName;          //게임닉네임
+    string name;            //플레이어이름
 
     [HideInInspector]
-   public int telephone; //핸드폰
+   public int telephone;    //핸드폰
     [HideInInspector]
     public int coin;        //보유코인
     [HideInInspector]
@@ -111,7 +111,7 @@ public class PlayerInfo
     [HideInInspector]
     public int cardHas = 0; //전체 종류중에 찾은 카드의 수
     [HideInInspector]
-    public int selectNum = 4;      //tab에 선택된 카드의 수
+    public int selectNum = 4;//tab에 선택된 카드의 수
     [HideInInspector]
     public int exp;
     [HideInInspector]

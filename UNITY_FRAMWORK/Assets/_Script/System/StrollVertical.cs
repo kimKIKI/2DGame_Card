@@ -7,13 +7,13 @@ using UnityEngine.EventSystems;
 public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IEventSystemHandler//, IPointerUpHandler, IPointerClickHandler
 {
 
-    float basePosX;    //처음배치localpos
-    float basePosY;
+    float  basePosX;    //처음배치localpos
+    float  basePosY;
 
-    float curPosX;
-    float curPosY;
-    bool isDragging = false;
-    bool isDragOn = false;
+    float  curPosX;
+    float  curPosY;
+    bool   isDragging  = false;
+    bool   isDragOn    = false;
     RectTransform myRect;
 
     public float CurPosX
@@ -59,8 +59,8 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
     {
         basePosX = myRect.localPosition.x;
         basePosY = myRect.localPosition.y;
-        CurPosX = myRect.localPosition.x;
-        CurPosY = myRect.localPosition.y;
+        CurPosX  = myRect.localPosition.x;
+        CurPosY  = myRect.localPosition.y;
     }
 
     public void OnEndDrag(PointerEventData eventData)

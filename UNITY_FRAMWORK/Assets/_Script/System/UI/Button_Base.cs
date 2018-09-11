@@ -49,10 +49,10 @@ public class Button_Base : MonoBehaviour {
 
     private void Awake()
     {
-        btn = gameObject.GetComponent<RectTransform>();
-        OrigScale = new Vector2(btn.localScale.x, btn.localScale.y);
-        pos = gameObject.transform.localPosition;
-        button = GetComponentInChildren<Button>();
+        btn        = gameObject.GetComponent<RectTransform>();
+        OrigScale  = new Vector2(btn.localScale.x, btn.localScale.y);
+        pos        = gameObject.transform.localPosition;
+        button     = GetComponentInChildren<Button>();
         Small();
         //btnImg = buttonTurn.GetComponent<Image>();
         imgbtnColor = btnImg.color;
@@ -63,11 +63,10 @@ public class Button_Base : MonoBehaviour {
     private void Start()
     {   //기본적으로 처음 시작시에 한번 코인량을 받고
         curhasGold = GameData.Instance.players[1].coin;
+       
         EventManager.Instance.AddListener(EVENT_TYPE.GOLD_CHANGE, OnEvent);
         //TODO: 여기 없으면 다른곳의 ClickCount가 작동하지 않음
         //시작과 동시에 button의 세팅을 적용한다.
-        //OnClickLate();
-
         ItemDisplayer.goldEvent += ReCollBackGold;
         CheckAmount();
     }
@@ -94,8 +93,7 @@ public class Button_Base : MonoBehaviour {
     void CheckAmount()
     {
         curhasGold = GameData.Instance.players[1].coin;
-        Debug.Log("costGold :"+costGold + "- curhasGold :"+curhasGold);
-        //Debug.Log("Button_Base-costGold:"+ costGold +"Button_Base:curhasGold:"+curhasGold);
+        //Debug.Log("costGold :"+costGold + "- curhasGold :"+curhasGold);
         if (CurhasGold < costGold)
         {
             //구매가 되지 않도록한다.
@@ -113,29 +111,32 @@ public class Button_Base : MonoBehaviour {
     {
        txLabel.text  = string.Format("{0}", info.PriceGold); 
        txLabel2.text = string.Format("{0}", info.caseName);
-       costGold = info.PriceGold;
+       costGold      = info.PriceGold;
         if (info.caseName == "LunchyCase")
         {
+            Debug.Log("역기 문제 없나요 LunchyCase");
             //sprite이름대입
-            name = "luckyCase";
+            name             = "luckyCase";
             main.sprite.name = name;
-            main.sprite = SpriteManager.GetSpriteByName("Sprite", main.sprite.name);
+            main.sprite      = SpriteManager.GetSpriteByName("Sprite", main.sprite.name);
             //GameData.Instance.dic_SetItems의 키값
             keyName = "lunchyCase";
         }
         else if (info.caseName == "legendaryCase")
-        {
-            name = "legendaryCase";
+        {   //sprite네임
+            Debug.Log("역기 문제 없나요 legendaryCase");
+            name             = "legendaryCase";
             main.sprite.name = name;
-            main.sprite = SpriteManager.GetSpriteByName("Sprite", main.sprite.name);
-            keyName = "legendaryCase";
+            main.sprite      = SpriteManager.GetSpriteByName("Sprite", main.sprite.name);
+            keyName          = "legendaryCase";
         }
         else if (info.caseName == "HeroCase")
-        {
-            name = "giantCase";
+        {   //sprite네임
+            Debug.Log("역기 문제 없나요 HeroCase");
+            name             ="giantCase";
             main.sprite.name = name;
-            main.sprite = SpriteManager.GetSpriteByName("Sprite", main.sprite.name);
-            keyName = "HeroCase";
+            main.sprite      = SpriteManager.GetSpriteByName("Sprite", main.sprite.name);
+            keyName          = "HeroCase";
         }
     }
 
@@ -170,7 +171,6 @@ public class Button_Base : MonoBehaviour {
 
     public void OnEvent(EVENT_TYPE Event_Type, Component Sender, object Param = null)
     {
-        
         switch (Event_Type)
         {
             case EVENT_TYPE.GOLD_CHANGE:

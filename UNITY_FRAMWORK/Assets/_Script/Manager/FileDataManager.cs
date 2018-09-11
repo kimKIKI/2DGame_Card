@@ -144,17 +144,13 @@ public  class FileDataManager  {
         string Id         = (string)jsonUnitydata["PlayerInfo"]["Info"][0]["ID"];
         string IdName     = jsonUnitydata["PlayerInfo"]["Info"][0]["IdName"].ToString();
         string PlayerName = jsonUnitydata["PlayerInfo"]["Info"][0]["PlayerName"].ToString();
+
        
         PlayerInfo playerLoad = new PlayerInfo(Id, IdName, PlayerName, JoinDay);
         //플레이어 재정상태
         playerLoad.cardHas = (int)jsonUnitydata["PlayerInfo"]["has"][0]["hasNum"];
         playerLoad.coin    = (int)jsonUnitydata["PlayerInfo"]["has"][0]["coin"];
         playerLoad.jew     = (int)jsonUnitydata["PlayerInfo"]["has"][0]["Jew"];
-
-       
-        playerLoad.telephone   = (int)jsonUnitydata["PlayerInfo"]["Info"][0]["telPhone"];
-        playerLoad.exp         = (int)jsonUnitydata["PlayerInfo"]["Info"][0]["Exprince Num"];
-        playerLoad.expCount    = (int)jsonUnitydata["PlayerInfo"]["Info"][0]["Exprince count"];
 
         //GameData.Instance.player = playerLoad;
         GameData.Instance.players.Add(1, playerLoad);
