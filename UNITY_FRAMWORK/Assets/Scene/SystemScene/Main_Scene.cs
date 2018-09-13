@@ -95,16 +95,16 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
 
     bool bCanvasClick;
     bool isRed;
-    bool isSwitch; //Tab와 교환하기 위해서 선택되어있을경우 
+    bool isSwitch;      //Tab와 교환하기 위해서 선택되어있을경우 
     //tab에 이미선택되어 있는지판단
     bool isTabIN;
     Text[] experinceText;
     //Text coinText;
     Text jewText;
-    int curGold;  //현재의Gold 를 기록하고 증가시킬때  From의 역할을 한다.
-    int addGold;  //증가시키너가 감소시킬 값
-                  //Level 단계 TODO: LEVEL 데이터화 필요 카드 경험치
-   
+    int curGold;        //현재의Gold 를 기록하고 증가시킬때  From의 역할을 한다.
+    int addGold;        //증가시키너가 감소시킬 값
+                        //Level 단계 TODO: LEVEL 데이터화 필요 카드 경험치
+    float yPos = -400f; //카드가 교체되기 위해서 중심으로 이동하는 y좌표
 
     int[] playerLevel = { 500, 1000, 2000, 3000, 4000, 6000, 8000, 10000, 20000, 30000, 40000, 50000 };
 
@@ -143,6 +143,8 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         //lsSlots       = buttonPanel.GetComponent<UI_GridGroup>().lsrcTransforms;
         //lsSlotsBack   = buttonPanelBack.GetComponent<UI_GridGroup>().lsrcTransforms;
         lsSwtichSlots = switchPanel.GetComponent<UI_GridGroup>().lsrcTransforms;
+        //시작시 1부터 시작
+        GameData.Instance.PanelItem = 1;
 
         if (GameData.Instance.players.ContainsKey(1))
         {
@@ -884,7 +886,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
 
                 // 임시로 좌표를  중심의 밑으로 설정한다.
                 MoveSelect.transform.localPosition = new Vector3(0, 0, 0);
-                MoveSelect.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -800f);
+                MoveSelect.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, yPos);
 
                 //카드의 세팅
                 string cardName = GameData.Instance.UnityDatas[i].Name;
@@ -904,15 +906,17 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     public void SwitchSelectMove()
     {
         Vector3 poss = GameData.Instance.toTopPos;
-
+        //world좌표축
+        Debug.Log("poss:" +poss);
+        Debug.Log(" SwitchSelectMove :poss  : "+poss);
         if (MoveSelect != null && isSwitch)
         {
-            iTween.MoveTo(MoveSelect, iTween.Hash("islocal", true,
-                                                  "position", poss,
-                                                  "oncomplete", "ReachSampleDestroy",
+            iTween.MoveTo(MoveSelect, iTween.Hash( "islocal",false ,
+                                                   "position", poss,
+                                                   "oncomplete", "ReachSampleDestroy",
                                                    "oncompletetarget", gameObject,
                                                    "time", 0.3f,
-                                                  "easetype", "easeOutQuart")
+                                                   "easetype", "easeOutQuart")
                                                  );
 
 

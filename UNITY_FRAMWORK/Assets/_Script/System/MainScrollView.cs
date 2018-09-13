@@ -10,13 +10,18 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
     
     public RectTransform[] panelRECT;       // 컨트롤할 패널OBJ을 저장한다.
     public RectTransform[] bottomPanelRect; //메뉴의 하단 버튼
+   
     public RectTransform bottomMoveRect;    //버튼이 클릭 됐는지 알기 위한 이펙트 효과
     public Transform buttonBackGround;      //버튼이 이동시 뒤 이펙트 이미지 
+   
     PanelNUM[] stPanels;                    //구조체 Panel데이터
     int iPanelNum;                          //전체패널의 숫자
     public Canvas mainCanvas;               //raycast
     GraphicRaycaster gr;
     PointerEventData ped;
+    ScrollRect scRect1;
+    ScrollRect scRect2;
+    ScrollRect scRect3;
     Vector3 startPos;
     Vector3 destPos;
     Vector3 v3movePanel;
@@ -26,7 +31,7 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
 
     int curPanel = 0;                     //처음 시작 패널의 값을 저장한다.
     int afterPanel = 0;                   //새로울 패널을 전달 받았을때 이동하기 위해서 
-
+    float initY = -860;
     struct PanelNUM
     {  //PanelRect로 드레그된 정보를 컨트롤할수 있게 구조체배열로 저장한다.
        public int    index;
@@ -44,6 +49,9 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
     {
         iPanelNum = panelRECT.Length;
         stPanels = new PanelNUM[iPanelNum];
+        scRect1 = panelRECT[0].GetComponent<ScrollRect>();
+        scRect2 = panelRECT[1].GetComponent<ScrollRect>();
+        scRect3 = panelRECT[2].GetComponent<ScrollRect>();
         InitPanel();//처음시작시 panelRect 오브젝트의 정보를 panel구조체에 저장한다.
     }
 
@@ -54,30 +62,41 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
         ped = new PointerEventData(null);
         //Debug발생으로 처리한 코드부분 만약 한칸 건너서 없은곳 보일때 다시수정필요
         // StartCoroutine(coReConFirm());
+        StrollVertical.eveVerticalMove += PanelMove;
+     
     }
+
+    void PanelMove()
+    {
+        PanleMove();
+    }
+
+
+  
+
 
     private void Update()
     {
-       ////이벤트화 하기 전에 일단 입력받게함
+      ////이벤트화 하기 전에 일단 입력받게함
       //  stPanels[0].curPosY = panelRECT[0].localPosition.y;
 
       //  if (Input.GetKeyDown(KeyCode.K))
       //  {
-       //      startPos = destPos = this.transform.position;
-         //   Vector3 tempPos = ped.position;
-       // }
+      //      startPos = destPos = this.transform.position;
+      //   Vector3 tempPos = ped.position;
+      // }
 
 
         //그래픽 레이케이스로 이미지의 네임을 지속적으로 판단하고 있다.
         //계속 해서 리스트에 등록하고 있으므로 가비지나 리셋해야됨....
         //
         //TODO:꼭 수정해야됨
-       //  SetStrollRectID();
+        //SetStrollRectID();
         //지속적으로 x,y의 위치를 판단하게 한다.
         //CurPanel();
        
-            //Touch//===================
-       // Touch[] touchs = Input.touches;
+        //Touch//===================
+        // Touch[] touchs = Input.touches;
 
     }
 
@@ -96,14 +115,10 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
             stPanels[i].nextPos = stPanels[i].curPosX - stPanels[i].Width;
             //코루틴으로 이동시킬오브젝트,시작점,도착지점,스피드전달
             StartCoroutine(coMove(panelRECT[i], stPanels[i].curPosX, stPanels[i].nextPos, 3f));
-            
         }
     }
 
-    public void MoveStPanels()
-    {
-
-    }
+   
 
 
     //이동
@@ -171,17 +186,31 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
 
         switch (curID)
         {
+            case 0:
+                v3movePanel = new Vector3((width - width * 0.5f) * -1, 0, 0);
+                break;
             case 1:
-                v3movePanel = new Vector3((width - width * 0.5f) * -1, hight * 0.5f, 0);
+              
+                v3movePanel = new Vector3((width - width * 0.5f) * -1, 0, 0);
+                //content 의 y값 초기값이  -1000
+
                 break;
             case 2:
-                v3movePanel = new Vector3((width * 2 - width * 0.5f) * -1, hight * 0.5f, 0);
+                
+                //v3movePanel = new Vector3((width * 2 - width * 0.5f) * -1, hight * 0.5f, 0);
+                v3movePanel = new Vector3((width * 2 - width * 0.5f) * -1, 0, 0);
+               
+
                 break;
             case 3:
-                v3movePanel = new Vector3((width * 3 - width * 0.5f) * -1, hight * 0.5f, 0);
+               
+                //content[2].transform.localPosition = new Vector3(0, -1000, 0);
+                v3movePanel = new Vector3((width * 3 - width * 0.5f) * -1, 0, 0);
+          
+
                 break;
             case 4:
-                v3movePanel = new Vector3((width * 4 - width * 0.5f) * -1, hight * 0.5f, 0);
+                v3movePanel = new Vector3((width * 4 - width * 0.5f) * -1, 0, 0);
                 break;
         }
       
@@ -191,6 +220,8 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
                                                   "oncomplete", "afterChange",
                                                   "easetype", "easeOutQuart",
                                                   "time", .7f));
+        Debug.Log("v3movePanel :" + v3movePanel);
+        Debug.Log("curId:" + curID);
     }
 
     void InitPanel()
@@ -251,7 +282,7 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
         //이벤트 시스템에서는 인수를 넘길수없다
 
         //뒤의 사각형이 천천히 크게 선택되는 모양 이펙트 
-        buttonBackGround.transform.localPosition = new Vector3(bottomPanelRect[0].anchoredPosition.x, -860, 0);
+        buttonBackGround.transform.localPosition = new Vector3(bottomPanelRect[0].anchoredPosition.x, initY, 0);
        
         Vector3 toScale = new Vector3(1,.4f,0);
       
@@ -264,7 +295,7 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
        
            
         // 클릭된 버튼의 위치로 박스가 이동하기 위해서 next설정
-        Vector3 selectNextBox = new Vector3(bottomPanelRect[0].anchoredPosition.x, -860, 0);
+        Vector3 selectNextBox = new Vector3(bottomPanelRect[0].anchoredPosition.x, initY, 0);
         
             if (curPanel != afterPanel)
             {
@@ -274,17 +305,14 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
                                                                 "easetype", "easeOutQuart",
                                                                 "time", .7f));
             }
-
-            
-       
         }
 
     public void SetCurPanelID_2()
     {
         curPanel = 2;
         // 클릭된 버튼의 위치로 박스가 이동하기 위해서 next설정
-        Vector3 selectNextBox = new Vector3(bottomPanelRect[1].anchoredPosition.x, -860, 0);
-        buttonBackGround.transform.localPosition = new Vector3(bottomPanelRect[1].anchoredPosition.x, -860, 0);
+        Vector3 selectNextBox = new Vector3(bottomPanelRect[1].anchoredPosition.x, initY, 0);
+        buttonBackGround.transform.localPosition = new Vector3(bottomPanelRect[1].anchoredPosition.x, initY, 0);
 
         if (curPanel != afterPanel)
         {
@@ -300,9 +328,9 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
     {
        curPanel = 3;
         // 클릭된 버튼의 위치로 박스가 이동하기 위해서 next설정
-        Vector3 selectNextBox = new Vector3(bottomPanelRect[2].anchoredPosition.x, -860, 0);
+        Vector3 selectNextBox = new Vector3(bottomPanelRect[2].anchoredPosition.x, initY, 0);
 
-        buttonBackGround.transform.localPosition = new Vector3(bottomPanelRect[2].anchoredPosition.x, -860, 0);
+        buttonBackGround.transform.localPosition = new Vector3(bottomPanelRect[2].anchoredPosition.x, initY, 0);
 
         if (curPanel != afterPanel)
         {
@@ -318,9 +346,9 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
     {
         curPanel = 4;
         // 클릭된 버튼의 위치로 박스가 이동하기 위해서 next설정
-        Vector3 selectNextBox = new Vector3(bottomPanelRect[3].anchoredPosition.x, -860, 0);
+        Vector3 selectNextBox = new Vector3(bottomPanelRect[3].anchoredPosition.x, initY, 0);
 
-        buttonBackGround.transform.localPosition = new Vector3(bottomPanelRect[3].anchoredPosition.x, -860, 0);
+        buttonBackGround.transform.localPosition = new Vector3(bottomPanelRect[3].anchoredPosition.x, initY, 0);
 
         if (curPanel != afterPanel)
         {
@@ -335,6 +363,8 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
     void afterChange()
     {
         afterPanel = curPanel;
+        //scRect1.content.localPosition = new Vector3(0, -1000, 0);
+        //scRect2.content.localPosition = new Vector3(0, -1000, 0);
     }
 
     //-------------------------------------
@@ -453,7 +483,8 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
         {
             for (int i = 0; i < iPanelNum; i++)
             {
-             panelRECT[i].localPosition = new Vector3(stPanels[0].posX ,panelRECT[i].localPosition.y, panelRECT[i].localPosition.z);
+            // panelRECT[i].localPosition = new Vector3(stPanels[0].posX ,panelRECT[i].localPosition.y, panelRECT[i].localPosition.z);
+               panelRECT[i].localPosition = new Vector3(stPanels[0].posX,-1000f, panelRECT[i].localPosition.z);
             }
             InitPanel();
         }
@@ -462,7 +493,8 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
         {
             for (int i = 0; i < iPanelNum; i++)
             {
-                panelRECT[i].localPosition = new Vector3(stPanels[0].posX, panelRECT[i].localPosition.y, panelRECT[i].localPosition.z);
+               // panelRECT[i].localPosition = new Vector3(stPanels[0].posX, panelRECT[i].localPosition.y, panelRECT[i].localPosition.z);
+                panelRECT[i].localPosition = new Vector3(stPanels[0].posX, -1000f, panelRECT[i].localPosition.z);
             }
             InitPanel();
         }

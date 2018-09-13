@@ -129,17 +129,17 @@ public class UnityCard : MonoBehaviour {
        
     }
 
-    //GameData로 현재의 ID를 전달한다.
+     //GameData로 현재의 ID를 전달한다.
     public void SendID()
     {
         GameData.Instance.curSwitchCard = ID;
-        GameData.Instance.CurSlotID = SlotIndex;
+        GameData.Instance.CurSlotID     = SlotIndex;
     }
 
-    //최종 선택되었을때 이동하기 위해서 GameData에 저장한다.
+     //최종 선택되었을때 이동하기 위해서 GameData에 저장한다.
     public void SendSwitchCard()
-    {
-        GameData.Instance.fromSwitchId = ID; //ID와 어떤차이가 있는지?확인필요
+    { //ID와 어떤차이가 있는지?확인필요
+        GameData.Instance.fromSwitchId = ID; 
         GameData.Instance.fromSwitchSlot = SlotIndex;                 
     }
     //tob Top---------> ArrayTab 
@@ -147,18 +147,23 @@ public class UnityCard : MonoBehaviour {
     {
         if (GameData.Instance.isSwitch)
         {
-                int toindex = GameData.Instance.fromSwitchSlot; //670  -- id  2
+                int toindex   = GameData.Instance.fromSwitchSlot; //670  -- id  2
                 int fromIndex = SlotIndex; //0  현재 오브젝트의 인덱스 id  0,1,2,3 이될수 있다.
 
-                int width = 260;
-                int height = 450;
+                if (fromIndex >= 4)
+                {
+                   fromIndex = fromIndex / 4;
+                }
+
+                int width    = 260;
+                int height   = 450;
                 int paddingX = 10;
                 int paddingY = 10;
       
-                float rectTopY = -730f;   //slot Y 
-                float rectTSlotY = -2211f; //Panel_Button + ItemSlot Y
-                float baseY = -(Mathf.Abs(rectTSlotY) - Mathf.Abs(rectTopY));
-                Vector2 rectPos = new Vector2(width * (fromIndex + 1) + paddingX * fromIndex - width / 2,
+                float rectTopY    = -730f;   //slot Y 
+                float rectTSlotY  = -2211f;  //Panel_Button + ItemSlot Y
+                float baseY       = -(Mathf.Abs(rectTSlotY) - Mathf.Abs(rectTopY));
+                Vector2 rectPos   = new Vector2(width * (fromIndex + 1) + paddingX * fromIndex - width / 2,
                                              (height * (((fromIndex) / 4) + 1) - paddingY * (fromIndex / 4)) - height / 2);
 
                 rectPos.y = baseY + rectPos.y - 300;
@@ -174,9 +179,10 @@ public class UnityCard : MonoBehaviour {
                     rectPos.x = chint * width;
                 }
 
-                Vector3 pos3 = new Vector3(rectPos.x, rectPos.y, 0);
+                 Vector3 pos3 = new Vector3(rectPos.x, rectPos.y, 0);
+                Debug.Log("pos3 :top :" + pos3);
 
-                iTween.MoveTo(gameObject, iTween.Hash("islocal", true, "position", pos3,
+                iTween.MoveTo(gameObject, iTween.Hash("islocal",true, "position", pos3,
                                                       "time", 0.3f, "oncomplete", "ReachTransID",
                                                       "easetype", "easeOutQuart"));
 
@@ -194,21 +200,22 @@ public class UnityCard : MonoBehaviour {
        
       //인덱스로  Grid Layout Group에서의 rect를 구한다.
       //비활성화 상태로 구해지지 않아서 공식으로 구한다.
-        int slot = SlotIndex; //인덱스 0 부터 이므로 slot +1
-        int width = 230;
-        int height = 300;
-        int paddingX = 20;
-        int paddingY = 80;
-        int parentRectX = 61;
-        int parentRectY  = -730;
+        //int slot         = SlotIndex; //인덱스 0 부터 이므로 slot +1
+        //int width        = 230;
+        //int height       = 300;
+        //int paddingX     = 20;
+        //int paddingY     = 80;
+        //int parentRectX  = 61;
+        //int parentRectY  = -730;
       
-            Vector2 rectPos = new Vector2( width * (slot+1) + paddingX *slot   - width/2,
-                                         (height * (( (slot)/ 4) + 1) - paddingY * (slot / 4)) - height/2);
+        // Vector2 rectPos = new Vector2( width * (slot+1) + paddingX *slot   - width/2,
+        //                             (height * (( (slot)/ 4) + 1) - paddingY * (slot / 4)) - height/2);
 
-        rectPos.x = rectPos.x + parentRectX;
-        rectPos.y = parentRectY + rectPos.y;
-        GameData.Instance.toTopPos = rectPos;
-       
+        //rectPos.x = rectPos.x + parentRectX;
+        //rectPos.y = parentRectY + rectPos.y;
+
+        //GameData.Instance.toTopPos = rectPos;
+        GameData.Instance.toTopPos = gameObject.transform.position;
       }
 
     //slot[]에 도착한후 원래위치에서 from으로 세팅한다.
