@@ -18,18 +18,10 @@ public static class SaveData {
 	// === 외부 파라미터 ======================================
 	public static string 	SaveDate 		= "(non)";
 
-	// HiScore
-	static int[] 	HiScoreInitData = new int[10] { 300000,100000,75000,50000,25000,10000,7500,5000,2500,1000 };
-	public static int[] 	HiScore 		= new int[10] { 300000,100000,75000,50000,25000,10000,7500,5000,2500,1000 };
-	
 	// Option
 	public static float 	SoundBGMVolume 	= 1.0f;
 	public static float 	SoundSEVolume  	= 1.0f;
-	#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
-	public static bool		VRPadEnabled 	= true;
-	#else
-	public static bool		VRPadEnabled 	= false;
-	#endif
+	
 	
 	// Etc(Don't Save)
 	public static bool 		continuePlay 	= false;
@@ -88,22 +80,14 @@ public static class SaveData {
 			SaveDataHeader("GUEST_GAMEPLAYER");
 			{ // PlayerData------------------------------------------------------------
 				zFoxDataPackString playerData = new zFoxDataPackString();
-				//playerData.Add ("Player_HPMax", PlayerController.nowHpMax);
-				//playerData.Add ("Player_HP"	  , PlayerController.nowHp);
-				//playerData.Add ("Player_Score", PlayerController.score);
-				//playerData.Add ("Player_Coin",PlayerController.coin);
+                //GameData.,,GoldAmount 프로퍼티로 호출과 동시에 json에 저장된다.
+                //같이 플레이어의 로컬 playerfabs에 저장시킨다.
+				playerData.Add ("Player_COIN", GameData.Instance.GoldAmount);
+				playerData.Add ("Player_JEW", GameData.Instance.JewAmount);
+				playerData.Add ("Player_EXP", GameData.Instance.ExpLevel);
+				playerData.Add ("Player_EXPCOUNT",GameData.Instance.ExpAmount);
 				
-				//item name ,수량 저장 ------------------------------------------------
-				//playerData.Add("Cannon_3Shooter",PlayerController.cannon3);
-				//playerData.Add("Cannon_ShooterIce",PlayerController.cannonIce);
-				//playerData.Add("Cannon_ShooterTim",PlayerController.cannonTim);
-				//playerData.Add("Cannon_ShooterDivide",PlayerController.cannonDivide);
-				//playerData.Add ("Player_LevelFort",PlayerLevelData.Instance.BoomFortLevel);
-				//playerData.Add ("Player_LevelFortNUM",PlayerLevelData.Instance.FortStageLevel);
 				
-				//playerData.Add ("Player_checkPointEnabled"	, PlayerController.checkPointEnabled);
-				//playerData.Add ("Player_checkPointSceneName", PlayerController.checkPointSceneName);
-				//playerData.Add ("Player_checkPointLabelName", PlayerController.checkPointLabelName);
 				playerData.PlayerPrefsSetStringUTF8 ("PlayerData", playerData.EncodeDataPackString ());
 				Debug.Log(playerData.EncodeDataPackString ());
 			}
@@ -150,21 +134,12 @@ public static class SaveData {
 					zFoxDataPackString playerData = new zFoxDataPackString();
 					playerData.DecodeDataPackString(playerData.PlayerPrefsGetStringUTF8 ("PlayerData"));
 					//Debug.Log(playerData.PlayerPrefsGetStringUTF8 ("PlayerData"));
-					//PlayerController.nowHpMax 			 = (float)playerData.GetData ("Player_HPMax");
-					//PlayerController.nowHp 				 = (float)playerData.GetData ("Player_HP");
-					//PlayerController.score 				 = (int)playerData.GetData ("Player_Score");
-					//PlayerController.coin                = (int)playerData.GetData("Player_Coin");
-					//PlayerController.cannon3             = (int)playerData.GetData("Cannon_3Shooter");
-					//PlayerController.cannonIce           = (int)playerData.GetData("Cannon_ShooterIce");
-					//PlayerController.cannonTim           = (int)playerData.GetData("Cannon_ShooterTim");
-					//PlayerController.cannonDivide        = (int)playerData.GetData("Cannon_ShooterDivide");
-					//PlayerLevelData.Instance.BoomFortLevel    = (int)playerData.GetData("Player_LevelFort");
-					//PlayerLevelData.Instance.FortStageLevel   = (int)playerData.GetData("Player_LevelFortNUM");
 					
-					//PlayerController.checkPointEnabled 	 = (bool)playerData.GetData ("Player_checkPointEnabled");
-					//PlayerController.checkPointSceneName = (string)playerData.GetData ("Player_checkPointSceneName");
-					//PlayerController.checkPointLabelName = (string)playerData.GetData ("Player_checkPointLabelName");
-					
+					 GameData.Instance.GoldAmount             = (int)playerData.GetData("Player_Coin");
+					 GameData.Instance.JewAmount              = (int)playerData.GetData("Player_JEW");
+					 GameData.Instance.ExpLevel               = (int)playerData.GetData("Player_EXP");
+					 GameData.Instance.ExpAmount              = (int)playerData.GetData("Player_EXPCOUNT");
+						
 					
 				}
 				// StageData
@@ -174,7 +149,7 @@ public static class SaveData {
 					//Debug.Log(stageData.PlayerPrefsGetStringUTF8 ("StageData_" + Application.loadedLevelName));
 					//zFoxUID[] uidList = GameObject.Find ("Stage").GetComponentsInChildren<zFoxUID> ();
 					//foreach(zFoxUID uidItem in uidList)
-     //               {
+                    //{
 					//	if (uidItem.uid != null && uidItem.uid != "(non)") { 
 					//		if (stageData.GetData (uidItem.uid) == null) {
 					//			uidItem.gameObject.SetActive(false);
@@ -205,69 +180,13 @@ public static class SaveData {
 			playerData.DecodeDataPackString(playerData.PlayerPrefsGetStringUTF8 ("PlayerData"));
 			return (string)playerData.GetData ("Player_checkPointSceneName");
 		}
-		
 		continuePlay = false;
 		//여기 필요 없을듯 
 		return "BoombardaFort";
 	}
 	
-	// === 코드(최고 득점 데이터·저장, 불러오기) ================
-	public static bool SaveHiScore(int playerScore) {
-		
-		LoadHiScore ();
-		
-		try {
-			Debug.Log("SaveData.SaveHiScore : Start");
-			// Hiscore Set & Sort
-			newRecord = 0;
-			int[] scoreList = new int [11];
-			HiScore.CopyTo (scoreList, 0);
-			scoreList[10] = playerScore;
-			System.Array.Sort(scoreList);
-			System.Array.Reverse(scoreList);
-			for(int i = 0;i < 10;i ++) {
-				HiScore[i] = scoreList[i];
-				if (playerScore == HiScore[i]) {
-					newRecord = i + 1;
-				}
-			}
-			
-			// Hiscore Save
-			SaveDataHeader("player_HiScore");
-			zFoxDataPackString hiscoreData = new zFoxDataPackString();
-			for(int i = 0;i < 10;i ++) {
-				hiscoreData.Add ("Rank" + (i + 1), HiScore[i]);
-			}
-			hiscoreData.PlayerPrefsSetStringUTF8 ("HiScoreData", hiscoreData.EncodeDataPackString ());
-			
-			PlayerPrefs.Save ();
-			Debug.Log("SaveData.SaveHiScore : End");
-			return true;
-		} catch(System.Exception e) {
-			Debug.LogWarning("SaveData.SaveHiScore : Failed (" + e.Message + ")");
-		}
-		
-		return false;
-	}
 	
-	public static bool LoadHiScore() {
-		try {
-			if (CheckSaveDataHeader("player_HiScore")) {
-				Debug.Log("SaveData.LoadHiScore : Start");
-				zFoxDataPackString hiscoreData = new zFoxDataPackString();
-				hiscoreData.DecodeDataPackString(hiscoreData.PlayerPrefsGetStringUTF8 ("HiScoreData"));
-				//Debug.Log(hiscoreData.PlayerPrefsGetStringUTF8 ("HiScoreData"));
-				for(int i = 0;i < 10;i ++) {
-					HiScore[i] = (int)hiscoreData.GetData ("Rank" + (i + 1));
-				}
-				Debug.Log("SaveData.LoadHiScore : End");
-			}
-			return true;
-		} catch(System.Exception e) {
-			Debug.LogWarning("SaveData.LoadHiScore : Failed (" + e.Message + ")");
-		}
-		return false;
-	}
+	
 	
 	// === 코드(옵션 데이터·저장, 불러오기) ================
 	public static bool SaveOption() {
@@ -275,11 +194,9 @@ public static class SaveData {
 			Debug.Log("SaveData.SaveOption : Start");
 			// 옵션 디폴트 설정  SaveDataheader --SDG_Option
 			SaveDataHeader("SDG_Option");
-			
 			PlayerPrefs.SetFloat ("SoundBGMVolume", SoundBGMVolume);
 			PlayerPrefs.SetFloat ("SoundSEVolume" , SoundSEVolume);
-			PlayerPrefs.SetInt 	 ("VRPadEnabled"  , (VRPadEnabled ? 1 : 0));
-			
+	
 			// Save
 			PlayerPrefs.Save ();
 			Debug.Log("SaveData.SaveOption : End");
@@ -297,8 +214,6 @@ public static class SaveData {
 				
 				SoundBGMVolume = PlayerPrefs.GetFloat ("SoundBGMVolume");
 				SoundSEVolume  = PlayerPrefs.GetFloat ("SoundSEVolume");
-				VRPadEnabled   = (PlayerPrefs.GetInt ("VRPadEnabled") > 0) ? true : false;
-				
 				Debug.Log("SaveData.LoadOption : End");
 			}
 		} catch(System.Exception e) {
@@ -318,13 +233,6 @@ public static class SaveData {
 			SoundBGMVolume  = 1.0f;
 			SoundSEVolume   = 1.0f;
 			
-			#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8)
-			VRPadEnabled 	= true;
-			#else
-			VRPadEnabled 	= false;
-			#endif
-			
-			HiScoreInitData.CopyTo(HiScore,0);
 		}
 	}
 }

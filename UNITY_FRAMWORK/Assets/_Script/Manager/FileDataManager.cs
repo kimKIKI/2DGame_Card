@@ -96,65 +96,68 @@ public  class FileDataManager  {
 
         #endregion
 
+
+        //플레이어가 가지고있는 코인, 경험치, TODO: 일단 풀어서 이벤트 음향효과 테스트후 하나의 세이브파이로
+        //묶어야 한다.
+
+        int JoinDay       = (int)jsonUnitydata["Info"][0]["Join"];
+        int exp           = (int)jsonUnitydata["Info"][0]["ExprinceNum"];
+        int expCount      = (int)jsonUnitydata["Info"][0]["ExprinceCount"];
+        int hasCards      = (int)jsonUnitydata["Info"][0]["hasNum"];
+        int Gold          = (int)jsonUnitydata["Info"][0]["coin"];
+        int Jew           = (int)jsonUnitydata["Info"][0]["Jew"];
+
+        string Id         = (string)jsonUnitydata["Info"][0]["ID"];
+        string IdName     = jsonUnitydata["Info"][0]["IdName"].ToString();
+        string PlayerName = jsonUnitydata["Info"][0]["PlayerName"].ToString();
+        //TODO: Json파일 수정전
+        //string PlayerName = jsonUnitydata["PlayerInfo"]["Info"][0]["PlayerName"].ToString();
+        PlayerInfo playerLoad = new PlayerInfo(Id, IdName, PlayerName, JoinDay, hasCards, Gold, Jew, exp, expCount);
+        //GameData.Instance.player = playerLoad;
+        GameData.Instance.players.Add(1, playerLoad);
+
+
         //ex)string TempID = jsonUnit["PlayerInfo"]["SelectDek"][3]["item-id"].ToString();
         //파일안의 목록의 수자 만큼 불러와야 되는데?
-        int num = jsonUnitydata["PlayerInfo"]["hasCard"].Count;
+        int num = jsonUnitydata["hasCard"].Count;
         GameData.Instance.hasCards = num;
 
         for (int i = 0; i < num; i++)
-        {
+         {
             //Dictoinary 에 저장하는 구간
-            //public Dictionary<int, Dictionary<int, int>> hasCard = 
-            //new Dictionary<int, Dictionary<int, int>>();
+            //public Dictionary<int, Dictionary<int, int>> hasCard = new Dictionary<int, Dictionary<int, int>>();
+    
             Card newInfo    = new Card();
-            newInfo.level   = (int)jsonUnitydata["PlayerInfo"]["hasCard"][i]["hasLevel"];
-            newInfo.hasCard = (int)jsonUnitydata["PlayerInfo"]["hasCard"][i]["hasNum"];
-            newInfo.ID      = (int)jsonUnitydata["PlayerInfo"]["hasCard"][i]["item-id"];
+            newInfo.level   = (int)jsonUnitydata["hasCard"][i]["hasLevel"];
+            newInfo.hasCard = (int)jsonUnitydata["hasCard"][i]["hasNum"];
+            newInfo.ID      = (int)jsonUnitydata["hasCard"][i]["item_id"];
 
             GameData.Instance.hasCard.Add(newInfo.ID, newInfo);
               
-        }
+         }
 
-        int  selDeckNum = jsonUnitydata["PlayerInfo"]["SelectDek"].Count;
+        int  selDeckNum = jsonUnitydata["SelectDek"].Count;
        
         //전체3줄
         for (int i = 0; i < selDeckNum; i++) 
         {   //json에 저장된 덱을 찾아서 GameData에 저장한다.
             // Dictionary<int, int[]> selectCards = new Dictionary<int, int[]>();
                 int[] temp = new int[8];
-                temp[0] = (int)jsonUnitydata["PlayerInfo"]["SelectDek"][i]["item-id1"];
-                temp[1] = (int)jsonUnitydata["PlayerInfo"]["SelectDek"][i]["item-id2"];
-                temp[2] = (int)jsonUnitydata["PlayerInfo"]["SelectDek"][i]["item-id3"];
-                temp[3] = (int)jsonUnitydata["PlayerInfo"]["SelectDek"][i]["item-id4"];
-                temp[4] = (int)jsonUnitydata["PlayerInfo"]["SelectDek"][i]["item-id5"];
-                temp[5] = (int)jsonUnitydata["PlayerInfo"]["SelectDek"][i]["item-id6"];
-                temp[6] = (int)jsonUnitydata["PlayerInfo"]["SelectDek"][i]["item-id7"];
-                temp[7] = (int)jsonUnitydata["PlayerInfo"]["SelectDek"][i]["item-id8"];
+                temp[0] = (int)jsonUnitydata["SelectDek"][i]["item_id1"];
+                temp[1] = (int)jsonUnitydata["SelectDek"][i]["item_id2"];
+                temp[2] = (int)jsonUnitydata["SelectDek"][i]["item_id3"];
+                temp[3] = (int)jsonUnitydata["SelectDek"][i]["item_id4"];
+                temp[4] = (int)jsonUnitydata["SelectDek"][i]["item_id5"];
+                temp[5] = (int)jsonUnitydata["SelectDek"][i]["item_id6"];
+                temp[6] = (int)jsonUnitydata["SelectDek"][i]["item_id7"];
+                temp[7] = (int)jsonUnitydata["SelectDek"][i]["item_id8"];
              
             GameData.Instance.playerSelectDecks.Add(i, temp);
         }
          //tab에서 선택된것이 있는가 판단, 0 :없음   1,2,3 선택번호
-         GameData.Instance.CurTab = (int)jsonUnitydata["PlayerInfo"]["SelectTab"][0]["Tab"];
-
-
-        //플레이어가 가지고있는 코인, 경험치, TODO: 일단 풀어서 이벤트 음향효과 테스트후 하나의 세이브파이로
-        //묶어야 한다.
-
-        int JoinDay       = (int)jsonUnitydata["PlayerInfo"]["Info"][0]["Join"];
-        string Id         = (string)jsonUnitydata["PlayerInfo"]["Info"][0]["ID"];
-        string IdName     = jsonUnitydata["PlayerInfo"]["Info"][0]["IdName"].ToString();
-        string PlayerName = jsonUnitydata["PlayerInfo"]["Info"][0]["PlayerName"].ToString();
-
-       
-        PlayerInfo playerLoad = new PlayerInfo(Id, IdName, PlayerName, JoinDay);
-        //플레이어 재정상태
-        playerLoad.cardHas = (int)jsonUnitydata["PlayerInfo"]["has"][0]["hasNum"];
-        playerLoad.coin    = (int)jsonUnitydata["PlayerInfo"]["has"][0]["coin"];
-        playerLoad.jew     = (int)jsonUnitydata["PlayerInfo"]["has"][0]["Jew"];
-
-        //GameData.Instance.player = playerLoad;
-        GameData.Instance.players.Add(1, playerLoad);
+         GameData.Instance.CurTab = (int)jsonUnitydata["SelectTab"][0]["Tab"];
     }
+
 
     public void ParsingMarket()
     {
@@ -171,6 +174,20 @@ public  class FileDataManager  {
 
             GameData.Instance.dailys.Add(i, day);
         }
+
+
+        int length4 = (int)jsonUnitydata["Market"]["NorSale"].Count;
+
+        for (int i = 0; i < length4; i++)
+        {   //버튼의또는 케이스의 세팅을위한 Data
+            NorInfo newNor = new NorInfo();
+            newNor.caseName = (string)jsonUnitydata["Market"]["NorSale"][i]["Type"];
+            newNor.PriceGold = (int)jsonUnitydata["Market"]["NorSale"][i]["PriceGold"];
+            GameData.Instance.nors.Add(i, newNor);
+        }
+
+
+
 
         int length1 = (int)jsonUnitydata["Market"]["RoyleSale"].Count;
 
@@ -202,6 +219,9 @@ public  class FileDataManager  {
 
       
 
+
+
+
         ItemBoxInfo newItemBox    = new ItemBoxInfo();
         newItemBox.boxName     = "lunchyCase";
       
@@ -215,12 +235,12 @@ public  class FileDataManager  {
         //여기 문제 
         GameData.Instance.dic_SetItems.Add("lunchyCase", newItemBox);
 
-        ItemBoxInfo newItemBox2 = new ItemBoxInfo();
-        newItemBox2.boxName     = "HeroCase";
-        newItemBox2.HeroNum     = (int)jsonUnitydata["Market"]["HeroCase"][0]["heroNum1"];
-        newItemBox2.HeroNum     = (int)jsonUnitydata["Market"]["HeroCase"][0]["heroNum2"];
-        newItemBox2.HeroNum     = (int)jsonUnitydata["Market"]["HeroCase"][0]["heroNum3"];
-        newItemBox2.productNum  = (int)jsonUnitydata["Market"]["HeroCase"][0]["product"]; 
+        ItemBoxInfo newItemBox2   = new ItemBoxInfo();
+        newItemBox2.boxName       = "HeroCase";
+        newItemBox2.HeroNum       = (int)jsonUnitydata["Market"]["HeroCase"][0]["heroNum1"];
+        newItemBox2.HeroNum       = (int)jsonUnitydata["Market"]["HeroCase"][0]["heroNum2"];
+        newItemBox2.HeroNum       = (int)jsonUnitydata["Market"]["HeroCase"][0]["heroNum3"];
+        newItemBox2.productNum    = (int)jsonUnitydata["Market"]["HeroCase"][0]["product"]; 
         GameData.Instance.dic_SetItems.Add("HeroCase", newItemBox2);
 
         ItemBoxInfo newItemBox3    = new ItemBoxInfo();
@@ -230,16 +250,22 @@ public  class FileDataManager  {
         GameData.Instance.dic_SetItems.Add("legendaryCase", newItemBox3);
 
 
-        int length4 = (int)jsonUnitydata["Market"]["NorSale"].Count;
       
-        for (int i = 0; i < length4; i++)
-        {   //버튼의또는 케이스의 세팅을위한 Data
-            NorInfo newNor   = new NorInfo();
-            newNor.caseName  = (string)jsonUnitydata["Market"]["NorSale"][i]["Type"];
-            newNor.PriceGold = (int)jsonUnitydata["Market"]["NorSale"][i]["PriceGold"];
-            GameData.Instance.nors.Add(i,newNor);
-        }
 
     }
+
+    public void SaveES(int exp,int expCount,int Gold,int Jew)
+    {
+        //JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json"));
+        //jsonUnitydata["Info"][0]["Exprince Num"]   = exp;
+        //jsonUnitydata["Info"][0]["Exprince count"] = expCount;
+        //jsonUnitydata["Info"][0]["coin"]           = Gold;
+        //jsonUnitydata["Info"][0]["Jew"]            = Jew;
+
+        //JsonData whitedata = JsonMapper.ToJson(jsonUnitydata);
+        //File.WriteAllText(Application.dataPath + "/Resources/PlayerData.json", whitedata.ToString());
+    }
+
+
 
 }

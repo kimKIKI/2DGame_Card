@@ -155,10 +155,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 116178}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ff9c1d6beb8249ea915c0464822f9cb, type: 3}
+  m_Script: {fileID: 11500000, guid: c11e3e0bec9988045858ba3da7aa8361, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  particles: {fileID: 19804908}
+  effs:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!124 &12445330
 Behaviour:
   m_ObjectHideFlags: 1

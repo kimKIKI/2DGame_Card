@@ -12,7 +12,7 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
     public RectTransform[] bottomPanelRect; //메뉴의 하단 버튼
    
     public RectTransform bottomMoveRect;    //버튼이 클릭 됐는지 알기 위한 이펙트 효과
-    public Transform buttonBackGround;      //버튼이 이동시 뒤 이펙트 이미지 
+    public Transform     buttonBackGround;      //버튼이 이동시 뒤 이펙트 이미지 
    
     PanelNUM[] stPanels;                    //구조체 Panel데이터
     int iPanelNum;                          //전체패널의 숫자
@@ -47,6 +47,12 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
 
     private void Awake()
     {
+
+        //Debug발생으로 처리한 코드부분 만약 한칸 건너서 없은곳 보일때 다시수정필요
+        // StartCoroutine(coReConFirm());
+
+        //DontDestroyOnLoad(this.gameObject);
+
         iPanelNum = panelRECT.Length;
         stPanels = new PanelNUM[iPanelNum];
         scRect1 = panelRECT[0].GetComponent<ScrollRect>();
@@ -60,46 +66,18 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
         gr = mainCanvas.GetComponent<GraphicRaycaster>();
         //그래픽레이캐스터에서의 마우스 포인터 위치를 나타낸다.
         ped = new PointerEventData(null);
-        //Debug발생으로 처리한 코드부분 만약 한칸 건너서 없은곳 보일때 다시수정필요
-        // StartCoroutine(coReConFirm());
+
+        Debug.Log("MainScrollView :  start");
+    }
+
+    private void OnEnable()
+    {
         StrollVertical.eveVerticalMove += PanelMove;
-     
     }
-
-    void PanelMove()
+    private void OnDisable()
     {
-        PanleMove();
+        StrollVertical.eveVerticalMove -= PanelMove;
     }
-
-
-  
-
-
-    private void Update()
-    {
-      ////이벤트화 하기 전에 일단 입력받게함
-      //  stPanels[0].curPosY = panelRECT[0].localPosition.y;
-
-      //  if (Input.GetKeyDown(KeyCode.K))
-      //  {
-      //      startPos = destPos = this.transform.position;
-      //   Vector3 tempPos = ped.position;
-      // }
-
-
-        //그래픽 레이케이스로 이미지의 네임을 지속적으로 판단하고 있다.
-        //계속 해서 리스트에 등록하고 있으므로 가비지나 리셋해야됨....
-        //
-        //TODO:꼭 수정해야됨
-        //SetStrollRectID();
-        //지속적으로 x,y의 위치를 판단하게 한다.
-        //CurPanel();
-       
-        //Touch//===================
-        // Touch[] touchs = Input.touches;
-
-    }
-
 
     public void RightMove()
     {
@@ -172,7 +150,7 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
         }
     }
 
-    public void PanleMove()
+    public void PanelMove()
     {
         //panelItem의 Id를 얻어서 이동시킬 좌표를 구한다. endx좌표
         //start좌표는 어떻게 구할것인가?
@@ -213,7 +191,7 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
                 v3movePanel = new Vector3((width * 4 - width * 0.5f) * -1, 0, 0);
                 break;
         }
-      
+        Debug.Log("gameObject Name" + this.gameObject.name);
        
             iTween.MoveTo(gameObject, iTween.Hash("islocal",true,
                                                   "position", v3movePanel,
@@ -283,9 +261,7 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
 
         //뒤의 사각형이 천천히 크게 선택되는 모양 이펙트 
         buttonBackGround.transform.localPosition = new Vector3(bottomPanelRect[0].anchoredPosition.x, initY, 0);
-       
         Vector3 toScale = new Vector3(1,.4f,0);
-      
             //iTween.ValueTo(buttonBackGround.gameObject, iTween.Hash("islocal", true,
             //                                                 "from", fromSize(),
             //                                                 "to", toScale,
@@ -329,7 +305,6 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
        curPanel = 3;
         // 클릭된 버튼의 위치로 박스가 이동하기 위해서 next설정
         Vector3 selectNextBox = new Vector3(bottomPanelRect[2].anchoredPosition.x, initY, 0);
-
         buttonBackGround.transform.localPosition = new Vector3(bottomPanelRect[2].anchoredPosition.x, initY, 0);
 
         if (curPanel != afterPanel)
@@ -347,7 +322,6 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
         curPanel = 4;
         // 클릭된 버튼의 위치로 박스가 이동하기 위해서 next설정
         Vector3 selectNextBox = new Vector3(bottomPanelRect[3].anchoredPosition.x, initY, 0);
-
         buttonBackGround.transform.localPosition = new Vector3(bottomPanelRect[3].anchoredPosition.x, initY, 0);
 
         if (curPanel != afterPanel)

@@ -1,0 +1,34 @@
+{
+    
+        "SelectDek": 
+        [
+            {"item_id1": 1,"item_id2": 4,"item_id3": 8,"item_id4": 2,"item_id5": 3,"item_id6": 5,"item_id7": 6,"item_id8": 2 },
+            {"item_id1": 2,"item_id2": 4,"item_id3": 8,"item_id4": 5 ,"item_id5": 1,"item_id6": 3,"item_id7": 7,"item_id8": 6 },  
+            {"item_id1": 3,"item_id2": 4,"item_id3": 7,"item_id4": 1 ,"item_id5": 2,"item_id6": 5,"item_id7": 8,"item_id8": 6 }          
+        ],
+
+        "Info":
+        [
+          {"Join" :20180620,  "ID":"#34587",   "IdName":"mycol",
+           "PlayerName":"kim","telPhone": 1234, "Exprince Num": 9,
+           "Exprince count":3400 ,"hasNum":10,"coin":60600,"Jew":1000}
+        ],
+        "hasCard":
+        [
+            { "item_id":3, "hasNum":56,"hasLevel":1},
+            { "item_id":2, "hasNum":80,"hasLevel":1},
+            { "item_id":4, "hasNum":32,"hasLevel":1},
+            { "item-id":6, "hasNum":32,"hasLevel":1},
+            { "item_id":5, "hasNum":80,"hasLevel":2},
+            { "item_id":7, "hasNum":50,"hasLevel":1},
+            { "item_id":1, "hasNum":20,"hasLevel":2},
+            { "item_id":8, "hasNum":20,"hasLevel":2},
+            { "item_id":9, "hasNum":20,"hasLevel":2},
+            { "item_id":11, "hasNum":20,"hasLevel":2}
+        ],
+        "SelectTab":
+        [ 
+           {"Tab":0}
+        ]
+   
+}

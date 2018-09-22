@@ -425,7 +425,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 11400000, guid: b529bb930c492d64faeed89ab98238ef, type: 2}
       propertyPath: LoadGameObjectList_Awake.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: b529bb930c492d64faeed89ab98238ef, type: 2}
       propertyPath: m_LocalPosition.x
@@ -462,7 +462,8 @@ Prefab:
     - target: {fileID: 11400000, guid: b529bb930c492d64faeed89ab98238ef, type: 2}
       propertyPath: LoadGameObjectList_Awake.Array.data[3]
       value: 
-      objectReference: {fileID: 100004, guid: 5938e01e98fbf6b4cb5559d752bb8951, type: 2}
+      objectReference: {fileID: 1016143574618426, guid: 2f5904ee8f8e3e14dab1872be5ebbbe4,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b529bb930c492d64faeed89ab98238ef, type: 2}
   m_IsPrefabAsset: 0

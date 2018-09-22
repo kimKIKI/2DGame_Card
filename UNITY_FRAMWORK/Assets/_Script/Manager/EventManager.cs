@@ -15,6 +15,8 @@ public enum EVENT_TYPE
     GOLD_CHANGE,       //어디서든 Top의Gold가 에 접근해서 자동으로 애니가 작동되게 한다. 
     JEW_CHANGE,       
     LEVEL_CHANGE,
+    CARD_ID,          //자신의 아이디를 전달하기 위해서 사용한다.
+    CARDTOGGLE,       //숨긴카드가 활성화 됐는지판단
     DEAD
 };
 

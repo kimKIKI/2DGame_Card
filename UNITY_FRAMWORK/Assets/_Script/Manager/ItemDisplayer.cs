@@ -10,9 +10,10 @@ public class ItemDisplayer : MonoBehaviour {
 	// Reference to the Text component displaying the item collected quantity
 	[Tooltip("Reference to the Text component displaying the item collected quantity")]
 	public Text _itemDisplay;
+    int playerIndex = GameData.Instance.curPlayerIndex;
 
     // 현재 아이템의 양
-   
+
     public delegate void GoldCallBack();
     public static event GoldCallBack goldEvent;
     
@@ -37,13 +38,14 @@ public class ItemDisplayer : MonoBehaviour {
     private void Start()
     {
         instance_ItemDisplayer = this;
-        EventManager.Instance.AddListener(EVENT_TYPE.GOLD_CHANGE, OnEvent);
+        //EventManager.Instance.AddListener(EVENT_TYPE.GOLD_CHANGE, OnEvent);
         init();
     }
 
     private void init()
     {
-        curhasGold = GameData.Instance.players[1].coin;
+       
+        curhasGold = GameData.Instance.players[playerIndex].coin;
         _itemDisplay.text = curhasGold.ToString();
     }
 
@@ -52,7 +54,7 @@ public class ItemDisplayer : MonoBehaviour {
     {
         curhasGold += quantity;
 		_itemDisplay.text = curhasGold.ToString();
-        GameData.Instance.players[1].coin = curhasGold;
+        GameData.Instance.players[playerIndex].coin = curhasGold;
 
         Item_Anim(quantity);
     }
@@ -76,7 +78,7 @@ public class ItemDisplayer : MonoBehaviour {
     {
         curhasGold -= quantity;
         _itemDisplay.text = curhasGold.ToString();
-        GameData.Instance.players[1].coin = curhasGold;
+        GameData.Instance.players[playerIndex].coin = curhasGold;
       
     }
 
@@ -95,9 +97,11 @@ public class ItemDisplayer : MonoBehaviour {
         if (this.GetInstanceID() != purchaseCard.GetInstanceID()) return;
 
         //골드 금액이 달라질때마다 호출을 한다.
-         if(goldEvent != null)
+        if (goldEvent != null)
+        {
             goldEvent();
-
+            GameData.Instance.GoldAmount = curhasGold;
+        }
     }
 
    

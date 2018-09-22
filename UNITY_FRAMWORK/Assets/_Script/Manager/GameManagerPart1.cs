@@ -91,7 +91,6 @@ public partial class GameManager : MonoBehaviour {
             else if (gameState == eGameState.PLAYER_CARDDISTRIBUTION)
             {   //player가 주먹가위보 선택------------
                 eText.text = String.Format("{0} :", "PLAYER_CARDDISTRIBUTION");
-
                 //누룰수 있게 표시 
                 imgbtnColor = Color.white;
                 //color을 컴포넌트에 적용
@@ -162,6 +161,7 @@ public partial class GameManager : MonoBehaviour {
             }
             else if (gameState == eGameState.JUDGEMENT_RESULT)
             {
+                //TODO: 잘 작동하는지 의심스러움..
                 AppSound.instance.SE_COMBAT_START.Stop();
                 yield return new WaitForSeconds(1f);
 

@@ -6,6 +6,10 @@ using UnityEngine.UI;
 using System.Linq;
 using UnityEngine.SceneManagement;
 
+
+using System.IO;
+using LitJson;
+
 public enum eGameState
 {
     NONE,
@@ -154,6 +158,7 @@ public partial class GameManager : MonoBehaviour {
             cards[num] = key.Key;
             num++;
         }
+
         StartCoroutine(AutoStep());
         //color를 설정
         imgbtnColor = Color.black;
@@ -1420,10 +1425,6 @@ public partial class GameManager : MonoBehaviour {
         }
 
     }
-
-  
-
-
 
 
 }

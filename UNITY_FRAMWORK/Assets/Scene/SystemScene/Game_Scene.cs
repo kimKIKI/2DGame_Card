@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Game_Scene : MonoBehaviour {
+public class Game_Scene : Singleton<Game_Scene>  {
 
     FadeOut fadeOut;
     void Start()
@@ -14,6 +14,12 @@ public class Game_Scene : MonoBehaviour {
 
         fadeOut = GameObject.Find("FadeOut").GetComponent<FadeOut>();
         StartCoroutine(FADEOUT_FLASH());
+    }
+
+    protected override void Awake()
+    {
+        //Game_Scene.Instance
+        base.Awake();
     }
 
     public void SceneChange()

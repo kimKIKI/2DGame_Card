@@ -308,7 +308,8 @@ public class CombatShow : MonoBehaviour
     {
         GameManager.sendEventRPS -= InPutRPS;
         GameManager.evnt_Victory -= VictoryRPS;
-        
+
+        AppSound.instance.SE_COMBAT_START.Stop();
     }
 
     //델리게이트로 받은 가위바위보 데이터를 현재에 담는다.
@@ -525,6 +526,9 @@ public class CombatShow : MonoBehaviour
         playerArm.transform.localPosition = new Vector3(start.x, YPosArm, 1);
         comArm.transform.localPosition = new Vector3(start.x * -1, YPosArm, 1);
     }
+
+
+    
 
 }
 

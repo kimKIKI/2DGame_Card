@@ -8,31 +8,31 @@ public class UnityCard : MonoBehaviour {
     //다음의 값에 접근하고 세팅할수 있어야 한다.
     //{"ID":0,"Name":"Ice Gollum ","ATK_Type":"Top","Kinds":"Unit","Coin":300,"Jew":10,"Elixir":2,"HP":400,"Speed":"Slow","Attack":4,"Atk_Zone":100,"BuildTime":1,"Sp_atk":4,"Up_Hp":10,"Up_atk":10,"Life":0,"EA":1},
     // card 오브젝트를 만드는데 필요한 기능 
-   
+
     //외부 드레그 
     public GameObject SampleB;       //자신과 같은 버튼을 생성하기 위해서
-    public Transform  panelSwitch;   //자신이 위치 하게될 부모루트
+    public Transform panelSwitch;   //자신이 위치 하게될 부모루트
     public GameObject arrow;         //자동으로 컨트롤하기 위해서 
-    public Transform  hideButton;     //버튼이 선택시 가려지게할 버튼
+    public Transform hideButton;     //버튼이 선택시 가려지게할 버튼
 
     enum Card_Kinds
     {
-      Unity,
-      Rarity,
-      Hero,
-      Lengend
+        Unity,
+        Rarity,
+        Hero,
+        Lengend
     }
 
-   
-    
+
+
     //Shape
-    public Image  levelImg;     //레벨 뒤화면 이미지
-    public Text   LevelNum;     //현재 카드의 엘릭서 숫자
-    public Text   tempLevelNum; //level과 num을 비교하기 위해서 설정
-    public Text   ownCards;     //레벨업 될때까지 남은 카드의 숫자를 표시 한다.
-    public Image  mainICon;     //메인이미지
+    public Image levelImg;     //레벨 뒤화면 이미지
+    public Text LevelNum;     //현재 카드의 엘릭서 숫자
+    public Text tempLevelNum; //level과 num을 비교하기 위해서 설정
+    public Text ownCards;     //레벨업 될때까지 남은 카드의 숫자를 표시 한다.
+    public Image mainICon;     //메인이미지
     public Slider slider;       //카드의 숫자를 받아 바 크기를 나타내 준다.
-    public Text   elixerNum;    //엘릭서 Num
+    public Text elixerNum;    //엘릭서 Num
 
     int xPadding = 10;
     int yPadding = 40;
@@ -56,9 +56,9 @@ public class UnityCard : MonoBehaviour {
     //float up_atk;          //업글시 공격력 증가량
     //int   spwawnEA = 1;    //생성될 겟수 default = 1;
 
-    int         CardNameID;   //카드의 Id에 따라 이미지가 달라짐
-    string      icon_name;    //카드의icon Name;
-    public int  kindNum;      //Enum인덱스로  숫자로 구한다.
+    int CardNameID;   //카드의 Id에 따라 이미지가 달라짐
+    string icon_name;    //카드의icon Name;
+    public int kindNum;      //Enum인덱스로  숫자로 구한다.
 
     //임시로 public 
     public int iD;          //datas에서 고유아이디
@@ -83,7 +83,7 @@ public class UnityCard : MonoBehaviour {
     [HideInInspector]
     public float height;  //slot의   height간격
 
-    bool    isSwitch;
+    bool isSwitch;
     Vector3 localScale;
     Vector3 curScale;
 
@@ -92,18 +92,19 @@ public class UnityCard : MonoBehaviour {
     [HideInInspector]
     public Vector3 moveToVector3; //현재의 카드가 다음위치로이동해야할 좌표
 
-    public int nextIndex;         //다음 이동할 인덱스                          
-
+    public int nextIndex;         //다음 이동할 인덱스   
+   
     //프로퍼티 ====================================================
-            int       cardNum;
-    public  int       elixer;
-            string    kinds;             //카드종류 네임
-    private Vector3   vcGridPos;         //그리드의 아이디를 적용해서 위치를 저장한다.
-            int       remainCardNum;     //레벨업빼고 남은 카드숫자
-    //============================================================
-    //float curPositionY;
-    //float toPositionY;
+    int cardNum;
+    public int elixer;
+    string kinds;             //카드종류 네임
+    private Vector3 vcGridPos;         //그리드의 아이디를 적용해서 위치를 저장한다.
+    int remainCardNum;     //레벨업빼고 남은 카드숫자
+                           //============================================================
+                           //float curPositionY;
+                           //float toPositionY;
 
+   
     private void Start()
     {
         //curPositionY = arrow.transform.localPosition.y;
@@ -113,20 +114,17 @@ public class UnityCard : MonoBehaviour {
         {
             localScale = arrow.transform.localScale;
         }
-
         rt = gameObject.GetComponent<RectTransform>();
     }
 
-   
-
+ 
     public void ReSeting()
     {
         //고유ID를 확인한다
         string cardName = GameData.Instance.UnityDatas[ID].Name;
-        int elixir      = GameData.Instance.UnityDatas[ID].Elixir;
-        LevelNum.text   = string.Format("" + elixir);
-        iconName.text   = string.Format("" + cardName);
-       
+        elixerNum.text  = GameData.Instance.UnityDatas[ID].Elixir.ToString();
+        mainICon.sprite = SpriteManager.GetSpriteByName("Sprite", cardName);
+        iconName.text   = cardName;
     }
 
      //GameData로 현재의 ID를 전달한다.
@@ -185,14 +183,20 @@ public class UnityCard : MonoBehaviour {
                 iTween.MoveTo(gameObject, iTween.Hash("islocal",true, "position", pos3,
                                                       "time", 0.3f, "oncomplete", "ReachTransID",
                                                       "easetype", "easeOutQuart"));
-
-
-
         }
 
     }
 
+    void toggleEnable()
+     {
+        if (hideButton != null)
+        {
+          bool a =  hideButton.gameObject.activeSelf;
+            
+        }
+     }
     
+
 
     // slot[]에 이동하게 한다.
     public void SendTopPos()

@@ -85,7 +85,7 @@ public class DailySale : MonoBehaviour {
     {
 
         curhasGold = GameData.Instance.players[1].coin;
-        Debug.Log("curhasGold:" + curhasGold + "  priceCoin:" + priceCoin);
+        //Debug.Log("curhasGold:" + curhasGold + "  priceCoin:" + priceCoin);
         if (priceCoin > curhasGold)
         {
             //구매가 되지 않도록한다.
@@ -150,7 +150,6 @@ public class DailySale : MonoBehaviour {
         if (curhasGold >= priceCoin)
         {   //UI topGold에서 차감후 Ga
             curhasGold = GameData.Instance.players[1].coin;
-
             ItemDisplayer.instance_ItemDisplayer.decreaseItem(priceCoin);
         }
 

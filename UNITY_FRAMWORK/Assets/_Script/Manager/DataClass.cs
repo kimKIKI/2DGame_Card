@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 
 public enum Data_TYPE
 {
     Cards,
     Market,
 };
+
 
 public class DataClass {
     //데이터를 리스트화 딕셔너리에 담기 위한 클래스 
@@ -118,12 +119,17 @@ public class PlayerInfo
     public int expCount;
 
     public PlayerInfo(){}
-    public PlayerInfo(string ID,string NAME,string NickName,int join)
+    public PlayerInfo(string ID,string NAME,string NickName,int join,int hasCards,int Gold,int Jew,int expL,int expCount)
     {
-        id =ID;
-        name = NAME;
-        idName = NickName;
-        JoinData = join;
+        id            =ID;
+        name          = NAME;
+        idName        = NickName;
+        JoinData      = join;
+        cardHas       = hasCards;
+        coin          = Gold;
+        jew           = Jew;
+        exp           = expL;
+        this.expCount = expCount;
     }
 
     List<int> cards;                          //가지고 있는 카드의 id의 배열
@@ -375,3 +381,14 @@ public class UnityInfo
         }
     }
 }
+
+
+//json  saveData 클래스 json파일을 저장하고 편집하기 위해서 먼저 데이터 타입에 대입되는 클래스 타입을 만든다.
+    [Serializable]
+    class DataJson
+    {
+       public string name;
+       public List<string> likes;
+       public int level;
+    }
+

@@ -11,7 +11,8 @@ using System.Linq;
 using System;
 
 
- 
+
+
 public class Main_Scene : MonoBehaviour, IPointerClickHandler
 {
 
@@ -29,7 +30,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
 
 
     public Transform TopLabel_experience; //메인상단의 경험치 라벨
-    public Transform TopLabel_Coins;      //플레이어 보유 전체금액
+    //public Transform TopLabel_Coins;      //플레이어 보유 전체금액
     public Transform TopLabel_Jews;       //플레이어 보유 전체 보석
 
     //public Transform  buttonPanel;      //복사되어 배치될 위치 앞면
@@ -40,7 +41,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     public Transform unfindCards;         //찾지못한 카드를 배치하게 할 위치 
     public Transform temp;                //찾은 카드를 배치하게 할 위치 
                                           //public Transform temp2;             //찾은 카드를 배치할 위치
-
+    public int playerindex = 1;           //플레이어의 데이터 ID;
 
 
     //public Transform switchTemp;        //switch의 바뀌는 카드가 임시로 위치할 좌표
@@ -51,62 +52,64 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     public UnityEvent FADEBUTTON;
     public PlayerSaveJsonData saveJsonData;
 
-    List<DataClass> list             = new List<DataClass>();                   //?
-    IList<RectTransform> lsSlots     = new List<RectTransform>();    //slot의 위치 
-    IList<RectTransform> lsSlotsBack = new List<RectTransform>();   //slotBack
+    List<DataClass>      list         = new List<DataClass>();                   //?
+    IList<RectTransform> lsSlots      = new List<RectTransform>();       //slot의 위치 
+    IList<RectTransform> lsSlotsBack  = new List<RectTransform>();       //slotBack
 
-    IList<RectTransform> lsSwtichSlots = new List<RectTransform>(); //swtichSlots
+    IList<RectTransform> lsSwtichSlots = new List<RectTransform>();      //swtichSlots
 
-    List<UnityCard> lsCards           = new List<UnityCard>();      //찾은 카드를 선택별로 정렬하기위해 담는다.
-    List<UnityCard> lsSwitchCards     = new List<UnityCard>();      //찾은 카드를 선택별로 정렬하기위해 담는다.
+    List<UnityCard> lsCards           = new List<UnityCard>();           //찾은 카드를 선택별로 정렬하기위해 담는다.
+    List<UnityCard> lsSwitchCards     = new List<UnityCard>();           //찾은 카드를 선택별로 정렬하기위해 담는다.
 
-    List<UnityCard> tempCards         = new List<UnityCard>();      //tab 버튼이 실행됐을때 생성해 주는 unityCards
-    List<UnityCard> tempCards2        = new List<UnityCard>();      //tab 버튼이 실행됐을때 생성해 주는 unityCards
+    List<UnityCard> tempCards         = new List<UnityCard>();            //tab 버튼이 실행됐을때 생성해 주는 unityCards
+    List<UnityCard> tempCards2        = new List<UnityCard>();            //tab 버튼이 실행됐을때 생성해 주는 unityCards
 
     public Dictionary<int, Vector2> switchGrid = new Dictionary<int, Vector2>();
-    //switch의 anchor의 좌표를 순서대로 기록한다.
-    List<int>      InDexID = new List<int>();                       //항상 바뀔수 있는 정렬 이므로 이벤트 발생때마다 생성정렬
+                                                                    //switch의 anchor의 좌표를 순서대로 기록한다.
+    List<int> InDexID = new List<int>();                            //항상 바뀔수 있는 정렬 이므로 이벤트 발생때마다 생성정렬
                                                                     //public으로 등록된 DailySale스크립트를 리스트화 한다.
-   
 
-    int ArrayNum     = 0;   // 0 :기본시작정렬 1:엘릭서  -1:엘릭서+ratial
-    int arrayPos     = -1;  //gridGroup에 순차적으로 들어갈 순서
+
+    int ArrayNum = 0;                                               // 0 :기본시작정렬 1:엘릭서  -1:엘릭서+ratial
+    int arrayPos = -1;                                              //gridGroup에 순차적으로 들어갈 순서
     int curTabButton = 1;
-    int levelCount;         //레벨업까지 필요한 카드의 숫자를 계산한다.
+    int levelCount;                                                 //레벨업까지 필요한 카드의 숫자를 계산한다.
 
     [SerializeField]
     Slider slider;
     string jumpSceneName;
     //FadeOut fadeOut;
-    public delegate void ButtonClick();
-    public static event ButtonClick OnButtonHandler;
+    public delegate void    ButtonClick();
+    public static   event   ButtonClick OnButtonHandler;
     public UnityEvent ARRAYCARDS;
 
     //ScrollViewController stroll;
 
     //Tab버튼 3개
-    int[] cur = new int[3];
+    int[] cur           = new int[3];
     //tab에 선택되어지는 갯수 
-    int[] tem = new int[4];
-    IList<int> hasTem = new List<int>();  //hasCards에서 int 만 리스트화 
-    IList<int> hasTemp = new List<int>(); //tob1의 카드를 빼기 위해서 임시로 생성
+    int[] tem           = new int[4];
+    IList<int> hasTem   = new List<int>();  //hasCards에서 int 만 리스트화 
+    IList<int> hasTemp  = new List<int>();  //tob1의 카드를 빼기 위해서 임시로 생성
 
-    GameObject MoveSelect;                //Tab로 이동하게 하기 위해서 생성된 객체 
+    GameObject MoveSelect;                  //Tab로 이동하게 하기 위해서 생성된 객체 
 
     bool bCanvasClick;
     bool isRed;
-    bool isSwitch;      //Tab와 교환하기 위해서 선택되어있을경우 
-    //tab에 이미선택되어 있는지판단
+    bool isSwitch;                          //Tab와 교환하기 위해서 선택되어있을경우 
+                                            //tab에 이미선택되어 있는지판단
     bool isTabIN;
     Text[] experinceText;
-    //Text coinText;
+    Text coinText;
     Text jewText;
-    int curGold;        //현재의Gold 를 기록하고 증가시킬때  From의 역할을 한다.
-    int addGold;        //증가시키너가 감소시킬 값
-                        //Level 단계 TODO: LEVEL 데이터화 필요 카드 경험치
-    float yPos = -400f; //카드가 교체되기 위해서 중심으로 이동하는 y좌표
+    int curGold;                          //현재의Gold 를 기록하고 증가시킬때  From의 역할을 한다.
+    int addGold;                          //증가시키너가 감소시킬 값
+                                          //Level 단계 TODO: LEVEL 데이터화 필요 카드 경험치
+    float yPos = -400f;                   //카드가 교체되기 위해서 중심으로 이동하는 y좌표
 
     int[] playerLevel = { 500, 1000, 2000, 3000, 4000, 6000, 8000, 10000, 20000, 30000, 40000, 50000 };
+
+
 
     public bool canvasClick
     {
@@ -125,39 +128,43 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         //fadeOut = GameObject.Find("FadeOut").GetComponent<FadeOut>();
 
         experinceText = TopLabel_experience.GetComponentsInChildren<Text>();
-        //coinText = TopLabel_Coins.GetComponentInChildren<Text>();
-        jewText = TopLabel_Jews.GetComponentInChildren<Text>();
+        //coinText    = TopLabel_Coins.GetComponentInChildren<Text>();
+        jewText       = TopLabel_Jews.GetComponentInChildren<Text>();
+
+     
+        //DontDestroyOnLoad(this.gameObject);
+        
     }
 
     void Start() {
         // !!! 가비지 컬렉션 강제 실행 !!!
-        // System.GC.Collect();
+         System.GC.Collect();
         // !!!!!!!!!!!!!!!!!!!!!
         //stroll = GetComponent<ScrollViewController>();
         //시작과 동시에 item 에 필요한 json데이터를파싱한다.
-      
-       // StartCoroutine(FADEOUT_FLASH());
 
-
+        // StartCoroutine(FADEOUT_FLASH());
         // slot 리스트 좌표임
         //lsSlots       = buttonPanel.GetComponent<UI_GridGroup>().lsrcTransforms;
         //lsSlotsBack   = buttonPanelBack.GetComponent<UI_GridGroup>().lsrcTransforms;
+        StrollVertical.eveVerticalMove += DeleteCopyUnity;
         lsSwtichSlots = switchPanel.GetComponent<UI_GridGroup>().lsrcTransforms;
         //시작시 1부터 시작
         GameData.Instance.PanelItem = 1;
 
-        if (GameData.Instance.players.ContainsKey(1))
+        //플레이어의 키를 확인 플레이어1의 데이터를 가지고 온다.
+        if (GameData.Instance.players.ContainsKey(playerindex))
         {
-           
-            string exp = GameData.Instance.players[1].exp.ToString();
-            string Num = GameData.Instance.players[1].expCount.ToString();
-            string defaultExp = playerLevel[GameData.Instance.players[1].exp].ToString();
 
+            string exp = GameData.Instance.players[playerindex].exp.ToString();
+            string Num = GameData.Instance.players[playerindex].expCount.ToString();
+            string defaultExp = playerLevel[GameData.Instance.players[playerindex].exp].ToString();
             experinceText[0].text = string.Format("{0}/{1}", Num, defaultExp);
-            experinceText[1].text = string.Format("{0}", GameData.Instance.players[1].exp);
+            experinceText[1].text = string.Format("{0}", GameData.Instance.players[playerindex].exp);
+            //메인에서 직접 출력해 줄 경우 
             //coinText.text = string.Format("{0}", GameData.Instance.players[1].coin);
-            curGold = GameData.Instance.players[1].coin;
-            jewText.text = string.Format("{0}", GameData.Instance.players[1].jew);
+            curGold = GameData.Instance.players[playerindex].coin;
+            jewText.text = string.Format("{0}", GameData.Instance.players[playerindex].jew);
             //시작과동시에 다시 자신의 골드를 프로퍼티로 사용학 위해서  데이터에 저장한다.
         }
 
@@ -165,7 +172,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         //StartCoroutine(FADEOUT_FLASH());
         //카드의 Icon Imag를 바꿔주기 위해서 시작시 로드한다.
 
-        Create_FADEOUT(marketRoyal.parent.parent,0.8f);
+        Create_FADEOUT(marketRoyal.parent.parent, 0.8f);
         //----------
         //Tab 에 위치하게될 카드
         //isSelectDeck();
@@ -175,8 +182,16 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         MarketSetRoyle();
         MarketSetNor();
     }
-
-
+    //카드가 이동이 완료되기전에 턴이 발생시 원래데로 돌려놓기 초기화 하기 위해서 삭제함
+    void DeleteCopyUnity()
+    {
+        //ERROR요인 아님..ㅠ.ㅠ
+        // if (switchMove.childCount > 1)
+        //{
+        //    GameObject a = switchMove.transform.Find("ItemCard(Clone)").gameObject;
+        //    Destroy(a);
+        //}
+    }
     //void Button_Play(MenuObject_Button button)
     //   {
     //	SaveData.continuePlay 				= false;
@@ -216,7 +231,14 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     void OnEnable()
     {
         CardEff_Open.eff += FadeOutA;
+       //StrollVertical.eveVerticalMove += DeleteCopyUnity;
+
     }
+
+    //void OnDisable()
+    //{
+    //    StrollVertical.eveVerticalMove -= DeleteCopyUnity;
+    //}
 
     void FadeOutA()
     {
@@ -237,6 +259,12 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         //nextScene = "2_Main_Scene";
     }
 
+    public void SceneChangeTitel()
+    {
+        SceneManager.LoadScene("0_Title_Scene");
+        //nextScene = "2_Main_Scene";
+    }
+
     //  //순간적으로 빨리 켜지고 꺼지는 효과 
     //  IEnumerator FADEOUT_FLASH()
     //  {
@@ -254,7 +282,6 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
 
     void Create_FADEOUT(Transform t,float delay)
     {
-
         GameObject fadeObj = Instantiate(fadeOut,t);
         fadeObj.GetComponent<FadeOut>().animTime = delay;
     }
@@ -544,6 +571,9 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    //카드의 이미지 적용부분..찾아야됨..
+    //string name = GameData.Instance.UnityDatas[i].Name;
+    //tempCards2[i].GetComponentInChildren<UnityCard>().mainICon.sprite = SpriteManager.GetSpriteByName("Sprite", name);
     void SetReFormCopy(List<int> arr)
     {
         UnityCard[] chs = switchPanel.GetComponentsInChildren<UnityCard>();
@@ -559,7 +589,6 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
             print("arr 배열" + arr[i]);
         }
         //Debug End-----------------------
-
         // tempCards.Add(i);  0 ~ 5 value
         // InDexID.Add(i.ID);
         Vector3[] tempList = new Vector3[switchGrid.Count];//temList 6, 0~5
@@ -628,7 +657,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
             tempCards2[i].GetComponentInChildren<UnityCard>().nextIndex = i;
             tempCards2[i].GetComponentInChildren<UnityCard>().MoveSelectPanel();
             //tempCards2[i].GetComponentInChildren<UnityCard>().hideButton.gameObject.SetActive(false);
-
+           
         } //END
 
     }
@@ -641,7 +670,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         int idIndex = 0;
         buttonCollectionLabel.text = string.Format("엘릭서 기준");
 
-        var lists = GameData.Instance.panelSlots.Where(m => m.Elixer >= 0).OrderByDescending(m => m.Elixer).ThenBy(m => m.Elixer);
+        var lists      = GameData.Instance.panelSlots.Where(m => m.Elixer >= 0).OrderByDescending(m => m.Elixer).ThenBy(m => m.Elixer);
         var listsBacks = GameData.Instance.panelBackSlots.Where(m => m.Elixer >= 0).OrderByDescending(m => m.Elixer).ThenBy(m => m.Elixer);
 
         foreach (var i in lists)
@@ -727,13 +756,12 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     {
         addGold = GameData.Instance.curAddGold;
         //experinceText[0].text = string.Format("{0}/{1}", Num, defaultExp);
-        experinceText[1].text = string.Format("{0}", GameData.Instance.players[1].exp);
+        experinceText[1].text = string.Format("{0}", GameData.Instance.players[playerindex].exp);
 
         iTween.Stop(gameObject);
         iTween.ValueTo(gameObject, iTween.Hash("from", curGold, "to", curGold - addGold, "time", .6, "onUpdate", "UpdateGoldDisplay", "oncompletetarget", gameObject));
         curGold -= addGold;
-
-        jewText.text = string.Format("{0}", GameData.Instance.players[1].jew);
+        jewText.text = string.Format("{0}", GameData.Instance.players[playerindex].jew);
     }
 
     //-----TODO:개별적으로 작동하게 함
@@ -753,17 +781,16 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         for (int i = 0; i < days.Count; i++)
         {   //list =  파싱된 데이터를 days에 순서대로 대입
             //프로퍼티 ID를 호출해서 네임이 바뀌게 한다.
-            days[i].ID = GameData.Instance.dailys[i].ID;
+            days[i].ID          = GameData.Instance.dailys[i].ID;
             //TODO: Image
-            string name = GameData.Instance.UnityDatas[i].Name;
-            days[i].priceCoin = GameData.Instance.dailys[i].Gold;
-            Debug.Log("priceCoin :"+ days[i].priceCoin);
-            days[i].priceJew = GameData.Instance.dailys[i].Jew;
-            days[i].ea = GameData.Instance.dailys[i].EA;
+            string name         = GameData.Instance.UnityDatas[i].Name;
+            days[i].priceCoin   = GameData.Instance.dailys[i].Gold;
+           
+            days[i].priceJew    = GameData.Instance.dailys[i].Jew;
+            days[i].ea          = GameData.Instance.dailys[i].EA;
             days[i].main.sprite = SpriteManager.GetSpriteByName("Sprite", name);
 
-            Debug.Log("Start Daily --" + GameData.Instance.dailys[i].ID);
-
+          
             //index 와 스크립트를 어떻게 연결할 것인가?
         }
 
@@ -790,8 +817,8 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         for (int i = 0; i < royle.Count; i++)
         {
             royle[i].priceJew = GameData.Instance.royles[i].Jew;
-            royle[i].Name = GameData.Instance.royles[i].CaseName;
-            royle[i].BoxName = GameData.Instance.royles[i].CaseIndex;
+            royle[i].Name     = GameData.Instance.royles[i].CaseName;
+            royle[i].BoxName  = GameData.Instance.royles[i].CaseIndex;
 
         }
     }
@@ -889,16 +916,12 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
                 MoveSelect.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, yPos);
 
                 //카드의 세팅
-                string cardName = GameData.Instance.UnityDatas[i].Name;
-                int elixir = GameData.Instance.UnityDatas[i].Elixir;
-
-                //카드이름
-                //MoveSelect.GetComponent<UI_Panel_Item>().ID = cur;
-                //엘릭서 
-                //MoveSelect.GetComponent<UnityCard>().Elixer = elixir;
-                //enum 으로 리스트를 위한 number을 얻는다.
-                //MoveSelect.GetComponent<UnityCard>().Kinds = GameData.Instance.UnityDatas[i].Kinds;
-                //MoveSelect.GetComponent<UnityCard>().ID = GameData.Instance.UnityDatas[i].Id;
+                string cardName = GameData.Instance.UnityDatas[GameData.Instance.curSwitchCard].Name;
+                int elixir      = GameData.Instance.UnityDatas[GameData.Instance.curSwitchCard].Elixir;
+                MoveSelect.GetComponentInChildren<VictoryCard>().iconName.text = cardName;
+                MoveSelect.GetComponentInChildren<VictoryCard>().mainICon.sprite = SpriteManager.GetSpriteByName("Sprite", cardName);
+               
+            
             }
         }
     }
@@ -907,8 +930,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     {
         Vector3 poss = GameData.Instance.toTopPos;
         //world좌표축
-        Debug.Log("poss:" +poss);
-        Debug.Log(" SwitchSelectMove :poss  : "+poss);
+     
         if (MoveSelect != null && isSwitch)
         {
             iTween.MoveTo(MoveSelect, iTween.Hash( "islocal",false ,
@@ -918,8 +940,6 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
                                                    "time", 0.3f,
                                                    "easetype", "easeOutQuart")
                                                  );
-
-
         }
 
     }
@@ -957,7 +977,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
                 if (ide == a)
                 {
                     tempCards2[i].GetComponentInChildren<UnityCard>().hideButton.gameObject.SetActive(true);
-                    GameData.Instance.ShowID = a;
+                    GameData.Instance.ShowID   = a;
                     GameData.Instance.isShowID = true;
 
                 }
@@ -979,6 +999,12 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         }
     }
 
+
+    public void AllHideButton()
+    {
+
+    }
+
     IEnumerator coSwitchMoveStart()
     {
         yield return new WaitForSeconds(0.1f);
@@ -995,16 +1021,21 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         //선택된 카드의 좌표를 가져온다.
         MoveSelect.GetComponent<RectTransform>().anchoredPosition = new Vector2(GameData.Instance.fromSwitchPos.x, GameData.Instance.fromSwitchPos.y);
         //카드의 세팅
-        string cardName = GameData.Instance.UnityDatas[ID].Name;
+       
         int elixir = GameData.Instance.UnityDatas[ID].Elixir;
-        //카드이름
-        MoveSelect.GetComponent<UnityCard>().Icon_name = GameData.Instance.UnityDatas[ID].Name;
+
+        //카드이름 이미지가 적용되지 않음 원인모름--ERROR-------------------
+        //string cardName = GameData.Instance.UnityDatas[ID].Name;
+        //MoveSelect.GetComponent<UnityCard>().mainICon.sprite = SpriteManager.GetSpriteByName("Sprite", cardName);
+        //-----------------------------------------------------------------
         //엘릭서 
-        MoveSelect.GetComponent<UnityCard>().Elixer = GameData.Instance.UnityDatas[ID].Elixir;
+        MoveSelect.GetComponent<UnityCard>().Elixer    = GameData.Instance.UnityDatas[ID].Elixir;
         //enum 으로 리스트를 위한 number을 얻는다.
-        MoveSelect.GetComponent<UnityCard>().Kinds = GameData.Instance.UnityDatas[ID].Kinds;
-        MoveSelect.GetComponent<UnityCard>().ID = GameData.Instance.UnityDatas[ID].Id;
+        MoveSelect.GetComponent<UnityCard>().Kinds     = GameData.Instance.UnityDatas[ID].Kinds;
+        MoveSelect.GetComponent<UnityCard>().ID        = GameData.Instance.UnityDatas[ID].Id;
         //TODO: isSwtich의 상태를 언제 바꿀지 결정한다. 
+        MoveSelect.GetComponent<UnityCard>().Icon_name = GameData.Instance.UnityDatas[ID].Name;
+
     }
 
     private void OnMouseUpAsButton()
@@ -1060,11 +1091,13 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         IList<int> hasId = new List<int>();
         IList<int> datasId = new List<int>();
 
+        //가지고 있는 카드의 리스트 
         foreach (KeyValuePair<int, Card> pair in GameData.Instance.hasCard)
         {
             hasId.Add(pair.Key); //ID ,
         }
 
+        //데이터 에 있는 모든 카드의 인덱스 
         for (int i = 0; i < GameData.Instance.infoCards; i++)
         {
             datasId.Add(GameData.Instance.UnityDatas[i].Id);
@@ -1090,11 +1123,16 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         foreach (var i in datasId)
         {
             if (i > 0)
-            {
+            {   //가지고 있지 않은 카드 
                 GameObject UnFindCard = Instantiate(cardObj);
                 UnFindCard.transform.SetParent(unfindCards, false);
                 UnFindCard.transform.localScale = new Vector3(1, 1, 1);
                 UnFindCard.transform.localPosition = new Vector3(0, 0, 0);
+             
+                string cardName = GameData.Instance.UnityDatas[i].Name;
+              
+                UnFindCard.GetComponent<VictoryCard>().mainICon.sprite = SpriteManager.GetSpriteByName("Sprite", cardName);
+                UnFindCard.GetComponent<VictoryCard>().iconName.text = GameData.Instance.UnityDatas[i].Name;
             }
         }
     }
@@ -1123,6 +1161,14 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     {
         CaseItem[0].SetActive(true);
        
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            //SetReFormCopy(List<int> arr);
+        }
     }
 
     

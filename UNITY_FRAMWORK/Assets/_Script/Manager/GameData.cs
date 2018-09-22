@@ -84,6 +84,7 @@ public sealed class GameData
             {
                 afterTab = curTab;
                 curTab = value;
+              
             }
             afterTabEve = value;
         }
@@ -102,8 +103,8 @@ public sealed class GameData
         }
     }
 
-
   
+
     public int[] Level = { 0, 2, 4, 10, 20, 50, 100, 200, 400, 1000, 2000, 4000, 5000 };
     //유닛 고유의 데이터 ..이데이터를 바탕으로 player의 데이터와 
     //FileDataManager에서부터 데이터가 들어온다.
@@ -135,14 +136,15 @@ public sealed class GameData
     //REesourcs 의 오브젝트를 가져오기 위해 생성한다.                    
     public IList<GameObject> prefabs = new List<GameObject>();
 
-    //승리한카드의 경험치및 보사을 판단하기 위해서 저장한다.
+    //승리한카드의 경험치및 보상을 판단하기 위해서 저장한다.
     public Dictionary<int, IList<Card>> playerVic = new Dictionary<int, IList<Card>>();
     public Dictionary<int, IList<Card>> comVic    = new Dictionary<int, IList<Card>>();
     //패배했을때 카드가 이긴만큼 그 카드에 경험치를 주기위해서 기록한다.
     public Dictionary<int, IList<Card>> defectPlayer = new Dictionary<int, IList<Card>>();
     // player vs  com 중 승리한 것을 받는다 . 3 :player 승리 ,2:무승부 ,1 :com 승리
     public int vicResult = 0;
-
+    //player의 현재 인덱스
+    public int curPlayerIndex = 1;
     public eGameState eGamestate = eGameState.NONE; // GameManager에 상태를 전달하기 위해서 설정한다.
 
     public int TempNUM;
@@ -166,24 +168,134 @@ public sealed class GameData
 
     public Vector3 toTopPos;      //Tab으로 이동하게될 위치 좌표      
 
-    public bool isShowID;         //하나만 보여져야한다.다른 클릭이 이루어진다면 전부 안보이게 해야 한다.
+    public bool    isShowID;         //하나만 보여져야한다.다른 클릭이 이루어진다면 전부 안보이게 해야 한다.
 
-    public int curSwitchCard;     //현재 교체하기 위해서 선택된 카드<------- 
-    public int fromSwitchSlot;    //움직일 슬롯<--------
+    public int    curSwitchCard;     //현재 교체하기 위해서 선택된 카드<------- 
+    public int    fromSwitchSlot;    //움직일 슬롯<--------
 
-    private int curSlotID;         //현재 선택된 아이템의 slot 인덱스 번호
-    public int curSlotIndex;       //Tab 에서 선택됐을때의 Tab내의 인덱스 번호
-    public int fromSwitchId;       //이동할 id 현재가 아니라 미리 저장해 놓아야 한다.
-    //TODO: 게임데이터에서  프로퍼티로 이벤트를 발생시킨다면 연구 과제..
-    public int curAddGold;         // 스코어의 애니를 위해서 증가분의 금액을 저장한다.
+    private int   curSlotID;         //현재 선택된 아이템의 slot 인덱스 번호
+    public  int   curSlotIndex;       //Tab 에서 선택됐을때의 Tab내의 인덱스 번호
+    public  int   fromSwitchId;       //이동할 id 현재가 아니라 미리 저장해 놓아야 한다.
+   
 
-    public int fromSwitchCard;      //이동할 선택된 카드 
+    public int     fromSwitchCard;      //이동할 선택된 카드 
     public Vector3 fromSwitchPos;   //움직일 좌표
-    public int toSwitchCard;
+    public int     toSwitchCard;
     public Vector3 toSwitchPos;
     public Vector3 Effect_position; //Result에서 Eff를 발생시킬 월드좌표
     
-    public bool isSwitch;            //현재 바꿀수 있는 상태인지 판단
+    public bool     isSwitch;            //현재 바꿀수 있는 상태인지 판단
+
+    //saveData-----------------------------------------------------
+    //TODO: 게임데이터에서  프로퍼티로 이벤트를 발생시킨다면 연구 과제..
+    public int    curAddGold;         // 스코어의 애니를 위해서 증가분의 금액을 저장한다.
+    //1 로컬에 저장시 
+    private int   goldAmount;
+    private int   jewAmount;
+    private int   expLevel;  //경험치 레벨
+    private float expAmount; //경험치 수치
+
+
+    public int GoldAmount
+    {
+        get
+        {
+            return goldAmount;
+        }
+
+        set
+        {
+           
+            //TODO: ES 시스템 이용
+            if (goldAmount != value)
+            {   //ES2저장
+                ES2.Save(value,"GoldAmount");
+                //json에 바로 저장시 
+                Debug.Log("GOLD -- GOLD -- GOLD -- GOLD 저장 실행");
+                JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json"));
+                jsonUnitydata["Info"][0]["coin"] = value;
+                JsonData whitedata = JsonMapper.ToJson(jsonUnitydata);
+                File.WriteAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json", whitedata.ToString());
+                goldAmount = value;
+               
+            }
+        }
+    }
+
+    public int JewAmount
+    {
+        get
+        {
+            return jewAmount;
+        }
+
+        set
+        {
+            jewAmount = value;
+            if (jewAmount != value)
+            {  //ES2저장
+                ES2.Save(value, "JewAmount");
+                //json에 바로 저장시 
+                JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json"));
+                jsonUnitydata["Info"][0]["Jew"] = value;
+                JsonData whitedata = JsonMapper.ToJson(jsonUnitydata);
+                File.WriteAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json", whitedata.ToString());
+            }
+        }
+    }
+
+    public int ExpLevel
+    {
+        get
+        {
+            return expLevel;
+        }
+
+        set
+        {
+            expLevel = value;
+        
+            if (expLevel != value)
+            {  //ES2저장
+                ES2.Save(value, "ExpLevel");
+                //Json저장
+                JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json"));
+                jsonUnitydata["Info"][0]["ExprinceNum"] = value;
+                JsonData whitedata = JsonMapper.ToJson(jsonUnitydata);
+                File.WriteAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json", whitedata.ToString());
+            }
+        }
+    }
+
+    public float ExpAmount
+    {
+        get
+        {
+            return expAmount;
+        }
+
+        set
+        {
+            expAmount = value;
+
+            if (expAmount != value)
+            {   //ES2저장
+                ES2.Save(value, "ExpAmount");
+                //JSON저장
+                JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json"));
+                jsonUnitydata["Info"][0]["ExprinceCount"] = value;
+                JsonData whitedata = JsonMapper.ToJson(jsonUnitydata);
+                File.WriteAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json", whitedata.ToString());
+            }
+        }
+    }
+
+
+
+
+    //-------------------------------------------------------------
+
+
 
     public eGameState gameState    = eGameState.NONE;
     
