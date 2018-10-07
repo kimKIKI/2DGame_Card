@@ -6,8 +6,11 @@ using UnityEngine.EventSystems;
 
 public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IEventSystemHandler//, IPointerUpHandler, IPointerClickHandler
 {
-    public delegate void   Strol();
-    public static   event  Strol eveVerticalMove;
+    public delegate void Strol();
+    public static event Strol eveVerticalMove; //이동이벤트 발생
+    public static event Strol stopMoveTrue;     //정지시켜야할 이벤트 발생
+    public static event Strol CloseCards;       //열린카드를 닫아주는 이벤트 발생
+    public static event Strol moveUp;           //터치이동후 툴바 버튼의 화살표를 재설정한다.
 
 
     float basePosX;    //처음배치localpos
@@ -24,11 +27,14 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
     bool isDragging = false;
     bool isDragOn = false;
     bool isLeft;
+    bool isChoice = false;
     float disX;
     float disY;
     float startAnchorPos = -1000f;  //panel 의 처음 맨위 Y값
     RectTransform myRect;
     ScrollRect myScrol;
+
+
 
     int tempAfter = 0;              //현재의 curItem
 
@@ -63,15 +69,13 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
         myRect = GetComponent<RectTransform>();
         myScrol = GetComponent<ScrollRect>();
 
-      
+
         DontDestroyOnLoad(this.gameObject);
-        
+
     }
 
     private void Start()
     {
-       
-
         Init();
     }
 
@@ -91,7 +95,16 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
         endMouseY = Input.mousePosition.y;
         //float distanceX = Mathf.distance
         Debug.Log("end:" + new Vector2(endMouseX, endMouseY));
+        //스톱되어 있는 스트롤을 재시작하기 위해서 설정에서 좌우이동이 되지 안게한다.
+        if (GameData.Instance.isStopScroview)
+            stopMoveTrue();
 
+        //업데이트또는 선택을 위해 버튼이 열린상태일때 좌우이동이되지 않게
+        if (GameData.Instance.IsShowCard)
+        {
+            stopMoveTrue();
+            //GameData.Instance.IsShowCard = false;
+        }
 
 
         if (startMouseX - endMouseX >= 0)
@@ -121,7 +134,6 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
 
         if (disX >= disY)
         {
-
             //Debug.Log("x 가 길어요");
             if (isLeft)
             {
@@ -140,7 +152,6 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
                 {
                     GameData.Instance.PanelItem = 3;
                 }
-
             }
             else
             {
@@ -172,7 +183,7 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
             {
                 Debug.Log("eveVertical 없네요 없어 ");
             }
-                    
+
             InitPosition();
         }
         else if (disX < disY)
@@ -180,20 +191,10 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
             // Debug.Log("Y 가 길어요");
         }
 
+        moveUp();
     }
 
-    void Update()
-    {
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (eveVerticalMove != null)
-            {
-                Debug.Log("eveVertialMove가 작동합니다.");
-                Debug.Log("++++++++++++++++++++++++++++++" + GameData.Instance.PanelItem);
-            }
-        } 
-    }
+   
 
     void IBeginDragHandler.OnBeginDrag(PointerEventData eventData)
     {
@@ -203,11 +204,30 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
         startMouseX = Input.mousePosition.x;
         startMouseY = Input.mousePosition.y;
         // Debug.Log("onBeginDrag---->>"+startMouseX+"--"+ startMouseY);
+
+      
+        //선택카드가 열리고 좌우 스트롤이 고정됐을때 모두 해제한다.
+        //선택했다가 이동중간에 그만둔 상태인경우
+        if (!GameData.Instance.isStopScroview  && GameData.Instance.IsShowCard)
+        { //화면이 정지가 되지 안고 열리기만 한 상태
+            GameData.Instance.isStopScroview = false;
+            GameData.Instance.IsShowCard     = false;
+        }
+        else if(GameData.Instance.isStopScroview || GameData.Instance.IsShowCard)
+        { //화면이 정지이고 , show카드가 열렸을때
+            CloseCards();
+        }
+        else if (!GameData.Instance.isStopScroview && !GameData.Instance.IsShowCard)
+        {//화면이 정지가 아니고  열리지도 안은상태
+            CloseCards();
+        }
+
+
     }
 
     void IDragHandler.OnDrag(PointerEventData eventData)
     {
-
+       
         endMouseX = Input.mousePosition.x;
         endMouseY = Input.mousePosition.y;
 
@@ -216,7 +236,6 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
         {
             isDragging = true;
             isDragOn = false;
-
         }
         curPosY = myRect.localPosition.y;
 
@@ -225,11 +244,11 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
             //더이상 밑으로 드레깅되지 않게 한다.
             curPosY = -200f;
             StartCoroutine(coMove(myRect, curPosY, 0, 5f));
+
             return;
         }
 
     }
-
 
 
     IEnumerator coMove(RectTransform obj, float start, float end, float speed)
@@ -251,8 +270,9 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
         //화면이 바뀔수 있는 위치로 이동
         myRect.anchoredPosition = new Vector2(myRect.anchoredPosition.x, 0);
         myScrol.content.anchoredPosition = new Vector2(0, startAnchorPos);
+
         Debug.Log("myRect.anchorPostion" + myRect.anchoredPosition);
-        //고정되어 있어야 한다.
+     
     }
 
     public void InitPosition()

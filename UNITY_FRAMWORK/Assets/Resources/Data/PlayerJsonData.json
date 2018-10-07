@@ -41,7 +41,7 @@
       "ExprinceNum": 9,
       "ExprinceCount": 3400,
       "hasNum": 10,
-      "coin": 30600,
+      "coin": 10000,
       "Jew": 1000
     }
   ],
@@ -69,8 +69,8 @@
     },
     {
       "item_id": 5,
-      "hasNum": 80,
-      "hasLevel": 2
+      "hasNum": 112,
+      "hasLevel": 5
     },
     {
       "item_id": 7,

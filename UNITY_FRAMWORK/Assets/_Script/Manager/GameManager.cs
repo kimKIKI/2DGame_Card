@@ -159,6 +159,10 @@ public partial class GameManager : MonoBehaviour {
             num++;
         }
 
+        int curPanel = GameData.Instance.PanelItem;
+        Debug.Log("현재GameScene panel:" + curPanel);
+       
+
         StartCoroutine(AutoStep());
         //color를 설정
         imgbtnColor = Color.black;
@@ -166,13 +170,14 @@ public partial class GameManager : MonoBehaviour {
         btnImg.color = imgbtnColor;
 
         //게임메니저가 실행될때마다 새로동적생성을 위해서 
+        //여기 밑으로 에러부분 있음-------
         GameData.Instance.playerVic.Clear();
         GameData.Instance.comVic.Clear();
         GameData.Instance.defectPlayer.Clear();
         OverlayParticles.ShowParticles(10, gameObject.transform.position);
 
-        
       
+
     }
 
 

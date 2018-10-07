@@ -1084,6 +1084,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 49526194}
+  - component: {fileID: 49526195}
   m_Layer: 5
   m_Name: ArrowBar_gold
   m_TagString: Untagged
@@ -1110,6 +1111,18 @@ RectTransform:
   m_AnchoredPosition: {x: 186.59998, y: -148.5}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &49526195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 49526193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b4df1a424ed26a4e9907c0f98992b8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _itemDisplay: {fileID: 1701063945}
 --- !u!1 &50079756
 GameObject:
   m_ObjectHideFlags: 0
@@ -22932,7 +22945,7 @@ Prefab:
         type: 2}
       propertyPath: _itemDisplayer
       value: 
-      objectReference: {fileID: 580775740}
+      objectReference: {fileID: 49526194}
     - target: {fileID: 114424137031188478, guid: efbd3ef4e3fcf9349be1cc92e5dd7973,
         type: 2}
       propertyPath: _popPosition

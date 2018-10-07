@@ -24,6 +24,8 @@ public class CollectingEffectController : MonoBehaviour {
 	// The prefab of the items to instanciate
 	[Tooltip("The prefab of the items to instanciate")]
 	public GameObject _itemPrefab;
+    [HideInInspector]
+    public int Amount; //prefab에 개당 value를 전달하기 위해서 사용.
 	// Instance of this class
 	[HideInInspector]
 	public static CollectingEffectController _instance;
@@ -72,7 +74,7 @@ public class CollectingEffectController : MonoBehaviour {
 			}
 
 			// Initialize object
-			animation.Initialize(_itemDisplayer, _popPosition, Vector3.zero, Vector3.one, _playSoundMode, _expansionMode, this);
+			animation.Initialize(_itemDisplayer, _popPosition, Vector3.zero, Vector3.one, _playSoundMode, _expansionMode,Amount, this);
 			// Start animation
 			animation.StartAnimation();
 			yield return delay;

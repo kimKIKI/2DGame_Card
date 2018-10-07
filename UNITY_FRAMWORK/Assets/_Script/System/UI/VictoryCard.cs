@@ -9,16 +9,17 @@ public class VictoryCard : MonoBehaviour {
     Card cardInfo = null;
     
     //Shape
-    public Image      levelImg;       //레벨 뒤화면 이미지
-    public Text       txLevelNum;     //현재 카드의 엘릭서 숫자
-    public Text       txTempLevelNum; //level과 num을 비교하기 위해서 설정
-    public Text       txOwnCards;     //레벨업 될때까지 남은 카드의 숫자를 표시 한다.
-    public Image      mainICon;       //메인이미지
-    public Slider     slider;         //카드의 숫자를 받아 바 크기를 나타내 준다.
-    public Text       txElixerNum;    //엘릭서 Num
-    public GameObject arrow;          //자동으로 컨트롤하기 위해서 
-    public Transform  hideCard;       //리스트에서 동작이 끝난후 보이지 않게 하기 위해서 
-
+    public     Image       levelImg;       //레벨 뒤화면 이미지
+    public     Text        txLevelNum;     //현재 카드의 엘릭서 숫자
+    public     Text        txTempLevelNum; //level과 num을 비교하기 위해서 설정
+    public     Text        txOwnCards;     //레벨업 될때까지 남은 카드의 숫자를 표시 한다.
+    public     Image       mainICon;       //메인이미지
+    public     Slider      slider;         //카드의 숫자를 받아 바 크기를 나타내 준다.
+    public     Text        txElixerNum;    //엘릭서 Num
+    public     GameObject  arrow;          //자동으로 컨트롤하기 위해서 
+    public     Transform   hideCard;       //리스트에서 동작이 끝난후 보이지 않게 하기 위해서
+    
+   
     Vector3 localScale;
    
     int xPadding = 10;
@@ -153,7 +154,6 @@ public class VictoryCard : MonoBehaviour {
     public void PumpUnity()
     {
         AppSound.instance.SE_CARD_PUMP.Play();
-
     }
 	
 	

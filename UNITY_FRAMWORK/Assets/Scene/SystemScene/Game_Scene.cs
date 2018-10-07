@@ -14,6 +14,7 @@ public class Game_Scene : Singleton<Game_Scene>  {
 
         fadeOut = GameObject.Find("FadeOut").GetComponent<FadeOut>();
         StartCoroutine(FADEOUT_FLASH());
+        GameData.Instance.PanelItem = 3;
     }
 
     protected override void Awake()

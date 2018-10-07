@@ -60,7 +60,8 @@ public  class FileDataManager  {
             //  "Jew":10,"Elixir":2,"HP":400,"Speed":"Slow","Attack":4,"Atk_Zone":100,"BuildTime":1,
             //"Sp_atk":4,"Up_Hp":10,"Up_atk":10,"Life":0,"EA":1},
             UnityInfo unit = new UnityInfo();
-            unit.Id       = i;
+            //유닛의 고유ID 와 맞출려고 +1함
+            unit.Id       = (int)jsonUnitydata[i]["ID"];
             unit.Name     = jsonUnitydata[i]["Name"].ToString();
             unit.Atk_Type = jsonUnitydata[i]["ATK_Type"].ToString(); //유닛타입 지상,공중
             unit.Kinds    = jsonUnitydata[i]["Kinds"].ToString();

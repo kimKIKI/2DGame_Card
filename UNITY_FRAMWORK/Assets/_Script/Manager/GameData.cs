@@ -104,8 +104,9 @@ public sealed class GameData
     }
 
   
-
-    public int[] Level = { 0, 2, 4, 10, 20, 50, 100, 200, 400, 1000, 2000, 4000, 5000 };
+    //CardLevelData
+    public int[] Level     = { 0, 2, 4, 10, 20, 50, 100, 200, 400, 1000, 2000, 4000, 5000 };
+    public int[] LevelCost = { 5,20,50,150,400,1000,2000,4000,8000,20000,50000,100000};
     //유닛 고유의 데이터 ..이데이터를 바탕으로 player의 데이터와 
     //FileDataManager에서부터 데이터가 들어온다.
     public IList<UnityInfo> UnityDatas       = new List<UnityInfo>();
@@ -163,7 +164,7 @@ public sealed class GameData
 
     public int toTabSlot;         //Tab의 위치에서 array정렬위치로 이동하기 위한slot 
 
-    int panelItem;                //UI의 bottom 목록
+    int panelItem = 1;                //UI의 bottom 목록
     public int panelItemAfter;
 
     public Vector3 toTopPos;      //Tab으로 이동하게될 위치 좌표      
@@ -173,19 +174,21 @@ public sealed class GameData
     public int    curSwitchCard;     //현재 교체하기 위해서 선택된 카드<------- 
     public int    fromSwitchSlot;    //움직일 슬롯<--------
 
-    private int   curSlotID;         //현재 선택된 아이템의 slot 인덱스 번호
+    private int   curSlotID;          //현재 선택된 아이템의 slot 인덱스 번호
     public  int   curSlotIndex;       //Tab 에서 선택됐을때의 Tab내의 인덱스 번호
     public  int   fromSwitchId;       //이동할 id 현재가 아니라 미리 저장해 놓아야 한다.
    
 
-    public int     fromSwitchCard;      //이동할 선택된 카드 
-    public Vector3 fromSwitchPos;   //움직일 좌표
+    public int     fromSwitchCard;    //이동할 선택된 카드 
+    public Vector3 fromSwitchPos;     //움직일 좌표
     public int     toSwitchCard;
     public Vector3 toSwitchPos;
-    public Vector3 Effect_position; //Result에서 Eff를 발생시킬 월드좌표
+    public Vector3 Effect_position;   //Result에서 Eff를 발생시킬 월드좌표
     
-    public bool     isSwitch;            //현재 바꿀수 있는 상태인지 판단
-
+    public bool     isSwitch;         //현재 바꿀수 있는 상태인지 판단
+    public bool     isStopScroview;   //교환하기 화면을 정지시킨 strollvertiacl 상태
+    public bool     IsShowCard;       //선택하기 위해열린 카드가 하나라도있는지 판단
+    
     //saveData-----------------------------------------------------
     //TODO: 게임데이터에서  프로퍼티로 이벤트를 발생시킨다면 연구 과제..
     public int    curAddGold;         // 스코어의 애니를 위해서 증가분의 금액을 저장한다.

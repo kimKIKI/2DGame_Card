@@ -38,17 +38,18 @@ public class CardEff_Result : MonoBehaviour {
     int spawnNum = 5;                //스폰될 량
 
     //Dictionary<int, IList<Card>> vicCard;
-    //Dictionary<int, IList<Card>> defCard;
+    //Dictionary<int, IList<Card>> defCard;ㅇ
 
     //델리게이트는 이벤트 발생부분에서 실행
-    public delegate void UnitEventHandler();
-    public static event UnitEventHandler onUnitySpawn;
-    public static event UnitEventHandler onUnityDestroy;
+    public delegate void    UnitEventHandler();
+    public static   event   UnitEventHandler    onUnitySpawn;
+    public static   event   UnitEventHandler    onUnityDestroy;
 
-    public delegate void ItemDelegate(int a);
-    public static event ItemDelegate itemEvent;
-
+    public delegate  void   ItemDelegate();
+    public static    event  ItemDelegate itemEvent;
+    //Level 단계
     int[] playerLevel = { 500, 1000, 2000, 3000, 4000, 6000, 8000, 10000, 20000, 30000, 40000, 50000 };
+   
 
     public enum eDEFECTCARD
     {
@@ -64,9 +65,9 @@ public class CardEff_Result : MonoBehaviour {
     {
         //보이는 위치가 아니므로 gradGroup와 같이 한다.
 
-        txGold = arrowGold.GetComponentInChildren<Text>();
-        txJew = arrowJew.GetComponentInChildren<Text>();
-        txLevel = arrowLevel.GetComponentInChildren<Text>();
+        txGold            = arrowGold.GetComponentInChildren<Text>();
+        txJew             = arrowJew.GetComponentInChildren<Text>();
+        txLevel           = arrowLevel.GetComponentInChildren<Text>();
         txExperienceLevel = experience.transform.Find("Text_LevelNum").GetComponent<Text>();        //경험치 레벨표시
         txExperienceCount = experience.transform.Find("Text_Value").GetComponent<Text>(); ;         //경험치 레벨카운트
         //titleName[0] Title [1] Kinds  [2] Level
@@ -76,7 +77,7 @@ public class CardEff_Result : MonoBehaviour {
 
     private void Start()
     {
-        itemEvent += OnCoinAnime;
+       // itemEvent += OnCoinAnime;
 
         if (GameData.Instance.players.ContainsKey(1))
         {   //현재의 캐릭터의 정보를 받아온다.
@@ -93,6 +94,8 @@ public class CardEff_Result : MonoBehaviour {
             titleNames[1].text     = string.Format("{0}", "");
             titleNames[2].text     = string.Format("{0}", "");
 
+            int curPanel = GameData.Instance.PanelItem;
+            Debug.Log("현재panel:" + curPanel);
         }
         StartCoroutine(Auto_Step());
     }
@@ -204,10 +207,10 @@ public class CardEff_Result : MonoBehaviour {
 
             Vector3 pos = new Vector3(2400 + sideAmount, 50, 0);
             //titleName[0] Title [1] Kinds  [2] Level
-
+                                   //승리한 카드의 정보
             titleNames[0].text = VicgridGroup.transform.GetChild(i).transform.GetComponent<VictoryCard>().iconName.text;
             titleNames[1].text = string.Format("{0}", "");
-            titleNames[2] = VicgridGroup.transform.GetChild(i).transform.GetComponent<VictoryCard>().txLevelNum;
+            titleNames[2]      = VicgridGroup.transform.GetChild(i).transform.GetComponent<VictoryCard>().txLevelNum;
             iTween.MoveTo(VicgridGroup.transform.GetChild(i).gameObject, iTween.Hash("islocal", true, "position", pos, "time", 0.6f,
                                                 "onstart", "VicCardStart", "onstarttarget", gameObject, "easetype", "easeOutQuart"));
             //위치를정렬시킨다.
@@ -250,7 +253,6 @@ public class CardEff_Result : MonoBehaviour {
     void VicCardStart()
     {
         AppSound.instance.SE_CARD_APPERMOVE.Play();
-        
     }
 
     eDEFECTCARD eDefectState = eDEFECTCARD.NONE;
@@ -260,12 +262,12 @@ public class CardEff_Result : MonoBehaviour {
     IEnumerator DefectCardAnimation()
     {
         //승리한 카드의 전체 숫자
-        int vicCardNum = VicgridGroup.transform.childCount;
+        int vicCardNum  = VicgridGroup.transform.childCount;
         //패널그룹에서의 인덱스를 계산하기 위해서 사용
-        int sumNum = 0;
+        int sumNum      = 0;
         int sumNumCount = 0;
         //패배한 카드의 숫자를 넣는다.
-        int cardCount = 0;
+        int cardCount   = 0;
         int cardCountMax = 0;
         //승리한 카드의 카운트 시작
         int vicCount = 0;
@@ -290,9 +292,9 @@ public class CardEff_Result : MonoBehaviour {
                     //Vector3 cursize     = VicgridGroup.transform.GetChild(vicCount).GetComponent<RectTransform>().sizeDelta;
                     //해당 승리한 카드가 가지고 있는 패배한 카드의 수량을 기록한다.
                     int DefectcardsIndex = VicgridGroup.transform.GetChild(vicCount).GetComponent<VictoryCard>().vicCards.Count;
-                    cardCountMax = DefectcardsIndex;
+                    cardCountMax         = DefectcardsIndex;
 
-                    eDefectState = eDEFECTCARD.DEFECTCARD;
+                    eDefectState         = eDEFECTCARD.DEFECTCARD;
                     //승한 카드가 없습니다.
                    
                 }
@@ -314,11 +316,9 @@ public class CardEff_Result : MonoBehaviour {
             else if (eDefectState == eDEFECTCARD.DEFECTCARD)
             {
                 //TODO : spawnNum의 양을 미리 입력해서 특수한 능력을 줘야 한다.
-
                 int sp = gridGroup.transform.GetChild(cardCount + sumNum).gameObject.GetComponent<VictoryCard>().CardID;
                 switch (sp)
                 {
-
                     case 0:
 
                         Debug.Log("아이디 0이0가?");
@@ -411,14 +411,20 @@ public class CardEff_Result : MonoBehaviour {
         }
     }
     //카드의 이동이 완료했을때 실행되어야 할것
-    void OnCoinAnime(int amount)
+    void OnCoinAnime()
     {
-        //여기서 만약 특별한 기능이 있다면 잠시 대기 시켜야 한다.
+        OnCoinEvent(3);
 
+    }
+
+    void OnCoinEvent(int amount)
+    {
+        //스폰될 갯수 이다.
         CollectingEffectController._instance.CollectItem(amount);
+        //스폰될 갯수의 개당 value;
+        CollectingEffectController._instance.Amount = 100;
         AppUIEffect.instance.InstanceVFX(eEFFECT_NAME.GOLD);
         //코인애니메이션실행
-
     }
 
     IEnumerator CoReturnDefaultGold(float t)
@@ -436,12 +442,14 @@ public class CardEff_Result : MonoBehaviour {
         yield return new WaitForSeconds(1.6f);
         spec_Text.gameObject.SetActive(false);
     }
+
     IEnumerator ChangeSecne(float t)
     {
         //만약 터치가 있다면 더 빨리 체인지 시킨다.
         yield return new WaitForSeconds(t);
         SceneManager.LoadScene("2_Main_Scene");
     }
+
     void DefectCardStart()
     {
         AppSound.instance.SE_CARD_DEFECTSHOOT.Play();

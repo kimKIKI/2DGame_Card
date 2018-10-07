@@ -5,9 +5,13 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 
+
+
+
 public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, IEndDragHandler, IEventSystemHandler, IPointerUpHandler, IPointerClickHandler
 {
-    
+
+   
     public RectTransform[] panelRECT;       // 컨트롤할 패널OBJ을 저장한다.
     public RectTransform[] bottomPanelRect; //메뉴의 하단 버튼
    
@@ -27,11 +31,15 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
     Vector3 v3movePanel;
     Vector3 fromScale;                    //UI bottom의 뒤배경 그라운드 크기 조절
     public bool bIsMoveing = false;       //현재 이동중일때 새로운 좌표가 설정되면 안된다.
-    bool bIsRight = false;                //left 와 right에 따라 move의 부호가 달라짐.주의
+    bool bIsRight          = false;       //left 와 right에 따라 move의 부호가 달라짐.주의
 
-    int curPanel = 0;                     //처음 시작 패널의 값을 저장한다.
-    int afterPanel = 0;                   //새로울 패널을 전달 받았을때 이동하기 위해서 
-    float initY = -860;
+    int curPanel           = 0;           //처음 시작 패널의 값을 저장한다.
+    int afterPanel         = 0;           //새로울 패널을 전달 받았을때 이동하기 위해서 
+    float initY            = -860;
+
+    public static bool isVertical        = false;       //외부에서 ViewScroll을 컨트롤할수 있게하기 위해서사용
+    //public static MainScrollView instance;
+
     struct PanelNUM
     {  //PanelRect로 드레그된 정보를 컨트롤할수 있게 구조체배열로 저장한다.
        public int    index;
@@ -42,22 +50,21 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
        public float  posY;
        public float  curPosY;
        public bool   bIsActive;          //현재 작업중인지 판단.
-       
     } 
+
 
     private void Awake()
     {
-
         //Debug발생으로 처리한 코드부분 만약 한칸 건너서 없은곳 보일때 다시수정필요
         // StartCoroutine(coReConFirm());
-
         //DontDestroyOnLoad(this.gameObject);
 
+        //MainScrollView.instance = this;
         iPanelNum = panelRECT.Length;
-        stPanels = new PanelNUM[iPanelNum];
-        scRect1 = panelRECT[0].GetComponent<ScrollRect>();
-        scRect2 = panelRECT[1].GetComponent<ScrollRect>();
-        scRect3 = panelRECT[2].GetComponent<ScrollRect>();
+        stPanels  = new PanelNUM[iPanelNum];
+        scRect1   = panelRECT[0].GetComponent<ScrollRect>();
+        scRect2   = panelRECT[1].GetComponent<ScrollRect>();
+        scRect3   = panelRECT[2].GetComponent<ScrollRect>();
         InitPanel();//처음시작시 panelRect 오브젝트의 정보를 panel구조체에 저장한다.
     }
 
@@ -66,17 +73,45 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
         gr = mainCanvas.GetComponent<GraphicRaycaster>();
         //그래픽레이캐스터에서의 마우스 포인터 위치를 나타낸다.
         ped = new PointerEventData(null);
-
-        Debug.Log("MainScrollView :  start");
+        //화면 고정 스트롤을 해제하는 이벤트
+        StrollVertical.stopMoveTrue += PanelReTrue; //false바꿈
+        
+       //시작시 이전의 패널로 돌아간다.ㅡ
+       SetPanel();
     }
+
+   
 
     private void OnEnable()
     {
         StrollVertical.eveVerticalMove += PanelMove;
+        UnityCard.evReScroll           += PanelReTrue;
+       
     }
     private void OnDisable()
     {
         StrollVertical.eveVerticalMove -= PanelMove;
+        UnityCard.evReScroll           -= PanelReTrue;
+       
+    }
+    //씬이 전환후 이전의 panel 을 나타내기 위해서 버튼에 있는메소드적용
+    void SetPanel()
+    {
+        int curItem = GameData.Instance.PanelItem;
+        PanelMove();
+        switch (curItem)
+        {
+            case 1:
+                SetCurPanelID_1();
+                break;
+            case 2:
+                SetCurPanelID_2();
+                break;
+            case 3:
+                SetCurPanelID_3();
+                break;
+
+        }
     }
 
     public void RightMove()
@@ -150,6 +185,21 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
         }
     }
 
+    //선택중일때 화면을 고정시키기 위해서 사용
+    public void PanelStop()
+    {
+        scRect2.vertical = false;
+        //StrollVertiacl에 전달하기 위해서 
+        GameData.Instance.isStopScroview = true;
+    }
+
+    public void PanelReTrue()
+    {
+        scRect2.vertical = true;
+        GameData.Instance.isStopScroview = false;
+      
+    }
+
     public void PanelMove()
     {
         //panelItem의 Id를 얻어서 이동시킬 좌표를 구한다. endx좌표
@@ -157,11 +207,8 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
         //after 
         int width = 1080;
         int hight = 1920;
-      
         int curID = GameData.Instance.PanelItem;
-        // panelRECT[]
-
-
+      
         switch (curID)
         {
             case 0:
@@ -171,36 +218,38 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
               
                 v3movePanel = new Vector3((width - width * 0.5f) * -1, 0, 0);
                 //content 의 y값 초기값이  -1000
-
+                SetCurPanelID_1();
                 break;
             case 2:
                 
                 //v3movePanel = new Vector3((width * 2 - width * 0.5f) * -1, hight * 0.5f, 0);
                 v3movePanel = new Vector3((width * 2 - width * 0.5f) * -1, 0, 0);
-               
 
+                SetCurPanelID_2();
                 break;
             case 3:
                
                 //content[2].transform.localPosition = new Vector3(0, -1000, 0);
                 v3movePanel = new Vector3((width * 3 - width * 0.5f) * -1, 0, 0);
-          
+                SetCurPanelID_3();
 
                 break;
             case 4:
                 v3movePanel = new Vector3((width * 4 - width * 0.5f) * -1, 0, 0);
+                SetCurPanelID_4();
                 break;
         }
-        Debug.Log("gameObject Name" + this.gameObject.name);
+       
        
             iTween.MoveTo(gameObject, iTween.Hash("islocal",true,
                                                   "position", v3movePanel,
                                                   "oncomplete", "afterChange",
                                                   "easetype", "easeOutQuart",
                                                   "time", .7f));
-        Debug.Log("v3movePanel :" + v3movePanel);
-        Debug.Log("curId:" + curID);
+       
     }
+
+
 
     void InitPanel()
     {
@@ -238,6 +287,7 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
         }
     }
 
+   
 
     void ScaleButton(Vector2 size)
     {
@@ -332,6 +382,12 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
                                                             "easetype", "easeOutQuart",
                                                             "time", .7f));
         }
+    }
+
+    //터치로 패널이동시 하단의 툴바에서 버튼이동표현을 한다.
+    void SetCurPaneMoveTouch()
+    {
+
     }
 
     void afterChange()

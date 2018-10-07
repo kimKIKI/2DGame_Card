@@ -29,7 +29,8 @@ public class CollectingAnimation : MonoBehaviour {
 	// Flag telling if animation is running or not for this item
 	[HideInInspector]
 	public bool _animationRunning = false;
-
+    //코인개당 증가할 value;
+    public int Amount = 1;
 	// Reference to the collecting Effect Controller
 	private CollectingEffectController _collectinEffectController;
 	// 상단아이콘표시위치
@@ -42,7 +43,7 @@ public class CollectingAnimation : MonoBehaviour {
     private EXPANSION_MODE _expansionMode;
 
     // destination :collection좌표,parent
-    public void Initialize(Transform destination, Transform parent, Vector3 localPosition, Vector3 localScale, PLAY_SOUND_MODE playSoundMode, EXPANSION_MODE expansionMode, CollectingEffectController collectingEffectController)
+    public void Initialize(Transform destination, Transform parent, Vector3 localPosition, Vector3 localScale, PLAY_SOUND_MODE playSoundMode, EXPANSION_MODE expansionMode,int amount, CollectingEffectController collectingEffectController)
     {
 		_itemDisplayerTransform = destination;
 		_itemDisplayer = _itemDisplayerTransform.GetComponent<ItemDisplayer> ();
@@ -53,6 +54,7 @@ public class CollectingAnimation : MonoBehaviour {
 		_playSoundMode = playSoundMode;
         _expansionMode = expansionMode;
         _collectinEffectController = collectingEffectController;
+        Amount = amount;
 	}
 
 	// Anime의 시작
@@ -113,7 +115,8 @@ public class CollectingAnimation : MonoBehaviour {
 		}
 
 		//인스턴스 리스트에 넣고 이미지를 세팅한다.
-		_itemDisplayer.AddItem (1);
+        // 코인하나당 증가할 value 가 된다.
+		_itemDisplayer.AddItem (Amount);
 		_animationRunning = false;
 		// Hide this item until next reuse
 		_image.enabled = false;

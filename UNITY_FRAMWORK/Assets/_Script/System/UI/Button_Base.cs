@@ -92,6 +92,7 @@ public class Button_Base : MonoBehaviour {
     //스스로 변경되게 델리게이트 이벤트의 이벤트 시스템이용
     void CheckAmount()
     {
+        Debug.Log("여기 NorMarke 의 eventManager은 작동회고 있는 거야");
         curhasGold = GameData.Instance.players[1].coin;
         //Debug.Log("costGold :"+costGold + "- curhasGold :"+curhasGold);
         if (CurhasGold < costGold)

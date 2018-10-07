@@ -10,6 +10,12 @@ public class UI_Icon : MonoBehaviour {
     public RectTransform icon;
     public int PanelItem;            //4개의 항목, gameScene,MarketScene,Button_CardScene,Button_E,
 
+
+    private void OnEnable()
+    {
+        //UnityCard.evReScroll += PanelReTrue;
+    }
+     
     public void SetActivateShowA()
     {
         hideImageLeft.SetActive(true);

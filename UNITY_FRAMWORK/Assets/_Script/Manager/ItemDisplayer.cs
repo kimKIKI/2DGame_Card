@@ -14,8 +14,8 @@ public class ItemDisplayer : MonoBehaviour {
 
     // 현재 아이템의 양
 
-    public delegate void GoldCallBack();
-    public static event GoldCallBack goldEvent;
+    public delegate void    GoldCallBack();
+    public static   event   GoldCallBack     goldEvent;
     
 
     int curhasGold;       
@@ -38,7 +38,7 @@ public class ItemDisplayer : MonoBehaviour {
     private void Start()
     {
         instance_ItemDisplayer = this;
-        //EventManager.Instance.AddListener(EVENT_TYPE.GOLD_CHANGE, OnEvent);
+        EventManager.Instance.AddListener(EVENT_TYPE.GOLD_CHANGE, OnEvent);
         init();
     }
 
@@ -49,7 +49,7 @@ public class ItemDisplayer : MonoBehaviour {
         _itemDisplay.text = curhasGold.ToString();
     }
 
-    // 추가될 아이템의 양
+    // 추가될 아이템의 양 증가되는양
     public void AddItem(int quantity)
     {
         curhasGold += quantity;
@@ -62,15 +62,14 @@ public class ItemDisplayer : MonoBehaviour {
     public void Item_Anim(int quantity)
     {
         iTween.ValueTo(gameObject, iTween.Hash("from", curhasGold, "to", curhasGold - quantity, "time", .6, "onUpdate", "UpdateGoldDisplay", "oncompletetarget", gameObject));
-        curhasGold -= quantity;
+        curhasGold += quantity;
     }
 
     //-----TODO:개별적으로 작동하게 함
     void UpdateGoldDisplay(int curGold)
     {
         _itemDisplay.text = curhasGold.ToString();
-
-      
+        GameData.Instance.players[playerIndex].coin = curhasGold;
     }
 
 
@@ -94,7 +93,6 @@ public class ItemDisplayer : MonoBehaviour {
 
     void OnGoldChange(Component purchaseCard, int gold)
     {
-        if (this.GetInstanceID() != purchaseCard.GetInstanceID()) return;
 
         //골드 금액이 달라질때마다 호출을 한다.
         if (goldEvent != null)
@@ -102,6 +100,8 @@ public class ItemDisplayer : MonoBehaviour {
             goldEvent();
             GameData.Instance.GoldAmount = curhasGold;
         }
+
+        //if (this.GetInstanceID() != purchaseCard.GetInstanceID()) return;
     }
 
    
