@@ -236,14 +236,9 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
                                 }
 
                             }
-                           
-
                         }
                     });
-                }
-
-
-        
+                } 
     }
 
    
@@ -258,11 +253,23 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
             localScale = arrow.transform.localScale;
         }
         rt = gameObject.GetComponent<RectTransform>();
-        //StartCoroutine(TEST());
-        //Debug.Log("초기 시작 itemsample : GetID = " + gameObject.GetInstanceID());
       
     }
 
+    void OnEnable()
+    {
+        //StartCoroutine(TEST());
+        //Debug.Log("초기 시작 itemsample : GetID = " + gameObject.GetInstanceID());
+        CanvasForm.eveLevelUp += ReSeting;
+        //CanvasForm.collLeveUp += LevelUp;
+        ReSeting();
+    }
+
+    void OnDisable()
+    {
+        CanvasForm.eveLevelUp -= ReSeting;
+       // CanvasForm.collLeveUp -= LevelUp;
+    }
     
     //이벤트메니저에 등록되는 시점
     public void EventListenrStart()
@@ -278,10 +285,14 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
         //고유ID를 확인한다
         //전달 받은 ID 가 불분명하다 .  UnityData[0].Id 인지
         // UnityData[index] 인지 명확하지 않다.
-        string cardName = GameData.Instance.UnityDatas[ID-1].Name;
-        elixerNum.text  = GameData.Instance.UnityDatas[ID-1].Elixir.ToString();
-        mainICon.sprite = SpriteManager.GetSpriteByName("Sprite", cardName);
-        iconName.text   = cardName;
+        if (ID >= 1)
+        {
+            string cardName = GameData.Instance.UnityDatas[ID - 1].Name;
+            elixerNum.text = GameData.Instance.UnityDatas[ID - 1].Elixir.ToString();
+            mainICon.sprite = SpriteManager.GetSpriteByName("Sprite", cardName);
+            iconName.text = cardName;
+        }
+       
         //스트롤이 가능하게 한다.
         evReScroll();
 
@@ -293,21 +304,21 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
         }
        
        
-        //                                    UnityData[0].Id 
+        //                           UnityData[0].Id 
         if (GameData.Instance.hasCard.ContainsKey(ID))
         {   //가지고 있는 카드의 tatal value
             int  hasCards       = GameData.Instance.hasCard[ID].hasCard;
             //현재 카드가 레벨업된value 
             int  level          = GameData.Instance.hasCard[ID].level;
             //현재까지의 레벨로 총카드숫자로 변환
-            int curLevel        = GameData.Instance.Level[level];
+            int curLevel        = GameData.Instance.Level[level-1];
             //업데이트하고 남은 카드의 value
             int remainCards     = LevelUpRemain(ID);
             //next level의 전체 카드 value 
-            int nextRemainCards = GameData.Instance.Level[level + 1];
+            int nextRemainCards = GameData.Instance.Level[level];
             //현재레벨에서 다음레벨까지  필요한 카드의 value
             int curRemainCards  = nextRemainCards - curLevel;
-
+          
             ownCards.text = string.Format("{0} / {1}", remainCards, nextRemainCards);
             LevelNum.text = string.Format("레벨 : {0} ", level);
             Slider();
@@ -315,7 +326,8 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
             //다음 레벨에  업글가능한 카드가 존재할때
             if (remainCards >= curRemainCards)
             {
-                //업그레이드를 유도하는 애니이펙트 실행 화살표 움직임
+               
+               
             }
         }
     }
@@ -328,8 +340,7 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
     }
 
 
-
-     //최종 선택되었을때 이동하기 위해서 GameData에 저장한다.
+    //최종 선택되었을때 이동하기 위해서 GameData에 저장한다.
     public void SendSwitchCard()
     { //ID와 어떤차이가 있는지?확인필요
         GameData.Instance.fromSwitchId   = ID; 
@@ -340,18 +351,18 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
     {
         if (GameData.Instance.isSwitch)
         {
-                int toindex   = GameData.Instance.fromSwitchSlot; //670  -- id  2
-                int fromIndex = SlotIndex; //0  현재 오브젝트의 인덱스 id  0,1,2,3 이될수 있다.
+                int toindex      = GameData.Instance.fromSwitchSlot; //670  -- id  2
+                int fromIndex    = SlotIndex; //0  현재 오브젝트의 인덱스 id  0,1,2,3 이될수 있다.
 
                 if (fromIndex >= 4)
                 {
-                   fromIndex = fromIndex / 4;
+                   fromIndex      = fromIndex / 4;
                 }
 
-                int width    = 260;
-                int height   = 450;
-                int paddingX = 10;
-                int paddingY = 10;
+                int width         = 260;
+                int height        = 450;
+                int paddingX      = 10;
+                int paddingY      = 10;
       
                 float rectTopY    = -730f;   //slot Y 
                 float rectTSlotY  = -2211f;  //Panel_Button + ItemSlot Y
@@ -449,7 +460,11 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
 
         }
     }
-
+    //레벨업을 갱신할때 사용하기 위한 메소드
+    void LevelUp()
+    {
+       ID =  GameData.Instance.hasCard[ID].level;
+    }
     //카드의 정렬이바뀌었을때위치가 이동하게 한다.
     public void MoveSelectPanel()
     {
@@ -513,7 +528,7 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
         //업데이트하고 남은 카드의 value
         int remainCards = LevelUpRemain(ID);
         //next level의 전체 카드 value 
-        int nextRemainCards = GameData.Instance.Level[level + 1];
+        int nextRemainCards = GameData.Instance.Level[level];
         //value 카드단위당 증가할 vale설정 백분율
         float uni = 1f / nextRemainCards;
         //최대값이 1이므로 1실수율로 변환
@@ -527,7 +542,7 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
        
         int remain           = LevelUpRemain(ID);
         int level            = GameData.Instance.hasCard[ID].level;
-        int nextRemainCards  = GameData.Instance.Level[level + 1];
+        int nextRemainCards  = GameData.Instance.Level[level];
 
         if (nextRemainCards < remain)
         {
@@ -547,7 +562,7 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
         //레벨에 따른 카드의 수량배열
         int curLevel;
 
-        for (int i = 1; i <= level; ++i)
+        for (int i = 0; i < level; ++i)
         {
             curLevel = GameData.Instance.Level[i];
             hasCards -= curLevel;

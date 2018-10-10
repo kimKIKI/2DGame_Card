@@ -3,26 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CanvasForm : Singleton<CanvasForm>
+public class CanvasForm : MonoBehaviour
 {
-            Text     ownCards;       //레벨업 될때까지 남은 카드의 숫자를 표시 한다.
-            Image    mainICon;      //메인이미지
-            Image    exitImg;       //UpdateShow에서 쇼가끝나고 클릭이 가능하게해서 빠져나가게한다.
-            Slider   slider;       //카드의 숫자를 받아 바 크기를 나타내 준다.
-            Text     cost;           //판매될 금액
-            Text     LevelCount;     //카드의 다음 증가량을 보여준다. 
+            public static CanvasForm Instance;
+            Text     ownCards;         //레벨업 될때까지 남은 카드의 숫자를 표시 한다.
+            Image    mainICon;         //메인이미지
+            Image    exitImg;          //UpdateShow에서 쇼가끝나고 클릭이 가능하게해서 빠져나가게한다.
+            Slider   slider;           //카드의 숫자를 받아 바 크기를 나타내 준다.
+            Text     cost;             //판매될 금액
+            Text     LevelCount;       //카드의 다음 증가량을 보여준다. 
             Text     name;
-            Transform buttonE;    //UpdateShow가 끝나고 보여질 문구를 위해서 잠시커둘버튼
-            int Count;            //count를 위해서 설정
-            int CountCards;       //Cards의 증가량 설정
-            int nextCardAmount;
-            float CountSlider;    //증가될 수치
-            float CountEa;        //계산된 증가량
-            float toFullCount;    //그래프에서 증가될 총한계
-            int remainCards;      //남은 카드량
-            int nextRemainCards;  //다음레벨의 업그레이드 카드량
-            int resultCard;       //남은 카드량에서 업그레이드된 카드를 뺀값
-            int ID;               //입력받은 id
+            Transform buttonE;         //UpdateShow가 끝나고 보여질 문구를 위해서 잠시커둘버튼
+            int      Count;            //count를 위해서 설정
+            int      CountCards;       //Cards의 증가량 설정
+            int      nextCardAmount;
+            float    CountSlider;      //증가될 수치
+            float    CountEa;          //계산된 증가량
+            float    toFullCount;      //그래프에서 증가될 총한계
+            int      remainCards;      //남은 카드량
+            int      nextRemainCards;  //다음레벨의 업그레이드 카드량
+            int      resultCard;       //남은 카드량에서 업그레이드된 카드를 뺀값
+            int      ID;               //입력받은 id
           
             public GameObject purchaseBox; //구매확인
             public GameObject updateBox;   //구매
@@ -31,6 +32,7 @@ public class CanvasForm : Singleton<CanvasForm>
             //-------------외부접근------------------
             [HideInInspector]
             public bool IsTop;            //tab 의 탭안의 카드가 업데이트 될때
+                                          //현재의 카드의 타입을 직접 선택하는 것으로바꿈
            //--------------------------------------------
               [HideInInspector]
             public GameObject frontObj;    //레벨업을 표시해주기 우해서front받음
@@ -42,13 +44,18 @@ public class CanvasForm : Singleton<CanvasForm>
             Button purchaseCloseBtn;       //코인결제 버튼
             public UnityCard card;
             bool   isOne;
+            bool   isPurchase;             //구매가 이루어 졌는지 판단
            
             int    nextUpGold;              //레벨업에 필요한 골드량
             GameObject SaleObj;             //여기서 호출한 곳의 메소드를 실행시키기 위해서 설정
-            
-            protected override void Awake()
+            public   delegate  void  collBackLeveUp(); //레벨업이나 구매가 이루어 졌을때다른카드를업데이트한다.
+            public   static event    collBackLeveUp  eveLevelUp; //Resting()
+            //public   static event    collBackLeveUp  collLeveUp; //LevelUp() UnityCard 의 Lavel만 업
+
+            void Awake()
             {
-                base.Awake();
+                Instance = this;
+               // base.Awake();
                 //purchaseBox 에 붙어 있는 updatebox을 열기위한 버튼임
                 updateBoxBtn = updateBox.GetComponentInChildren<Button>();
                 updateBoxBtn.onClick.AddListener(delegate
@@ -59,16 +66,16 @@ public class CanvasForm : Singleton<CanvasForm>
                         //활성화 되면 자동으로 애니실행
                         updateShow.SetActive(true);
                         updateBox.SetActive(false);
-                      
-                        //ItemSampleTop일때 인수 셋이 들어 가야 한다.
-                        if (IsTop)
+                       
+                       
+                        //ItemSampleTop의 타입을 직접 확인
+                        if (card.eCardType == CARDOBJTYPE.TabSlotCard)
                         {
                             SetUpdateShowOne(ID, card.gameObject, updateShow);
-                            Debug.Log("IsTop 인수셋실행");
+                           
                         }
                         else
                         {
-                            Debug.Log(" 인수넷 실행");
                             SetUpdateShow(ID, card.gameObject, frontObj, updateShow);
                         }
                         
@@ -83,17 +90,12 @@ public class CanvasForm : Singleton<CanvasForm>
                 UpdateShowCloseBtn = updateShow.transform.Find("Button_Close").GetComponent<Button>();
                 UpdateShowCloseBtn.onClick.AddListener(delegate
                 {
-                  
                         updateShow.SetActive(false);
                         GameData.Instance.isStopScroview = false;
                         GameData.Instance.IsShowCard     = false;
                         //TODO: 여기서 활성화된 backCard를 다시 하이드 해줘야 한다.
-
-                       
                         //card.GetComponent<UnityCard>().transform.Find("Panel").gameObject.SetActive(false);
                         //가격전달 메소드
-                   
-                   
                 });
 
                 puchaseBtn = purchaseBox.transform.Find("Button").GetComponent<Button>();
@@ -104,13 +106,20 @@ public class CanvasForm : Singleton<CanvasForm>
 
                     SaleObj.GetComponent<DailySale>().PurchaseSend();
                     SaleObj.GetComponent<DailySale>().OnClick();
-                    
+                    isPurchase = true;
+
+                    eveLevelUp();
+
                 });
 
                 purchaseCloseBtn = purchaseBox.transform.Find("Button_Close").GetComponent<Button>();
                 purchaseCloseBtn.onClick.AddListener(delegate
                  {
-                     SaleObj.GetComponent<DailySale>().PurchaseEnd();
+                     if (isPurchase)
+                     {
+                         SaleObj.GetComponent<DailySale>().PurchaseEnd();
+                         isPurchase = false;
+                     }
                      purchaseBox.SetActive(false);
                  });
                }
@@ -139,11 +148,11 @@ public class CanvasForm : Singleton<CanvasForm>
                         //현재 카드가 레벨업된value 
                         int level           = GameData.Instance.hasCard[ID].level;
                         //현재까지의 레벨로 총카드숫자로 변환
-                        int curLevel        = GameData.Instance.Level[level];
+                        int curLevel        = GameData.Instance.Level[level-1];
                         //업데이트하고 남은 카드의 value
                         int remainCards     = LevelUpRemain(ID);
                         //next level의 전체 카드 value 
-                        int nextRemainCards = GameData.Instance.Level[level + 1];
+                        int nextRemainCards = GameData.Instance.Level[level];
                         //현재레벨에서 다음레벨까지  필요한 카드의 value
                         int curRemainCards  = nextRemainCards - curLevel;
 
@@ -200,11 +209,11 @@ public class CanvasForm : Singleton<CanvasForm>
                             //현재 카드가 레벨업된value 
                             int level           = GameData.Instance.hasCard[ID].level;
                             //현재까지의 레벨로 총카드숫자로 변환
-                            int curLevel        = GameData.Instance.Level[level];
+                            int curLevel        = GameData.Instance.Level[level-1];
                             //업데이트하고 남은 카드의 value
                             int remainCards     = LevelUpRemain(ID);
                             //next level의 전체 카드 value 
-                            int nextRemainCards = GameData.Instance.Level[level+1];
+                            int nextRemainCards = GameData.Instance.Level[level];
                             nextUpGold          = GameData.Instance.LevelCost[level - 1];
                             //현재레벨에서 다음레벨까지  필요한 카드의 value
                            int curRemainCards = nextRemainCards - curLevel;
@@ -248,7 +257,7 @@ public class CanvasForm : Singleton<CanvasForm>
                 //레벨에 따른 카드의 수량배열
                 int curLevel;
       
-                for (int i = 1; i <= level; ++i)
+                for (int i = 0; i < level; ++i)
                 {
                     curLevel  = GameData.Instance.Level[i];
                     hasCards -= curLevel;
@@ -263,12 +272,8 @@ public class CanvasForm : Singleton<CanvasForm>
                 
                 ID               = id;
                 card             = obj.GetComponent<UnityCard>();
-
-            
                UnityCard frontO = front.GetComponent<UnityCard>();
               
-              
-
                 LevelCount       = form.transform.Find("tx_LevelCount").GetComponentInChildren<Text>();
                 ownCards         = form.transform.Find("tx_Amount").GetComponentInChildren<Text>();
                 mainICon         = form.transform.Find("Icon").GetComponentInChildren<Image>();
@@ -280,16 +285,16 @@ public class CanvasForm : Singleton<CanvasForm>
 
             if (GameData.Instance.hasCard.ContainsKey(ID))
             {   //가지고 있는 카드의 tatal value
-                    int hasCards = GameData.Instance.hasCard[ID].hasCard;
+                    int hasCards      = GameData.Instance.hasCard[ID].hasCard;
                     //현재 카드가 레벨업된value 
-                    int level    = GameData.Instance.hasCard[ID].level;
+                    int level          = GameData.Instance.hasCard[ID].level;
                     //현재까지의 레벨로 총카드숫자로 변환
-                    int curLevel       = GameData.Instance.Level[level];
+                    int curLevel       = GameData.Instance.Level[level-1];
                     //업데이트하고 남은 카드의 value
                     remainCards        = hasCards - curLevel;
                     //next level의 전체 카드 value 
-                    nextRemainCards    = GameData.Instance.Level[level + 1];
-                    nextUpGold        = GameData.Instance.LevelCost[level - 1];
+                    nextRemainCards    = GameData.Instance.Level[level];
+                    nextUpGold         = GameData.Instance.LevelCost[level - 1];
                     //현재레벨에서 다음레벨까지  필요한 카드의 value
                     int curRemainCards = nextRemainCards - curLevel;
 
@@ -328,6 +333,8 @@ public class CanvasForm : Singleton<CanvasForm>
                     card.LevelNum.text    = string.Format(" 레벨 {0}", levelUp);
                     frontO.LevelNum.text  = string.Format(" 레벨 {0}", levelUp);
                     GameData.Instance.hasCard[ID].level = levelUp;
+                    //collLeveUp();
+                    eveLevelUp();
                     card.ReSeting();
                     frontO.ReSeting();
                   }
@@ -357,11 +364,11 @@ public class CanvasForm : Singleton<CanvasForm>
             //현재 카드가 레벨업된value 
             int level = GameData.Instance.hasCard[ID].level;
             //현재까지의 레벨로 총카드숫자로 변환
-            int curLevel = GameData.Instance.Level[level];
+            int curLevel = GameData.Instance.Level[level-1];
             //업데이트하고 남은 카드의 value
-            remainCards = hasCards - curLevel;
+            remainCards = LevelUpRemain(ID);
             //next level의 전체 카드 value 
-            nextRemainCards = GameData.Instance.Level[level + 1];
+            nextRemainCards = GameData.Instance.Level[level];
             nextUpGold = GameData.Instance.LevelCost[level - 1];
             //현재레벨에서 다음레벨까지  필요한 카드의 value
             int curRemainCards = nextRemainCards - curLevel;
@@ -399,24 +406,28 @@ public class CanvasForm : Singleton<CanvasForm>
         
             //GameData.Instance.hasCard[ID].hasCard
             card.LevelNum.text = string.Format(" 레벨 {0}", levelUp);
-           
-            GameData.Instance.hasCard[ID].level = levelUp;
-            card.ReSeting();
 
+            //레벨업 이벤트 필요
+            GameData.Instance.hasCard[ID].level = levelUp;
+           // collLeveUp();
+            eveLevelUp();
+            card.ReSeting();
+            //TODO: 아이디를 찾아서 바꿔주는 기능이 필요함
+            //어디에 존재하는가?Tab 여기서 이벤트 발생
             //여기 UnityCard.cs와 중복확률
             if (IsTop)
             {
                 card.updateBtn.gameObject.SetActive(false);
                 IsTop = false;
             }
-
         }
-
     }
 
-    IEnumerator LevelCountAnim()
+            IEnumerator LevelCountAnim()
             {
                 yield return new WaitForSeconds(1f);
+                //TODO:증가된 레벨을 GameData에 보낸다.그래야 다른UnityCard들도 같게 변경된다.
+
                 CountAnimeLevel();
                 //업데이트된 것을 카드에 전달해서 적용한다.
             }
@@ -431,8 +442,6 @@ public class CanvasForm : Singleton<CanvasForm>
                 iTween.ValueTo(gameObject, iTween.Hash("from", CountSlider, "to", 0, "time", 1, "onUpdate", "UpdateSliderDisplay", "oncompletetarget", gameObject));
                 CountSlider -= CountEa;
 
-               
-               
            }
 
             //중앙의 카드가 습득되는 애니 실행

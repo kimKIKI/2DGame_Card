@@ -798,9 +798,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
             days[i].ID          = GameData.Instance.dailys[i].ID;
             //TODO: Image                                      
             string name         = GameData.Instance.UnityDatas[days[i].ID -1].Name;
-
             days[i].priceCoin   = GameData.Instance.dailys[i].Gold;
-           
             days[i].priceJew    = GameData.Instance.dailys[i].Jew;
             days[i].ea          = GameData.Instance.dailys[i].EA;
             days[i].main.sprite = SpriteManager.GetSpriteByName("Sprite", name);
@@ -913,7 +911,6 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         //자기 자신의 버튼탭에 있는 UnityCard 이부분 tab에서 받아 오면 될듯
         chs = GameData.Instance.panelSlots;
 
-
         for (int i = 0; i < chs.Count; i++)
         {
             if (chs[i].ID == GameData.Instance.curSwitchCard)
@@ -972,7 +969,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     public void ReachSampleDestroy()
     {
         //이동이 완료후에는 false로 해줌
-        isSwitch = false;
+        isSwitch                   = false;
         GameData.Instance.isSwitch = false;
         //MoveSelect = null;
         Destroy(MoveSelect.gameObject);
@@ -1109,7 +1106,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     void UnFindCardSet()
     {
 
-        IList<int> hasId = new List<int>();
+        IList<int> hasId   = new List<int>();
         IList<int> datasId = new List<int>();
 
         //가지고 있는 카드의 리스트 
@@ -1124,7 +1121,6 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         for (int i = 0; i < GameData.Instance.infoCards; ++i)
         {                                          //0 ~15
             datasId.Add(GameData.Instance.UnityDatas[i].Id);
-          
         }
 
         for (int i = 0; i < GameData.Instance.infoCards; i++)

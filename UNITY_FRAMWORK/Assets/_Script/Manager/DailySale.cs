@@ -20,6 +20,7 @@ public class DailySale : MonoBehaviour {
     public Image main;       //메인아이콘 이미지
     public Text  dollar ;    //gold 가격
     public Text  LevelCount; //해당 카드의 업데이트까지의 숫자/전체숫자 *
+    public Text  TimeCount;  //시간 표시될때 보여줘야할 text
     public Text  itemNum;    //클릭시 습득될 카드숫자
    
     public float timeCost  ;  //시간별 줄어들 량
@@ -28,7 +29,7 @@ public class DailySale : MonoBehaviour {
     public Image arrow;       //화살표
     public Image icon;        //coinImage
     public Image imgTime;     //구매후 타임을 보여주기 위한 타이밍
-    public Image imgTimeFill; //구매후타임을 보여주기 위한 타
+    public Image imgTimeFill; //구매후타임을 보여주기 위한 타이머 이미지
     public Image btnImg;      //구매할수 없을때 색깔변경을 위해서 
     public GameObject set;    //구매됐을때 가려줘야할 부분들
            bool  isPurchase; //한번 구매했는지 판단
@@ -92,7 +93,6 @@ public class DailySale : MonoBehaviour {
     {
         set.SetActive(true);
         StartCoroutine(coLateSet());
-
         CheckAmount();
     }
 
@@ -113,7 +113,6 @@ public class DailySale : MonoBehaviour {
     void ReCollBackGold()
     {  //바뀐값을 콜백으로 GameData에서 부터 받도록한다.
         curhasGold = GameData.Instance.players[1].coin;
-      
         CheckAmount();
     }
 
@@ -139,6 +138,8 @@ public class DailySale : MonoBehaviour {
         itemNum.text    = string.Format("X {0}", ea);
         //이미지 세팅 
     }
+
+   
 
     public void PurchaseSend()
     {
@@ -215,10 +216,7 @@ public class DailySale : MonoBehaviour {
         //구매가 완료됐을때의 표시 
         //코인표시,갯수 표시 이미지 변경, 버튼 효과 false;
         charName.text    = string.Format("{0}", "구매완료");
-
         set.SetActive(false);
-       
-
         SetItemDelay();
     }
 
@@ -230,9 +228,9 @@ public class DailySale : MonoBehaviour {
         int level       = GameData.Instance.hasCard[ID].level;
 
         //next level의 전체 카드 value 
-        int nextRemainCards = GameData.Instance.Level[level + 1];
+        int nextRemainCards = GameData.Instance.Level[level];
         //현재까지의 레벨로 레벨에 필요한카드숫자로 변환 ex) 5 & 50
-        int curLevel = GameData.Instance.Level[level];
+        int curLevel = GameData.Instance.Level[level-1];
         //현재레벨에서 다음레벨까지  필요한 카드의 value
         int curRemainCards = nextRemainCards - curLevel;
        
@@ -254,7 +252,7 @@ public class DailySale : MonoBehaviour {
         //레벨에 따른 카드의 수량배열
         int curLevel;
 
-        for (int i = 1; i <= level; ++i)
+        for (int i = 0; i < level; ++i)
         {
             curLevel = GameData.Instance.Level[i];
             hasCards -= curLevel;
@@ -265,13 +263,15 @@ public class DailySale : MonoBehaviour {
 
     IEnumerator MatketTime(float t)
     {
-        //fillAmount 감소될량
-        float reUseTime            = 100f;
+        //fillAmount 감소될량 10번 호출된다.
+        TimeCount.gameObject.SetActive(true);
+        float reUseTime            = 10f;
         float amount               = 1 / reUseTime * t;
         int hours, minute, second;
-
-        while (reUseTime > 0)
+        int count = 0; 
+        while (reUseTime >= 0)
         {
+            count++;
             reUseTime              -= Time.deltaTime;
             imgTimeFill.fillAmount -= amount;
             float data              = imgTimeFill.fillAmount * 100; //소수2번째 자리 없애기 위해곱함
@@ -282,9 +282,15 @@ public class DailySale : MonoBehaviour {
             minute                  = dataInt % 3600 / 60;//분을 구하기위해서 입력되고 남은값에서 또 60을 나눈다.
             second                  = dataInt % 3600 % 60;//마지막 남은 시간
 
-            itemNum.text             = string.Format(" {0} : {1} : {2}", hours, minute, second);
-            yield return new WaitForSeconds(t);
+            TimeCount.text             = string.Format(" {0} : {1} : {2}", hours, minute, second);
 
+            if ( count >= reUseTime)
+            {
+                NewItem();
+              
+                break;
+            }
+            yield return new WaitForSeconds(t);
         }
     }
 
@@ -307,4 +313,24 @@ public class DailySale : MonoBehaviour {
         CheckAmount();
         if (this.GetInstanceID() != purchaseCard.GetInstanceID()) return;
     }
+
+    void NewItem()
+    {
+        charName.text = string.Format("{0}", "구매완료");
+        set.SetActive(true);
+        //현재 가지고있는카드중 하나를 랜덤하게 받는다.
+        int length = GameData.Instance.hasCard.Count;
+        int rnd = UnityEngine.Random.Range(0, length);
+        ID = GameData.Instance.hasCard[rnd].ID;
+        string name = GameData.Instance.UnityDatas[ID - 1].Name;
+        main.sprite = SpriteManager.GetSpriteByName("Sprite", name);
+        imgTimeFill.fillAmount = 1;
+        imgTime.gameObject.SetActive(false);
+        imgTimeFill.gameObject.SetActive(false);
+        TimeCount.gameObject.SetActive(false);
+
+    Slider(ID);
+    }
+
+   
 }

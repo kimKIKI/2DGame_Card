@@ -97,7 +97,7 @@ public class UI_TabControl : Singleton<UI_TabControl>
         //이동하기 전위치 
         selectCurBox = Vector3.zero;
 
-       
+        //tab 1,2,3
         slots1 = ImgBtn[0].gameObject.GetComponentsInChildren<UnitySlot>();
         slots2 = ImgBtn[1].gameObject.GetComponentsInChildren<UnitySlot>();
         slots3 = ImgBtn[2].gameObject.GetComponentsInChildren<UnitySlot>();
@@ -168,7 +168,7 @@ public class UI_TabControl : Singleton<UI_TabControl>
          
 
             int[] tempbtn      = new int[4];
-            IList<int> hasTemp = new List<int>();          //tob1의 카드를 빼기 위해서 임시로 생성
+            IList<int> hasTemp = new List<int>();          //tab의 카드를 빼기 위해서 임시로 생성
             int[] tem          = new int[4];               //확인필요 tab 당 원소는4 에 선택된 카드
                                 
             //현재 player가 가지고 있는 카드 리스트를 만든다.
@@ -235,13 +235,14 @@ public class UI_TabControl : Singleton<UI_TabControl>
                     //현재 카드가 레벨업된value 
                     int level = GameData.Instance.hasCard[ID].level;
                     //현재까지의 레벨로 총카드숫자로 변환
-                    int curLevel = GameData.Instance.Level[level];
+                    int curLevel = GameData.Instance.Level[level-1];
                     //업데이트하고 남은 카드의 value
-                    int remainCards = hasCards - curLevel;
+                    int remainCards = LevelUpRemain(ID);
+
                     //next level의 전체 카드 value 
-                    int nextRemainCards = GameData.Instance.Level[level + 1];
+                    int nextRemainCards = GameData.Instance.Level[level];
                     //현재레벨에서 다음레벨까지  필요한 카드의 value
-                    int curRemainCards = nextRemainCards - curLevel;
+                    int curRemainCards = nextRemainCards - curLevel;         
                     temp.GetComponent<UnityCard>().ownCards.text = string.Format("{0} / {1}", remainCards, nextRemainCards);
 
                     //다음 레벨에  업글가능한 카드가 존재할때
@@ -289,8 +290,12 @@ public class UI_TabControl : Singleton<UI_TabControl>
                     //이벤트를 메니저에 포스트를 등록한다.
                     sample1.GetComponent<UnityCard>().EventListenrStart();
                     sample1.GetComponent<UnityCard>().eCardType = CARDOBJTYPE.FrontSlotCard;
+                    sample1.GetComponent<UnityCard>().ID = hasTemp[i];
+                    sample1.GetComponent<UnityCard>().ReSeting();
                     sample2.GetComponent<UnityCard>().EventListenrStart();
                     sample2.GetComponent<UnityCard>().eCardType = CARDOBJTYPE.BackSloatCard;
+                    sample2.GetComponent<UnityCard>().ID = hasTemp[i];
+                    sample2.GetComponent<UnityCard>().ReSeting();
 
                     switch (btnPos)
                     {
@@ -366,13 +371,15 @@ public class UI_TabControl : Singleton<UI_TabControl>
                         //현재 카드가 레벨업된value 
                         int level = GameData.Instance.hasCard[ID].level;
                         //현재까지의 레벨로 총카드숫자로 변환
-                        int curLevel = GameData.Instance.Level[level];
+                        int curLevel = GameData.Instance.Level[level-1];
                         //업데이트하고 남은 카드의 value
-                        int remainCards = hasCards - curLevel;
+                      
+                        int remainCards = LevelUpRemain(ID);
                         //next level의 전체 카드 value 
-                        int nextRemainCards = GameData.Instance.Level[level + 1];
+                        int nextRemainCards = GameData.Instance.Level[level];
                         //현재레벨에서 다음레벨까지  필요한 카드의 value
                         int curRemainCards = nextRemainCards - curLevel;
+                       
                         sample1.GetComponent<UnityCard>().ownCards.text = string.Format("{0} / {1}", remainCards, nextRemainCards);
                         //세팅후 이벤트 메니저에 등록한다.
                        
@@ -445,6 +452,8 @@ public class UI_TabControl : Singleton<UI_TabControl>
 
         GameData.Instance.panelBackSlots = null;
         GameData.Instance.panelBackSlots = panelSwBtn[0].GetComponentsInChildren<UnityCard>();
+
+        tabPosition(1);
     }
 
     public void ButtonTab2()
@@ -476,6 +485,8 @@ public class UI_TabControl : Singleton<UI_TabControl>
         GameData.Instance.panelSlots     = panelBtn[1].GetComponentsInChildren<UnityCard>();
         GameData.Instance.panelBackSlots = null;
         GameData.Instance.panelBackSlots = panelSwBtn[1].GetComponentsInChildren<UnityCard>();
+
+        tabPosition(2);
     }
 
     public void ButtonTab3()
@@ -507,6 +518,8 @@ public class UI_TabControl : Singleton<UI_TabControl>
         GameData.Instance.panelSlots = panelBtn[2].GetComponentsInChildren<UnityCard>();
         GameData.Instance.panelBackSlots = null;
         GameData.Instance.panelBackSlots = panelSwBtn[2].GetComponentsInChildren<UnityCard>();
+
+        tabPosition(3);
     }
 
     void CurNextChange()
@@ -621,7 +634,23 @@ public class UI_TabControl : Singleton<UI_TabControl>
         StartCoroutine(ShowItem(0));
     }
 
-   
+    //현재레벨까지 없데이트된후 남은량
+    int LevelUpRemain(int ID)
+    {
+        //ID별 가지고 있는 카드량
+        int hasCards = GameData.Instance.hasCard[ID].hasCard;
+        //현재 카드가 레벨업된value 
+        int level   = GameData.Instance.hasCard[ID].level;
+        //레벨에 따른 카드의 수량배열
+        int curLevel;
+
+        for (int i = 0; i < level; ++i)
+        {
+            curLevel = GameData.Instance.Level[i];
+            hasCards -= curLevel;
+        }
+        return hasCards;
+    }
 
     //개별적으로 ButtonS를 찾아서 꺼주는 역할
     IEnumerator ShowItem(float t)
@@ -694,7 +723,7 @@ public class UI_TabControl : Singleton<UI_TabControl>
 
     public  void  HideAllUnChoice()
     {
-                int num = swSlots1.Count;
+               int num = swSlots1.Count;
               
                for (int i = 0; i < num; i++)
                 {
@@ -817,7 +846,16 @@ public class UI_TabControl : Singleton<UI_TabControl>
         }
     }
 
-
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("----.hasCard[9]-----" +
+                GameData.Instance.hasCard[9].level);
+            Debug.Log("----hasCard[1]-----" +
+               GameData.Instance.hasCard[1].level);
+        }
+    }
     private void OnDestroy()
     {
         StrollVertical.stopMoveTrue -= HideAllUnChoice;
