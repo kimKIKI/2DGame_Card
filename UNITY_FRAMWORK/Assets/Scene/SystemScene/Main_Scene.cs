@@ -247,6 +247,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
 
     void OnDestroy()
     {
+        CardEff_Open.eff      -= FadeOutA;
         StrollVertical.moveUp -= TurnOffPanelItem;
     }
 

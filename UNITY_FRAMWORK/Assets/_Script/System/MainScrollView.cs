@@ -84,16 +84,26 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
 
     private void OnEnable()
     {
+      
         StrollVertical.eveVerticalMove += PanelMove;
         UnityCard.evReScroll           += PanelReTrue;
        
     }
     private void OnDisable()
     {
+        StrollVertical.stopMoveTrue    -= PanelReTrue; //false바꿈
         StrollVertical.eveVerticalMove -= PanelMove;
         UnityCard.evReScroll           -= PanelReTrue;
        
     }
+
+    private void OnDestroy()
+    {
+        StrollVertical.stopMoveTrue    -= PanelReTrue; //false바꿈
+        StrollVertical.eveVerticalMove -= PanelMove;
+        UnityCard.evReScroll           -= PanelReTrue;
+    }
+
     //씬이 전환후 이전의 panel 을 나타내기 위해서 버튼에 있는메소드적용
     void SetPanel()
     {

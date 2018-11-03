@@ -19,9 +19,6 @@ public class SpriteAnim : MonoBehaviour {
     }
 
     //스프라이트 이미지를 켜고 끌수 있게 한다.
-
-
-
     public void TurenOFf()
     {
         switch (eAtk)

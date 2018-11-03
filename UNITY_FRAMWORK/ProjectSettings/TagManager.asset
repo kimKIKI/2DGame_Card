@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - UI
+  - player
   layers:
   - Default
   - TransparentFX
@@ -14,24 +15,24 @@ TagManager:
   - UI
   - 
   - 
-  - UI_EFF
   - 
   - 
   - 
+  - UI_EFF_CombatHi
+  - 
+  - Combat
   - 
   - 
   - 
+  - UI_EFF_Hi
   - 
   - 
+  - UI_Card
+  - 
+  - UI_EFF_Low
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - UI_Ground
   - 
   - 
   - 
@@ -48,6 +49,18 @@ TagManager:
   - name: UIMiddle
     uniqueID: 4267410123
     locked: 0
-  - name: UI_EFF
+  - name: UI_EFF_Low
     uniqueID: 2466465825
+    locked: 0
+  - name: UI_Card
+    uniqueID: 1871665295
+    locked: 0
+  - name: 
+    uniqueID: 2662533881
+    locked: 0
+  - name: UI_EFF_Hi
+    uniqueID: 677510201
+    locked: 0
+  - name: UI_Combat
+    uniqueID: 2152551999
     locked: 0

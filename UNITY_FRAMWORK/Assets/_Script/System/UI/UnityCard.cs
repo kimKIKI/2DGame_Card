@@ -232,7 +232,6 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
                                     CanvasForm.Instance.IsTop = true;
                                     updateBtn.gameObject.SetActive(true);
                                     IsOpenbutton = true;
-
                                 }
 
                             }
@@ -260,15 +259,20 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
     {
         //StartCoroutine(TEST());
         //Debug.Log("초기 시작 itemsample : GetID = " + gameObject.GetInstanceID());
-        CanvasForm.eveLevelUp += ReSeting;
+        CanvasForm.eveLevelUp += ReSetting;
         //CanvasForm.collLeveUp += LevelUp;
-        ReSeting();
+        ReSetting();
     }
 
     void OnDisable()
     {
-        CanvasForm.eveLevelUp -= ReSeting;
+        CanvasForm.eveLevelUp -= ReSetting;
        // CanvasForm.collLeveUp -= LevelUp;
+    }
+
+    void OnDestroy()
+    {
+        CanvasForm.eveLevelUp -= ReSetting;
     }
     
     //이벤트메니저에 등록되는 시점
@@ -280,7 +284,7 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
         //Debug.Log("unityCard(clone) :" +wonID);
     }
     //move로 슬롯이 변경되고 다시 세팅될때 호출된는 메소드
-    public void ReSeting()
+    public void ReSetting()
     {
         //고유ID를 확인한다
         //전달 받은 ID 가 불분명하다 .  UnityData[0].Id 인지
@@ -288,13 +292,15 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
         if (ID >= 1)
         {
             string cardName = GameData.Instance.UnityDatas[ID - 1].Name;
-            elixerNum.text = GameData.Instance.UnityDatas[ID - 1].Elixir.ToString();
+            elixerNum.text  = GameData.Instance.UnityDatas[ID - 1].Elixir.ToString();
             mainICon.sprite = SpriteManager.GetSpriteByName("Sprite", cardName);
-            iconName.text = cardName;
+            iconName.text   = cardName;
         }
        
         //스트롤이 가능하게 한다.
-        evReScroll();
+        //ERROR 발생부분-----------------
+         //evReScroll();
+        //-------------------------------
 
         if (eCardType == CARDOBJTYPE.TabSlotCard)
         {
@@ -431,7 +437,7 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
     {
         //자동으로 엘릭서가 세팅되게 한다
        ID = GameData.Instance.fromSwitchId;
-       ReSeting();
+       ReSetting();
        rt.anchoredPosition = new Vector2(0, 0);
     }
 

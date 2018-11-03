@@ -11,8 +11,8 @@ public class AutoSave : MonoBehaviour {
     {
         EsSaveDataManager em = manager.GetComponent<EsSaveDataManager>();
 
-        ES2.Save(em.Gold, "Gold");
-        ES2.Save(em.Jew, "Jew");
+        //ES2.Save(em.Gold, "Gold");
+        //ES2.Save(em.Jew, "Jew");
 
     }
 }

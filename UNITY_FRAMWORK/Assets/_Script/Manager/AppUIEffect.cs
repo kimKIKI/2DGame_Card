@@ -14,6 +14,7 @@ public enum eEFFECT_NAME
     JEW,
     EXPERIENCE,   //경험치
     Destroy_Card, //카드가 사라질때 나오는 이펙트
+    BULLET,       //bullet
 }
 
 public class AppUIEffect : MonoBehaviour {
@@ -86,7 +87,7 @@ public class AppUIEffect : MonoBehaviour {
             {
                 effObj = Instantiate(effs[i]);
                 effObj.SetActive(true);
-                //복제되늩 이펙트는 활성화후 파괴된다.
+                //복제되는 이펙트는 활성화후 파괴된다.
                 effObj.GetComponent<AutoDestructShuriken>().OnlyDeactivate = false;
                 break;
             }
@@ -118,10 +119,55 @@ public class AppUIEffect : MonoBehaviour {
             case eEFFECT_NAME.Destroy_Card:
                 vfxIntance = CreatetEffObj("CuteDeath");
                 break;
-            }
+            case eEFFECT_NAME.BULLET:
+                vfxIntance = CreatetEffObj("BulletSmallFire");
+                break;
+        }
 
         return vfxIntance;
        }
+
+
+
+    //네입별로 발사할 부분의 이펙트
+    public GameObject InstanceFIRE(eEFFECT_NAME vfx)
+    {
+        GameObject vfxIntance = null;
+        switch (vfx)
+        {
+            case eEFFECT_NAME.GOLD:
+
+                vfxIntance = CreatetEffObj("CartoonyFightAction2");
+
+                break;
+            case eEFFECT_NAME.JEW:
+
+                vfxIntance = CreatetEffObj("CartoonyFightAction2");
+                break;
+
+            case eEFFECT_NAME.EXPERIENCE:
+                vfxIntance = CreatetEffObj("CartoonyFightAction2");
+                break;
+
+            case eEFFECT_NAME.Destroy_Card:
+                vfxIntance = CreatetEffObj("CartoonyFightAction2");
+                break;
+            case eEFFECT_NAME.BULLET:
+                vfxIntance = CreatetEffObj("CartoonyFightAction2");
+                break;
+        }
+
+        return vfxIntance;
+    }
+
+
+
+
+
+
+
+
+
 
     //GameData에서 설정된 enum 을 받아서  현재 가지고있는 것을 활성화 시킨다.
     //활성화

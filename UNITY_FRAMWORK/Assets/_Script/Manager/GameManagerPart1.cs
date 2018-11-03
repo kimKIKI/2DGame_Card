@@ -8,8 +8,6 @@ public partial class GameManager : MonoBehaviour {
 
     IEnumerator AutoStep()
     {
-       
-
         yield return new WaitForSeconds(2f);
         while (true)
         {
@@ -39,9 +37,6 @@ public partial class GameManager : MonoBehaviour {
                 //player & com 타워레벨 데이터 설정
                 LevelSet();
                 //타워의 초기 체력값을 적용한다.
-                kingT2.Init();
-                kingT.Init();
-
                 yield return new WaitForSeconds(2f);
                 gameState = eGameState.CARDDISTRIBUTION;
             }
@@ -63,12 +58,13 @@ public partial class GameManager : MonoBehaviour {
                 }
 
                 AppSound.instance.SE_CardOpenWidth.Play();
-                formation2.FormationCardsArcCom(eGameCardSize.BASE, eBelong.COM);
-
+                //TODO:여기서 카드의 베이스 폼을 정할수 있게된다.
+                formation2.FormationCardsArcCom(eGameCardSize.BASE, eBelong.COM,eCardType.SLOT);
+                //formation2.FormationCards(eGameCardSize.BASE);
                 yield return new WaitForSeconds(0.5f);
                 AppSound.instance.SE_CardOpenWidth.Play();
-                formation.FormationCardsArc(eGameCardSize.BASE, eBelong.PLAYER);
-
+                formation.FormationCardsArc(eGameCardSize.BASE, eBelong.PLAYER,eCardType.SLOT);
+                //formation.FormationCards(eGameCardSize.BASE);
                 gameState = eGameState.COM_CARDMOVE;
 
             }
@@ -85,16 +81,16 @@ public partial class GameManager : MonoBehaviour {
                 //컴가위바위보 수정
                 AppSound.instance.SE_CARD_COM.Play();
                 yield return new WaitForSeconds(1f);
-                gameState = eGameState.PLAYER_CARDDISTRIBUTION;
+                gameState      = eGameState.PLAYER_CARDDISTRIBUTION;
 
             }
             else if (gameState == eGameState.PLAYER_CARDDISTRIBUTION)
             {   //player가 주먹가위보 선택------------
-                eText.text = String.Format("{0} :", "PLAYER_CARDDISTRIBUTION");
+                eText.text     = String.Format("{0} :", "PLAYER_CARDDISTRIBUTION");
                 //누룰수 있게 표시 
-                imgbtnColor = Color.white;
+                imgbtnColor    = Color.white;
                 //color을 컴포넌트에 적용
-                btnImg.color = imgbtnColor;
+                btnImg.color   = imgbtnColor;
 
                 if (tem)
                 {
@@ -102,13 +98,13 @@ public partial class GameManager : MonoBehaviour {
                     //버튼에서 정보를 받는다.
                     PlayerRPS();
                     yield return new WaitForSeconds(1f);
-                    tem = false;
+                    tem          = false;
 
                     //버튼칼라변경
-                    imgbtnColor = Color.black;
+                    imgbtnColor  = Color.black;
                     btnImg.color = imgbtnColor;
 
-                    gameState = eGameState.JUDGEMENT;
+                    gameState    = eGameState.JUDGEMENT;
 
                 }
                 yield return null;
@@ -116,7 +112,7 @@ public partial class GameManager : MonoBehaviour {
             }
             else if (gameState == eGameState.JUDGEMENT)
             {
-                eText.text = String.Format("{0} :", "JUDGEMENT");
+                eText.text      = String.Format("{0} :", "JUDGEMENT");
                 //보류 :TODO 별로임
                 //MoviesEffect(0);
                 //슬롯의 가위바위보정보를 델리게이트가 호출되는 곳에 전달한다.
@@ -127,7 +123,7 @@ public partial class GameManager : MonoBehaviour {
 
                 yield return new WaitForSeconds(1f);
                 //애니실행
-                gameState = eGameState.JUDGEMENT_ANI;
+                gameState      = eGameState.JUDGEMENT_ANI;
             }
             else if (gameState == eGameState.JUDGEMENT_ANI)
             {

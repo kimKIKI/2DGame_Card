@@ -29,6 +29,7 @@ public enum eAttackType
   GENERAL,
   LAZER,
   GROUND,
+  BULLET,
 }
 
 public class CombatShow : MonoBehaviour
@@ -51,6 +52,8 @@ public class CombatShow : MonoBehaviour
     public Transform playerArm;
     public Transform comArm;
     public Transform combatImg;
+  
+
 
     delegate void AttackEffect(int id);
     AttackEffect eventSetEffect;
@@ -62,20 +65,31 @@ public class CombatShow : MonoBehaviour
     //-------------------------------
     CombatCardSlot playerSlot;
     CombatCardSlot comSlot;
+    CombatCardSlot KingPlyerSlot;
+    CombatCardSlot KingComSlot;
+
     UIEffect       E_comArm;   //승리판정 오브젝트
     UIEffect       E_playerArm;
     SpriteAnim     ef_power;
     SpriteAnim     ef_destroy;
     Image          img_power;
     Image          img_destroy;
-
-  
+    Transform      KingPlayer; //player의 왕이미지
+    Transform      KingCom;    //com의 왕이미지
+    GameObject     EFFObject;  //생성되는 이펙트 오브젝트
+    GameObject     EFFFire;    //발사 부분 이펙트 오브젝트
     Animator       anim_Power;
     Animator       anim_Destroy; //Effect Sprite animation을 교체하기 위해서 만든 스크립트
-
+    Camera         MainCamera;
     Vector3        start;
     Vector3        endPos;
-
+    Vector3        startY;  //킹타워가 출현하고  물러설 위치
+    Vector3        endPosY;
+    Vector3        firstPos;//변동이 없은 처음 시작좌표로 처음위치한 곳으로 되돌리기 위해서 사용
+    Vector3        target;  //타워에서 발사될 이펙트가 도착할 좌표
+    Transform       A;      //레이저 발사 시작(플레어편에서 볼때)
+    Transform       B;      //레이저 도찾지점(플레이어편에서 볼때);
+    int      curVicAndDef;  //현재 진행중인 애니가 player승리인지 컴승리인지 등록함
     eEff_state    effState      = eEff_state.NON;
     eShock        shock         = eShock.LAZERDEST;
 
@@ -95,29 +109,45 @@ public class CombatShow : MonoBehaviour
 
     private void Awake()
     {
+        MainCamera = GameObject.Find("MainCamera").GetComponent<Camera>();
         playerSlot  = player.GetComponent<CombatCardSlot>();
         comSlot     = Com.GetComponent<CombatCardSlot>();
         E_comArm    = comArm.GetComponent<UIEffect>();
         E_playerArm = playerArm.GetComponent<UIEffect>();
         img_power   = powerEFF.GetComponentInChildren<Image>();
         img_destroy = DestroyEFF.GetComponentInChildren<Image>();
+        A           = GameObject.Find("A").GetComponent<Transform>();
+        B           = GameObject.Find("B").GetComponent<Transform>();
 
         anim_Power   = powerEFF.GetComponentInChildren<Animator>(); 
         anim_Destroy = DestroyEFF.GetComponentInChildren<Animator>();
         ef_power     = powerEFF.GetComponentInChildren<SpriteAnim>();
         ef_destroy   = DestroyEFF.GetComponentInChildren <SpriteAnim>();
 
+        KingPlayer    = transform.Find("Panel/KingPlayer").GetComponent<Transform>();
+        KingCom       = transform.Find("Panel/KingCom").GetComponent<Transform>();
+        KingPlyerSlot = KingPlayer.GetComponent<CombatCardSlot>();
+        KingComSlot   = KingCom.GetComponent<CombatCardSlot>();
+
         bg.enabled  = false;
         start       = player.localPosition;
         endPos      = new Vector3(-258, player.transform.localPosition.y, 1);
+
+        startY      = playerKingTower.localPosition;
+       
+        endPosY     = new Vector3(0,-600 , 1);
+        firstPos    = new Vector3(0, 1320, 0);
+
         YPosArm     = comArm.localPosition.y;
         gm          = GameObject.Find("@GM").GetComponent<GameManager>();
         after       = atkType;
-        // AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        //AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         //EffeAnimator = Resources.LoadAll("Animation", typeof(AnimationClip));
         //EffeAnimator = Resources.LoadAll("Animation", typeof(AnimationClip)).Cast<AnimationClip>().ToArray();
       
     }
+
+  
 
     //카드별 차이가 발생할수 있으므로 세팅시 자동체크 slot[0][1][2] 인덱스
     //newCard - com, newCard2-player
@@ -210,12 +240,13 @@ public class CombatShow : MonoBehaviour
     #endregion
 
 
-    //이펙트가 실행되게 한다.
-    IEnumerator  coAttackEffect(float t)
+    //승리했을때 이펙트의 타입을 받아와서 생성되게 한다.
+   public IEnumerator  coAttackEffect(float t)
     {
+       
         //여기서 타입이 결정되거나 분리 되어야 한다.
         yield return new WaitForSeconds(t);
-        img_power.enabled = true;
+       
         
         //파괴 이펙트에 타입을 전달한다.
         SpriteAnim.eAtk = this.atkType;
@@ -223,18 +254,60 @@ public class CombatShow : MonoBehaviour
         switch (this.atkType)
         {
             case eAttackType.LAZER:
+                //스프라이트 이미지가 보여지기 위해서 활성화 시킨다.
+                StartCoroutine(ShotEffect(0.3f));
+                img_power.enabled = true;
                 anim_Power.SetBool("Lazer_blue", true);
 
                 break;
             case eAttackType.GROUND:
+                img_power.enabled = true;
                 anim_Power.SetBool("Lazer_red", true);
+                break;
+
+            case eAttackType.BULLET:
+
+                //발사체
+                GameObject ef = AppUIEffect.instance.InstanceVFX(eEFFECT_NAME.BULLET);
+                EFFObject = ef;
+                //Fire
+                GameObject fir = AppUIEffect.instance.InstanceFIRE(eEFFECT_NAME.BULLET);
+                EFFFire = fir;
+                //컴승리 프레이어패배일때
+                if (curVicAndDef == 1)
+                {
+                    EFFFire.transform.position      = B.transform.position;
+                 
+                    EFFObject.transform.position    = B.transform.position;
+                  
+                    EFFObject.transform.localScale  = new Vector3(5, 5, 5);
+                    target = new Vector3(A.transform.position.x,A.transform.position.y,1);
+                    iTween.MoveTo(EFFObject, iTween.Hash("islocal", true, "position", target,
+                                                      "oncompletetarget", gameObject, "time", .5f,
+                                                       "easetype", "easeOutQuart"));
+
+                }
+                else if (curVicAndDef == 3)
+                {
+                    EFFFire.transform.position     = A.transform.position;
+                    EFFObject.transform.position   = A.transform.position;
+                    EFFObject.transform.localScale = new Vector3(5, 5, 5);
+                    target = new Vector3(B.transform.position.x, B.transform.position.y,1);
+                    iTween.MoveTo(EFFObject, iTween.Hash("islocal", true, "position", target,
+                                                      "oncompletetarget", gameObject, "time", .5f,
+                                                       "easetype", "easeOutQuart"));
+                }
+               
+             
+
                 break;
         }
         AppSound.instance.SE_COMBAT_LAZER2.Play();
-
     }
 
-    //피격 이펙트 실행
+  
+
+    //레이저가 발사되는 애니실행을 위햇서 스크립트를 활성화 시킨다.
     IEnumerator ShotEffect(float t)
     {
       
@@ -253,7 +326,17 @@ public class CombatShow : MonoBehaviour
        
     }
 
-    //com에서 이펙트 실행할때 coAttackEffectCom을 반대로 돌림
+    void EFFECTEX()
+    {
+        ////스폰될 갯수 이다.
+        //CollectingEffectController._instance.CollectItem(amount);
+        ////스폰될 갯수의 개당 value;
+        //CollectingEffectController._instance.Amount = 100;
+        AppUIEffect.instance.InstanceVFX(eEFFECT_NAME.GOLD);
+        //코인애니메이션실행
+    }
+
+    //com에서 이펙트 실행할때 coAttackEffectCom을 반대로 돌림 스프라이트 이펙트 경우 
     IEnumerator coAttackEffectCom(float t)
     {
         yield return new WaitForSeconds(t);
@@ -274,12 +357,20 @@ public class CombatShow : MonoBehaviour
     //승패를 보여주는 애니메이션 실행
     public IEnumerator AnimeStart(int cur)
     {
+      
                //카드 출현 사운드
                 AppSound.instance.SE_COMBAT_OUT.Play();
                 Vector3 to = endPos;
                 Vector3 to2 = new Vector3(endPos.x * -1, endPos.y, 1);
                 playerSlot.MoveTo(to);
                 comSlot.MoveTo(to2);
+
+                //PlayerKing가 애니실행시 옴겨져야할 위치
+                Vector3 to_k = endPosY; 
+                //comKing가 옴겨져야할 위치
+                Vector3 to_k2 = new Vector3(0, -1*endPosY.y, 1);
+                KingPlyerSlot.MoveTo(to_k);
+                KingComSlot.MoveTo(to_k2);
                 yield return new WaitForSeconds(0.8f);
 
                 Vector3 to3 = new Vector3(endPos.x, YPosArm, 1);
@@ -287,6 +378,11 @@ public class CombatShow : MonoBehaviour
                 AppSound.instance.SE_COMBAT_IMPACT.Play();
                 E_playerArm.MoveTo(to3);
                 E_comArm.MoveTo(to4);
+
+                Vector3 to3_k = new Vector3(0, startY.y, 1);
+                Vector3 to4_k = new Vector3(0 , -1*startY.y, 1);
+                KingPlyerSlot.MoveTo(to3_k);
+                KingComSlot.MoveTo(to4_k);
                 yield return new WaitForSeconds(.3f);
                 //가위바위보 표시 
                 OpenCard(cur);
@@ -367,15 +463,19 @@ public class CombatShow : MonoBehaviour
             {
                 atkType = eAttackType.GROUND;
             }
+            else if (temp[1].atk_type == "bullet")
+            {
+                atkType = eAttackType.BULLET;
+            }
         }
         else if (num == 1)
         {//com 승리
          //카드의 정보를 받아서 이펙트를 변경시켜준다.
-           if(temp[1] == null)
+            if (temp[1] == null)
             {
                 Debug.Log(" 카드가 없을때 작동합니다.");
             }
-           else if (temp[1].atk_type == "Ground")
+            else if (temp[1].atk_type == "Ground")
             {
                 atkType = eAttackType.GROUND;
             }
@@ -390,6 +490,10 @@ public class CombatShow : MonoBehaviour
             else if (temp[1].atk_type == "Top")
             {
                 atkType = eAttackType.GROUND;
+            }
+            else if (temp[1].atk_type == "bullet")
+            {
+                atkType = eAttackType.BULLET;
             }
         }
         else if (num == 2)
@@ -423,8 +527,8 @@ public class CombatShow : MonoBehaviour
     //승리했을때의 이동 & 승리한 카드의 ID 를 바탕으로 이펙트가 변경되게 한다.
     IEnumerator VictoryAni(int num)
     {
-        //기존의 이펙트와같은지 확인, 같지 않으면 변경되게 한다.?
-        //전부다 로드하고 필요한 것만 선택되게 한다.?
+        //이펙트 출현시 방향이 달라져야 하므로 num을 통해서 어디가 승리인지 판단한다.
+        curVicAndDef = num;
         SetATKType(num);
         switch (num)
         {
@@ -436,20 +540,19 @@ public class CombatShow : MonoBehaviour
                 Vector3 to3 = new Vector3(start.x, endPos.y, endPos.z);
                 playerSlot.MoveTo(to3);
 
+                //승리한 컴카드는 중앙으로 오고
                 Vector3 to4 = new Vector3(0, start.y, 1);
-                //패배한 것은 바깥으로 사라지게 한다.
                 comSlot.MoveTo(to4);
-
+                //작게 움직이는 중앙 아이콘 충돌애니실행
                 Vector3 toPlayerArmL = new Vector3(start.x, YPosArm, 1);
                 E_playerArm.MoveTo(toPlayerArmL);
-
                 Vector3 toComArmL = new Vector3(0, YPosArm, 1);
                 E_comArm.MoveTo(toComArmL);
-
-                //승리했을때 공격 이펙트 
+               
+                //이펙트의 타입을 받아와서 생성되게 한다. 스프라이트 이펙트가 섞여 있어서 2개 다 적어줌
                 StartCoroutine(coAttackEffect(1f));
                 DestroyEFF.transform.position = playerKingTower.transform.position;
-                StartCoroutine(ShotEffect(1.7f));
+               
                 StartCoroutine(EndShow(1.6f));
                 //카드가 소진되거나 킹타워가 Hp가 모두 소진됐다면 다음 애니가 실행되지 않고
                 //게임이 끝나게 한다.
@@ -486,9 +589,14 @@ public class CombatShow : MonoBehaviour
                 Vector3 toComArm    = new Vector3(start.x, YPosArm, 1);
                 E_comArm.MoveTo(toComArm);
 
-                StartCoroutine(coAttackEffectCom(1f));
+                //Vector3 to6 = new Vector3(start.x, endPos.y, endPos.z);
+                //playerSlot.MoveTo(to6);
+
+
+                StartCoroutine(coAttackEffectCom(1f)); //--->>coAttackEffect
+                                                       //이펙트 실행부분
                 DestroyEFF.transform.position = comKingTower.transform.position;
-                StartCoroutine(ShotEffect(1.7f));
+              
                 StartCoroutine(EndShow(1.5f));
                 //카드가 소진되거나 킹타워가 Hp가 모두 소진됐다면 다음 애니가 실행되지 않고
                 //게임이 끝나게 한다.
@@ -498,37 +606,49 @@ public class CombatShow : MonoBehaviour
         }
     }
 
-    //초기의 값으로 다시 세팅함
+    //초기의 값으로 다시 세팅함(한턴이 끝나는 애니에이션임 3턴돔)
      IEnumerator EndShow(float t)
     {
         yield return new WaitForSeconds(t);
         //처음의 위치로 되돌린다.
-        player.transform.localPosition = start;
-        Com.transform.localPosition = new Vector3(start.x * -1, start.y, 1);
-        playerArm.transform.localPosition = new Vector3(start.x, YPosArm, 1);
-        comArm.transform.localPosition = new Vector3(start.x * -1, YPosArm, 1);
-        E_playerArm.itemIcon.enabled = false;
-        E_comArm.itemIcon.enabled    = false;
-        bg.enabled = false;
-       
+        player.transform.localPosition     = start;
+        Com.transform.localPosition        = new Vector3(start.x * -1, start.y, 1);
+        playerArm.transform.localPosition  = new Vector3(start.x, YPosArm, 1);
+        comArm.transform.localPosition     = new Vector3(start.x * -1, YPosArm, 1);
+        E_playerArm.itemIcon.enabled       = false;
+        E_comArm.itemIcon.enabled          = false;
+        bg.enabled                         = false;
+
+        //상하가 조금 늦게 움직이게 한다.
+        StartCoroutine(DelayKingplayerSlot(0.55f));
+
     }
 
-  
+    //playerKing상하로 움직이는 애니메이션작동
+    IEnumerator DelayKingplayerSlot(float t)
+    {
+        yield return new WaitForSeconds(t);
+        Vector3 to3_k = new Vector3(0, -1 * firstPos.y, 1);
+        Vector3 to4_k = new Vector3(0, firstPos.y, 1);
+        KingPlyerSlot.MoveTo(to3_k);
+        KingComSlot.MoveTo(to4_k);
+    }
+
     IEnumerator ReturnSlot(float t)
     {
         yield return new WaitForSeconds(t);
-        Vector3 tostart = start;
+        Vector3 tostart                   = start;
         playerSlot.MoveTo(tostart);
 
-        Vector3 tostartCom = new Vector3(start.x * -1, start.y, 1);
+        Vector3 tostartCom                = new Vector3(start.x * -1, start.y, 1);
         comSlot.MoveTo(tostartCom);
 
         playerArm.transform.localPosition = new Vector3(start.x, YPosArm, 1);
-        comArm.transform.localPosition = new Vector3(start.x * -1, YPosArm, 1);
+        comArm.transform.localPosition    = new Vector3(start.x * -1, YPosArm, 1);
     }
 
+  
 
-    
 
 }
 

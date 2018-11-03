@@ -218,11 +218,7 @@ public  class FileDataManager  {
         // "lunchyCase":
         // {"Gold":1800,"Jew":2,"generalNum":192,"rareNum":50,"heroNum":8,"lengendaryNum":1}
 
-      
-
-
-
-
+    
         ItemBoxInfo newItemBox    = new ItemBoxInfo();
         newItemBox.boxName     = "lunchyCase";
       

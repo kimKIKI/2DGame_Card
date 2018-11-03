@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Game_Scene : Singleton<Game_Scene>  {
+public class Game_Scene : MonoBehaviour {
 
     FadeOut fadeOut;
     void Start()
@@ -11,16 +11,15 @@ public class Game_Scene : Singleton<Game_Scene>  {
         // !!! 가비지 컬렉션 강제 실행 !!!
         //System.GC.Collect();
         // !!!!!!!!!!!!!!!!!!!!!
-
         fadeOut = GameObject.Find("FadeOut").GetComponent<FadeOut>();
         StartCoroutine(FADEOUT_FLASH());
         GameData.Instance.PanelItem = 3;
     }
 
-    protected override void Awake()
+     void Awake()
     {
         //Game_Scene.Instance
-        base.Awake();
+        //base.Awake();
     }
 
     public void SceneChange()

@@ -48,14 +48,14 @@ public class CanvasForm : MonoBehaviour
            
             int    nextUpGold;              //레벨업에 필요한 골드량
             GameObject SaleObj;             //여기서 호출한 곳의 메소드를 실행시키기 위해서 설정
-            public   delegate  void  collBackLeveUp(); //레벨업이나 구매가 이루어 졌을때다른카드를업데이트한다.
+            public   delegate  void  collBackLeveUp();           //레벨업이나 구매가 이루어 졌을때다른카드를업데이트한다.
             public   static event    collBackLeveUp  eveLevelUp; //Resting()
-            //public   static event    collBackLeveUp  collLeveUp; //LevelUp() UnityCard 의 Lavel만 업
+          
 
             void Awake()
             {
                 Instance = this;
-               // base.Awake();
+                //base.Awake();
                 //purchaseBox 에 붙어 있는 updatebox을 열기위한 버튼임
                 updateBoxBtn = updateBox.GetComponentInChildren<Button>();
                 updateBoxBtn.onClick.AddListener(delegate
@@ -94,7 +94,7 @@ public class CanvasForm : MonoBehaviour
                         GameData.Instance.isStopScroview = false;
                         GameData.Instance.IsShowCard     = false;
                         //TODO: 여기서 활성화된 backCard를 다시 하이드 해줘야 한다.
-                        //card.GetComponent<UnityCard>().transform.Find("Panel").gameObject.SetActive(false);
+                        card.GetComponent<UnityCard>().transform.Find("Panel").gameObject.SetActive(false);
                         //가격전달 메소드
                 });
 
@@ -335,8 +335,8 @@ public class CanvasForm : MonoBehaviour
                     GameData.Instance.hasCard[ID].level = levelUp;
                     //collLeveUp();
                     eveLevelUp();
-                    card.ReSeting();
-                    frontO.ReSeting();
+                    card.ReSetting();
+                    frontO.ReSetting();
                   }
      
           }
@@ -411,7 +411,7 @@ public class CanvasForm : MonoBehaviour
             GameData.Instance.hasCard[ID].level = levelUp;
            // collLeveUp();
             eveLevelUp();
-            card.ReSeting();
+            card.ReSetting();
             //TODO: 아이디를 찾아서 바꿔주는 기능이 필요함
             //어디에 존재하는가?Tab 여기서 이벤트 발생
             //여기 UnityCard.cs와 중복확률

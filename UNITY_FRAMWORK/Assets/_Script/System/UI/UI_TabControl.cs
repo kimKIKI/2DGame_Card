@@ -42,7 +42,7 @@ public class UI_TabControl : Singleton<UI_TabControl>
     int curTab;
     int curTabButton = 1;
 
-    //전체 UnityCard데이터로 움직이게 변경한다.
+    //전체 UnityCard데이터로 움직이게 변경한다. Tab
     UnitySlot[] slots1;
     UnitySlot[] slots2;
     UnitySlot[] slots3;
@@ -154,6 +154,38 @@ public class UI_TabControl : Singleton<UI_TabControl>
        tabPosition(2);
        tabPosition(3);
     }
+    //tab에 선태된 cardInfo를 저장한다.gameSecne에서 시작시 
+    //시작 게임카드의 배열을 한다.
+    IList<int> curTabSelectCards(int curtab)
+    {
+        IList<int> curCardsIds = new List<int>();
+       
+        
+        switch (curtab)
+        {
+            case 1:
+                for (int i = 0; i < slots1.Length; ++i)
+                {
+                    
+                    curCardsIds.Add(slots1[i].GetComponentInChildren<UnityCard>().iD);
+                }
+                break;
+            case 2:
+                for (int i = 0; i < slots2.Length; ++i)
+                {
+                    curCardsIds.Add(slots1[i].GetComponentInChildren<UnityCard>().iD);
+                }
+                break;
+            case 3:
+                for (int i = 0; i < slots3.Length; ++i)
+                {
+                    curCardsIds.Add(slots1[i].GetComponentInChildren<UnityCard>().iD);
+                }
+                break;
+        }
+      
+        return curCardsIds;
+    }
 
     //텝별로 playerSelectDecks에서 직접불러옴
     void tabPosition(int btnPos)
@@ -222,7 +254,7 @@ public class UI_TabControl : Singleton<UI_TabControl>
                 //tab의 카드의 이미지를 선택한다.
                 temp.GetComponent<UnityCard>().mainICon.sprite = SpriteManager.GetSpriteByName("Sprite", cardName);
                 temp.GetComponent<UnityCard>().SlotIndex = i;
-                temp.GetComponent<UnityCard>().ReSeting();
+                temp.GetComponent<UnityCard>().ReSetting();
                 temp.GetComponent<UnityCard>().eCardType = CARDOBJTYPE.TabSlotCard;
                 //enum 으로 리스트를 위한 number을 얻는다.
                 temp.GetComponent<UnityCard>().Kinds = GameData.Instance.UnityDatas[id-1].Kinds;
@@ -291,11 +323,11 @@ public class UI_TabControl : Singleton<UI_TabControl>
                     sample1.GetComponent<UnityCard>().EventListenrStart();
                     sample1.GetComponent<UnityCard>().eCardType = CARDOBJTYPE.FrontSlotCard;
                     sample1.GetComponent<UnityCard>().ID = hasTemp[i];
-                    sample1.GetComponent<UnityCard>().ReSeting();
+                    sample1.GetComponent<UnityCard>().ReSetting();
                     sample2.GetComponent<UnityCard>().EventListenrStart();
                     sample2.GetComponent<UnityCard>().eCardType = CARDOBJTYPE.BackSloatCard;
                     sample2.GetComponent<UnityCard>().ID = hasTemp[i];
-                    sample2.GetComponent<UnityCard>().ReSeting();
+                    sample2.GetComponent<UnityCard>().ReSetting();
 
                     switch (btnPos)
                     {
@@ -446,6 +478,7 @@ public class UI_TabControl : Singleton<UI_TabControl>
 
 
         GameData.Instance.CurTab         = 1;
+        curTab = 1;
         GameData.Instance.panelSlots     = null;
                                      //바뀐 panelBtn 의 정보를 담기위해서 GetComponent 필요
         GameData.Instance.panelSlots     = panelBtn[0].GetComponentsInChildren<UnityCard>();
@@ -480,6 +513,7 @@ public class UI_TabControl : Singleton<UI_TabControl>
         panelSwBtn[2].gameObject.SetActive(false);
 
         GameData.Instance.CurTab         = 2;
+        curTab = 2;
         //선택된 카드중 정렬탭의 카드를 정렬 시키기 위해서 데이터화 한다.
         GameData.Instance.panelSlots     = null;
         GameData.Instance.panelSlots     = panelBtn[1].GetComponentsInChildren<UnityCard>();
@@ -514,6 +548,7 @@ public class UI_TabControl : Singleton<UI_TabControl>
         panelSwBtn[2].gameObject.SetActive(true);
 
         GameData.Instance.CurTab = 3;
+        curTab = 3;
         GameData.Instance.panelSlots = null;
         GameData.Instance.panelSlots = panelBtn[2].GetComponentsInChildren<UnityCard>();
         GameData.Instance.panelBackSlots = null;
@@ -763,12 +798,12 @@ public class UI_TabControl : Singleton<UI_TabControl>
                     string name = GameData.Instance.UnityDatas[   lsSlots1[curSlot].GetComponentInChildren<UnityCard>().ID -1].Name;
                     lsSlots1[curSlot].GetComponentInChildren<UnityCard>().mainICon.sprite = SpriteManager.GetSpriteByName("Sprite", name);
                     lsSlots1[curSlot].GetComponentInChildren<UnityCard>().iconName.text   = name;
-                    lsSlots1[curSlot].GetComponentInChildren<UnityCard>().ReSeting();
+                    lsSlots1[curSlot].GetComponentInChildren<UnityCard>().ReSetting();
 
                     string name2 = GameData.Instance.UnityDatas[swSlots1[curSlot].GetComponentInChildren<UnityCard>().ID-1  ].Name;
                     swSlots1[curSlot].GetComponentInChildren<UnityCard>().mainICon.sprite = SpriteManager.GetSpriteByName("Sprite", name2);
                     swSlots1[curSlot].GetComponentInChildren<UnityCard>().iconName.text   = name2;
-                    swSlots1[curSlot].GetComponentInChildren<UnityCard>().ReSeting();
+                    swSlots1[curSlot].GetComponentInChildren<UnityCard>().ReSetting();
                     //TODO: DEBUG----END-------------------------------------------------------------------
                     //sampleFront
 
@@ -859,11 +894,15 @@ public class UI_TabControl : Singleton<UI_TabControl>
     private void OnDestroy()
     {
         StrollVertical.stopMoveTrue -= HideAllUnChoice;
-        StrollVertical.CloseCards   -= SelectUnChoice;
-        UI_Close.eveDegClose        -= SelectUnChoice;
+        StrollVertical.CloseCards -= SelectUnChoice;
+        UI_Close.eveDegClose -= SelectUnChoice;
+        //화면 전환시 GameData에 저장해서 게임씬에서 카드를 배열할수 있도록한다.
+        Debug.Log("======="+curTab);
+        GameData.Instance.curSlotCards =  curTabSelectCards(curTab);
+       
     }
 
-
+   
     #region Sample
     //void UnFindCardSet()
     //{

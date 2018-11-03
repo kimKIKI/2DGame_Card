@@ -55,9 +55,7 @@ public class Formation : MonoBehaviour {
 
     private void Start()
     {
-
         //시작시 모든 게임슬롯을 null로해서 아이콘 이미지를 비활성화 시킨다.
-
         //FormationCards();
         //FormationCardsArc();
         //TODO: 이벤트 메니저 확장을 위해서 설정함 만약 쓰지 않을 경우 삭제
@@ -65,7 +63,7 @@ public class Formation : MonoBehaviour {
     }
 
     //계산식 전체 크기를 벗어나지 않는 메소드 
-    void FormationCards(eGameCardSize eState)
+   public  void FormationCards(eGameCardSize eState)
     {
         int num = CardFindsNum(); //cardInfo가 null이 아닌 숫자
         //카드의 숫자를 넘겨 받습니다.
@@ -76,7 +74,6 @@ public class Formation : MonoBehaviour {
         float endPosition =  (0.5f * maxRimited) - (width * 0.5f) - (fade * 0.5f);
         //마지막 카드의 배치좌표
        
-
         //할당 너비보다 카드가 크다면 겹쳐져야 한다.
         if (widthEa <= width)
         {   //첫카드의 배치좌표
@@ -105,7 +102,6 @@ public class Formation : MonoBehaviour {
                 cardsLength[i].CardSetSize(eState);
             }
         }
-           
     }
 
    
@@ -128,7 +124,7 @@ public class Formation : MonoBehaviour {
    
 
     //계산식 전체 크기를 벗어나지 않는 메소드 
-    public void FormationCardsArc(eGameCardSize eState,eBelong user)
+    public void FormationCardsArc(eGameCardSize eState,eBelong user,eCardType type)
     {    //카드의 숫자를 넘겨 받습니다.
         int num           = CardFindsNum();
         if (num >= 2)
@@ -175,6 +171,7 @@ public class Formation : MonoBehaviour {
                         lscardsLength[i].gameObject.transform.localRotation = Quaternion.Euler(0, 0, curAngle);
                         lscardsLength[i].CardSetSize(eState);
                         lscardsLength[i].eBelongState = eBelong.PLAYER;
+                        lscardsLength[i].eType        = eCardType.SLOT;
 
                     iTween.MoveTo(lscardsLength[i].gameObject, iTween.Hash("islocal", true,
                                                              "position", targetPos,
@@ -195,6 +192,7 @@ public class Formation : MonoBehaviour {
                         lscardsLength[i].gameObject.transform.localPosition = new Vector3(startPos + aSpace + width + (i * (width + aSpace)), 0, 0);
                         lscardsLength[i].CardSetSize(eState);
                         lscardsLength[i].eBelongState = eBelong.PLAYER;
+                        lscardsLength[i].eType        = eCardType.SLOT;
 
                         Vector3 targetPos        = new Vector3(startPos + aSpace + width + (i * (width + aSpace)), 0, 0);
                         iTween.MoveTo(lscardsLength[i].gameObject, iTween.Hash("islocal", true,
@@ -210,7 +208,7 @@ public class Formation : MonoBehaviour {
     }//Method END
 
     //계산식 전체 크기를 벗어나지 않는 메소드 
-    public void FormationCardsArcCom(eGameCardSize eState,eBelong user)
+    public void FormationCardsArcCom(eGameCardSize eState,eBelong user ,eCardType type)
     {   //카드의 숫자를 넘겨 받습니다.
         int num = CardFindsNumCom();
 
@@ -254,15 +252,16 @@ public class Formation : MonoBehaviour {
                         }
 
                         Vector3 moveTarget  = new Vector3(startFull + (i * widthEa), amount * Mathf.Sin(curAng * Mathf.Deg2Rad) * -1, 0);
-                       // cardsLength[i].gameObject.transform.localPosition = new Vector3(startFull + (i * widthEa), amount * Mathf.Sin(curAng * Mathf.Deg2Rad) * -1, 0);
+                        //cardsLength[i].gameObject.transform.localPosition = new Vector3(startFull + (i * widthEa), amount * Mathf.Sin(curAng * Mathf.Deg2Rad) * -1, 0);
 
 
-                        float curAngle = maxRot - i * angle; //-20 ~ 20
+                        float curAngle      = maxRot - i * angle; //-20 ~ 20
                         Quaternion rotation = Quaternion.Euler(0, 0, curAngle);
 
                         cardsLength[i].gameObject.transform.localRotation = Quaternion.Euler(0, 0, curAngle);
                         cardsLength[i].CardSetSize(eState);
                         cardsLength[i].eBelongState = eBelong.COM;
+                        cardsLength[i].eType        = eCardType.SLOT;
 
 
                     //TODO: 출발하는 위치 값을 여기서 설정해 주어야 한다.
@@ -298,6 +297,17 @@ public class Formation : MonoBehaviour {
                     }
                 }
         } //IF END
+    }
+
+    // 메소드 
+    public void FormationCardsGrid(eGameCardSize eState, eBelong user, eCardType type)
+    {
+        int num = CardFindsNumCom();
+
+        if (num > 1)
+        {
+
+        }
     }
 
     //현재슬롯에 있는 갯수를 판단한다.
@@ -368,10 +378,6 @@ public class Formation : MonoBehaviour {
 
         return enableCard;
     }
-
-
-
-
 
     #region 확장이벤트메니저
     ///--------------TEMP----------확장 이벤트 메니저 -------------------------------------------------------

@@ -115,6 +115,8 @@ public sealed class GameData
     public IList<UnityCard> panelSlots                  = new List<UnityCard>();
     //가려져 있는 슬롯 정렬의 슬록시 움직이기 때문에 필요하다.
     public IList<UnityCard> panelBackSlots              = new List<UnityCard>();
+    //현재 탭에 선택된 카드의 ID 
+    public IList<int> curSlotCards                      = new List<int>();
           
     public Dictionary<int, Card> hasCard                = new Dictionary<int, Card>(); // ID , Card
     public PlayerInfo player = new PlayerInfo();
@@ -177,7 +179,13 @@ public sealed class GameData
     private int   curSlotID;          //현재 선택된 아이템의 slot 인덱스 번호
     public  int   curSlotIndex;       //Tab 에서 선택됐을때의 Tab내의 인덱스 번호
     public  int   fromSwitchId;       //이동할 id 현재가 아니라 미리 저장해 놓아야 한다.
-   
+
+   //-------------------------------------------------------------------------
+    public Card         DrageCardInfo;      //드레그되고 있는 카드의 정보
+    public Vector3      DrageCardInfoVector3;//드레그된 카드의 위치값
+    public bool         bolPlayerBlankAll;   //플레이어의슬롯이 모두 비었나 판단   
+    public bool         IsOnePickUp = true;  //일정시간이후에 픽업이 발생하도록 판단
+
 
     public int     fromSwitchCard;    //이동할 선택된 카드 
     public Vector3 fromSwitchPos;     //움직일 좌표
@@ -212,7 +220,7 @@ public sealed class GameData
             //TODO: ES 시스템 이용
             if (goldAmount != value)
             {   //ES2저장
-                ES2.Save(value,"GoldAmount");
+                //ES2.Save(value,"GoldAmount");
                 //json에 바로 저장시 
                 Debug.Log("GOLD -- GOLD -- GOLD -- GOLD 저장 실행");
                 JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json"));
@@ -237,7 +245,7 @@ public sealed class GameData
             jewAmount = value;
             if (jewAmount != value)
             {  //ES2저장
-                ES2.Save(value, "JewAmount");
+                //ES2.Save(value, "JewAmount");
                 //json에 바로 저장시 
                 JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json"));
                 jsonUnitydata["Info"][0]["Jew"] = value;
@@ -260,7 +268,7 @@ public sealed class GameData
         
             if (expLevel != value)
             {  //ES2저장
-                ES2.Save(value, "ExpLevel");
+                //ES2.Save(value, "ExpLevel");
                 //Json저장
                 JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json"));
                 jsonUnitydata["Info"][0]["ExprinceNum"] = value;
@@ -283,7 +291,7 @@ public sealed class GameData
 
             if (expAmount != value)
             {   //ES2저장
-                ES2.Save(value, "ExpAmount");
+                //ES2.Save(value, "ExpAmount");
                 //JSON저장
                 JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json"));
                 jsonUnitydata["Info"][0]["ExprinceCount"] = value;
@@ -292,17 +300,8 @@ public sealed class GameData
             }
         }
     }
-
-
-
-
     //-------------------------------------------------------------
-
-
-
     public eGameState gameState    = eGameState.NONE;
-    
-
     // temp.GetComponent<UnityCard>().mainICon.sprite = SpriteManager.GetSpriteByName("Sprite", "Sample_UI_1");
     //전체 테두리
     //  temp.GetComponent<Image>().sprite = SpriteManager.GetSpriteByName("Sprite", "Sample_UI_1");
