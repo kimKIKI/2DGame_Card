@@ -74,6 +74,7 @@ public  class FileDataManager  {
             unit.Build    = (int) jsonUnitydata[i]["BuildTime"];
             unit.Life     = (int) jsonUnitydata[i]["Life"];
             unit.Up_atk   = (int) jsonUnitydata[i]["Up_atk"];
+            unit.Up_Hp    = (int) jsonUnitydata[i]["Up_Hp"];
             unit.SpawnEA  = (int) jsonUnitydata[i]["EA"];
             unit.Elixir   = (int)jsonUnitydata[i]["Elixir"];
             unit.SpAble   = jsonUnitydata[i]["SpAble"].ToString();

@@ -151,8 +151,8 @@ public class AppSound : MonoBehaviour {
 			sceneName = currSceneName.name;
 			
 			//음량 설정
-			//fm.SetVolume("BGM",SaveData.SoundBGMVolume);
-			//fm.SetVolume("SE",SaveData.SoundSEVolume);
+			fm.SetVolume("BGM",SaveData.SoundBGMVolume);
+			fm.SetVolume("SE",SaveData.SoundSEVolume);
 			
 			// BGM 재생
 			if (sceneName == "0_Title_Scene") {

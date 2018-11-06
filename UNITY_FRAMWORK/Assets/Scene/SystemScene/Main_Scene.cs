@@ -47,6 +47,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     //public Transform switchTemp;        //switch의 바뀌는 카드가 임시로 위치할 좌표
     public Text colectCard;               //찾은 카드의 숫자를 표시해준다.
     public Text buttonCollectionLabel;    //카드 정렬이 바뀌었을때 정렬이름을 정해준다.
+   
 
     public static string nextScene;
     public UnityEvent FADEBUTTON;
@@ -93,7 +94,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     IList<int> hasTemp  = new List<int>();  //tob1의 카드를 빼기 위해서 임시로 생성
 
     GameObject MoveSelect;                  //Tab로 이동하게 하기 위해서 생성된 객체 
-
+   
     bool bCanvasClick;
     bool isRed;
     bool isSwitch;                          //Tab와 교환하기 위해서 선택되어있을경우 
@@ -106,7 +107,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     int addGold;                          //증가시키너가 감소시킬 값
                                           //Level 단계 TODO: LEVEL 데이터화 필요 카드 경험치
     float yPos = -400f;                   //카드가 교체되기 위해서 중심으로 이동하는 y좌표
-
+   
     int[] playerLevel = { 500, 1000, 2000, 3000, 4000, 6000, 8000, 10000, 20000, 30000, 40000, 50000 };
 
 
@@ -133,7 +134,9 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         //coinText    = TopLabel_Coins.GetComponentInChildren<Text>();
         jewText       = TopLabel_Jews.GetComponentInChildren<Text>();
         //DontDestroyOnLoad(this.gameObject);
-        
+        //Sound Slider 소리조절
+    
+
     }
 
     void Start() {
@@ -153,9 +156,9 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         lsSwtichSlots                  = switchPanel.GetComponent<UI_GridGroup>().lsrcTransforms;
         //시작시 1부터 시작
         int curPanel                   = GameData.Instance.PanelItem;
-       
 
-       
+      
+
 
         //플레이어의 키를 확인 플레이어1의 데이터를 가지고 온다.
         if (GameData.Instance.players.ContainsKey(playerindex))
@@ -241,7 +244,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     {
         CardEff_Open.eff         += FadeOutA;
         StrollVertical.moveUp    += TurnOffPanelItem;
-        
+     
         //StrollVertical.eveVerticalMove += DeleteCopyUnity
     }
 
@@ -249,6 +252,8 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     {
         CardEff_Open.eff      -= FadeOutA;
         StrollVertical.moveUp -= TurnOffPanelItem;
+    
+     
     }
 
     //void OnDisable()
@@ -1181,9 +1186,11 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     public void SelectCaseItem()
     {
         CaseItem[0].SetActive(true);
+      
        
     }
 
-    
-    
+   
+
+
 }

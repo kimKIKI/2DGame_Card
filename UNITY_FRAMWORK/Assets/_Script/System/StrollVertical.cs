@@ -143,15 +143,19 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
                 if (curItem == 0)
                 {
                     GameData.Instance.PanelItem = 1;
+                    InitPosition();
                 }
                 else if (curItem == 1)
                 {
                     GameData.Instance.PanelItem = 2;
+                    InitPosition();
                 }
                 else if (curItem == 2)
                 {
                     GameData.Instance.PanelItem = 3;
+                    InitPosition();
                 }
+              
             }
             else
             {
@@ -164,15 +168,19 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
                 else if (curItem == 1)
                 {
                     GameData.Instance.PanelItem = 0;
+                    InitPosition();
                 }
                 else if (curItem == 2)
                 {
                     GameData.Instance.PanelItem = 1;
+                    InitPosition();
                 }
                 else if (curItem == 3)
                 {
                     GameData.Instance.PanelItem = 2;
+                    InitPosition();
                 }
+               
             }
 
             if (eveVerticalMove != null)
@@ -184,8 +192,8 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
                 Debug.Log("eveVertical 없네요 없어 ");
             }
 
-            InitPosition();
-        }
+           
+        } //Debug.Log("x 가 길어요"); END
         else if (disX < disY)
         {
             // Debug.Log("Y 가 길어요");
@@ -271,7 +279,7 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
         myRect.anchoredPosition = new Vector2(myRect.anchoredPosition.x, 0);
         myScrol.content.anchoredPosition = new Vector2(0, startAnchorPos);
 
-        Debug.Log("myRect.anchorPostion" + myRect.anchoredPosition);
+        //Debug.Log("myRect.anchorPostion" + myRect.anchoredPosition);
      
     }
 

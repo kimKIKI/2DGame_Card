@@ -25,13 +25,14 @@ public class Card
     public int     level;    //현재 카드별 가지고 있는 레벨
     public int     hasCard;
     public int     Attack;   //man 피해량
+    public int     Up_Hp;    //증가할 타워량
     public int     AtK_zone; //성벽Level 피해량
     public string  atk_type; //이펙트의 타입을 결정해주기 위해서설정
     public string  Name;     //카드이름
     public string  Shap;     //카드 모양
     public string  IconName; //카드이미지
     public string  Spable;   //현재 카드가 가지고 있는 특수한 능력
-   
+    
 
 }
 
@@ -164,6 +165,7 @@ public class UnityInfo
     int life;        //건물일때 유지 시간
     int up_atk_Zone; //업글시 파괴영역 증가량
     int up_atk;      //업글시 공격력 증가량
+    int up_Hp;       //추가될 HP량
     int elixir;      //엘릭서
     int spawnEA = 1; //생성될 겟수 default = 1;
 
@@ -366,6 +368,11 @@ public class UnityInfo
     public int Elixir
     {
         get;  set;
+    }
+
+    public int Up_Hp
+    {
+        get; set;
     }
 
     public string SpAble

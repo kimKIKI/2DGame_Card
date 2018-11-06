@@ -22,7 +22,7 @@ public class DragSlot : GameCardSlot,IComparer<GameCardSlot>
     public GameCardSlot  targetSlot         = null; 
     public GameCardSlot  pickedSlot         = null;
            //슬롯이 꽉차서 이동하지 못할경우 원래위치로 복원
-    GameCardSlot  baseSlot        = null;
+    GameCardSlot  baseSlot                  = null;
    
     Camera mainCameraA;        //캔버스의 스크린좌표를 월드 좌표로 구하기 위해서 사용함
     bool IsDragging = false;
@@ -135,7 +135,7 @@ public class DragSlot : GameCardSlot,IComparer<GameCardSlot>
 
         //바꾸기 위해 이동한 지점의 슬롯 아무것도 없을때
         //드레깅 trigger에 아무것도 잡히지 않을때
-        if (targetSlot == null)
+        if (targetSlot == null )
         {   //null이 되면 안되는 부분
             //플레이어의슬롯이꽉차 있지 안을때
             if (!GameData.Instance.bolPlayerBlankAll)
@@ -171,7 +171,7 @@ public class DragSlot : GameCardSlot,IComparer<GameCardSlot>
             if (!GameData.Instance.bolPlayerBlankAll)
             {        
                     // 내려 놓을 칸에 있는 정보를 아이템을 집은 칸에 셋팅한다. (스왑)
-                    if (pickedSlot.eType == eCardType.SLOT)
+                    if (pickedSlot.eType == eCardType.SLOT )
                     {   //슬롯에 이미 데이터가 있을때 판단이 없음
                         //타겟이 있을때 center이면
 
@@ -201,10 +201,7 @@ public class DragSlot : GameCardSlot,IComparer<GameCardSlot>
                             this.gameObject.SetActive(false);
                             }
                              
-                            
                            
-                          
-
                         }
                         else if (targetSlot.eType == eCardType.SLOT)
                         {   ////2---->제자리에서 드레그해서 제자리에 놓았을 경우------------------
@@ -252,7 +249,8 @@ public class DragSlot : GameCardSlot,IComparer<GameCardSlot>
         {
            targetSlot.SetCardInfo(GetUnityInfo(), eCardType.CENTERSLOT);
            targetSlot.EFFECT();
-
+            //TODO:카드의 특성정보를 읽어서 player타워에 적용
+            //targetSlot.CharacterSticCheck();
             lstTargetSlot.Clear();
             SetCardInfo(null);
             pickedSlot = null;

@@ -196,7 +196,10 @@ public sealed class GameData
     public bool     isSwitch;         //현재 바꿀수 있는 상태인지 판단
     public bool     isStopScroview;   //교환하기 화면을 정지시킨 strollvertiacl 상태
     public bool     IsShowCard;       //선택하기 위해열린 카드가 하나라도있는지 판단
-    
+    public int      PlayerKingTowerAddHp; //player의 타원에 추가될 Hp양
+    public int      ComKingTowerAddHp;
+    public int      curPlayerKingTowerHp;
+    public int      curComKingTowerHp;
     //saveData-----------------------------------------------------
     //TODO: 게임데이터에서  프로퍼티로 이벤트를 발생시킨다면 연구 과제..
     public int    curAddGold;         // 스코어의 애니를 위해서 증가분의 금액을 저장한다.

@@ -45,7 +45,6 @@ public enum ePlayer
   }
 
 
-
 public partial class GameManager : MonoBehaviour {
 
     public  GameObject  startLabel;                    //시작시 시작을 알려주는 Start라벨
@@ -58,15 +57,19 @@ public partial class GameManager : MonoBehaviour {
     public  Transform  kingTower;                      //player킹타워 
     public  Transform  comCombatPos;
     //player의 card데이터값
-    IList<Card> SpriteSlot    = new List<Card>();
-    IList<Card> SpriteSlotCom = new List<Card>();
+    IList<Card> SpriteSlot     = new List<Card>();
+    IList<Card> SpriteSlotCom  = new List<Card>();
     //IList<string> SpriteName = new List<String>();
     Camera mainCamera;
     
     //컴퓨터의 카드 배분이벤트 전달
     public  delegate void degCardIn();
     public  static  event degCardIn  eveCardIn;
-
+    //GameManager을 외부에서 호출시키기 위해서 사용
+    //public delegate void AddHpDelegate(object ui);
+    //외부에서 AddHpDelegate를 실행할수 있게 한다.
+    //public AddHpDelegate PlayerKingTowerAddHP;
+    //public static event AddHpDelegate AddHPEvent;
     //computer---------------------------------
     public Transform playerForm2;
     public CenterFormation centerformation2;
@@ -74,17 +77,17 @@ public partial class GameManager : MonoBehaviour {
     public Transform combatShow;                      //승리 패배의 결과를 보여준다.
     public bool ______________________________________________________________________;
 
-    Formation        formation;                       //player의 base 카드세트 
-    Formation        formation2;                      //computer의 base 카드세트
+    Formation               formation;                //player의 base 카드세트 
+    Formation               formation2;               //computer의 base 카드세트
     static GameCardSlot[]   centerSlots;              //중앙에 놓여질 카드 슬롯 위치
     static GameCardSlot2[]  centerSlots2;             //computer의 센터카드 
-    GameCardSlot[]   cardSlots;                       //Player의 카드 세팅
-    GameCardSlot[]   cardSlots2;                      //computer의 베이스세팅카드
-    KingTower        kingT;                           //킹타워의 스크립트 
-    KingTower        kingT2;
-    CombatShow       combatShowC;
-    GameObject      cardslotSample;                   //객체를 복제해서 이동시키기 위해서 
-
+    GameCardSlot[]          cardSlots;                //Player의 카드 세팅
+    GameCardSlot[]          cardSlots2;               //computer의 베이스세팅카드
+    KingTower               kingT;                    //킹타워의 스크립트 
+    KingTower               kingT2;
+    CombatShow              combatShowC;
+    GameObject              cardslotSample;           //객체를 복제해서 이동시키기 위해서 
+   
 
     Text     labelText;                               //특정 글자 컨트롤 시자과 ending 때 사용할 문자 
     Button   btn;
@@ -113,16 +116,17 @@ public partial class GameManager : MonoBehaviour {
     public static   event deg_Victory evnt_Victory;  //슬롯의 이긴결과를 보낸다.
 
 
-    bool tem = false; //test bool ~~
-    bool NotSlot = false;                            //빈 슬롯이 있는지 판단
+    bool tem               = false; //test bool ~~
+    bool NotSlot           = false;                  //빈 슬롯이 있는지 판단
     bool particlesPlaying;
 
-    int  stageVictory = 0;                           // 1패배  2무승부 3승리
-    int  MaxSlotCount = 9;                           //기본최대 슬롯의 갯수는 9개이다.
+    int  stageVictory      = 0;                      // 1패배  2무승부 3승리
+    int  MaxSlotCount      = 9;                      //기본최대 슬롯의 갯수는 9개이다.
     int tempIntCoutinueCount = 0;
-    bool TempCorStop = false;
+    bool TempCorStop       = false;
+    static GameCardSlot dgCardSlot;                  //델리게이트로 특정한 카드정보를 받아온다.
 
-    GameCardSlot pre;  //전역이 아니라서 실행이 되지 않나해서 전역으로설정 //상관없네 다시 지역으로변경할것
+    //GameCardSlot pre;  //전역이 아니라서 실행이 되지 않나해서 전역으로설정 //상관없네 다시 지역으로변경할것
     private void Awake()
     {
         formation    = playerForm.GetComponent<Formation>();
@@ -145,7 +149,7 @@ public partial class GameManager : MonoBehaviour {
         cardslotSample = GameObject.Find("CanvasBasePlayer/Panel_/GameObjectCardSample");
         //만약 경호가 잘못됐을때 유효성 검사가 필요할것 같다.
         //if (mainCamera != null) //비어있는지 판단하지 못함..
-            mainCamera = GameObject.Find("MainCamera").GetComponent<Camera>();
+         mainCamera = GameObject.Find("MainCamera").GetComponent<Camera>();
 
         GameData.Instance.prefabs  = Resources.LoadAll("RoadPrefabs", typeof(GameObject)).Cast<GameObject>().ToArray();
         //현재 비어있는 슬롯의 월드좌표를 넘겨준다.
@@ -154,12 +158,12 @@ public partial class GameManager : MonoBehaviour {
         DragSlot.eveClick += PlayerBlankAll;
         //playerSlot 이동완료또는 변경후 다시 슬롯의 카드를 재정렬한다.
         DragSlot.eveClick += PlayerFormArray;
-    
 
+        //ERROR CardSendevent가 여러개여서 문제발생
+        //GameCardSlot.CardSendevent += PlayerKingTowerAdd;
     }
 
-
-
+  
     private void Start()
     {
        
@@ -191,12 +195,19 @@ public partial class GameManager : MonoBehaviour {
         OverlayParticles.ShowParticles(10, gameObject.transform.position);
     }
 
+    //AddHp가 호출될 이벤트임
+    //public static void AddHp(GameObject ui)
+    //{ //자체 이벤트 필드
+       // if (AddHPEvent != null)
+       //     AddHPEvent(ui);
+    //}
 
     //Formati0n에서 정렬되면서 저장시킨 cardSlot의 정보를 가져온다
     void ReCountCardSlots2()
     {
         cardSlots2         = formation2.CardReNumCom();
     }
+
 
     void StartLabelEff(GameObject obj)
     {
@@ -280,12 +291,13 @@ public partial class GameManager : MonoBehaviour {
             Card player = new Card();
 
             player.IconName = GameData.Instance.UnityDatas[ids[i]].Name;
-            player.Name = GameData.Instance.UnityDatas[ids[i]].Name;
-            player.Spable = GameData.Instance.UnityDatas[ids[i]].SpAble;  //특수 능력
-            player.atk_type = GameData.Instance.UnityDatas[ids[i]].Atk_Type;//공격타입
-            player.Attack = GameData.Instance.UnityDatas[ids[i]].Attack;  //성안 군사 공격
+            player.Name      = GameData.Instance.UnityDatas[ids[i]].Name;
+            player.Spable    = GameData.Instance.UnityDatas[ids[i]].SpAble;  //특수 능력
+            player.atk_type  = GameData.Instance.UnityDatas[ids[i]].Atk_Type;//공격타입
+            player.Attack    = GameData.Instance.UnityDatas[ids[i]].Attack;  //성안 군사 공격
             player.AtK_zone  = GameData.Instance.UnityDatas[ids[i]].Atk_Zone;//성곽공격
             player.ID        = GameData.Instance.UnityDatas[ids[i]].Id;
+            player.Up_Hp     = GameData.Instance.UnityDatas[ids[i]].Up_Hp;    //update될 HP량
             SpriteSlot.Add(player); //id만 받아서 
         }
 
@@ -315,6 +327,7 @@ public partial class GameManager : MonoBehaviour {
             i.Value.atk_type   = GameData.Instance.UnityDatas[i.Key].Atk_Type;
             i.Value.Attack     = GameData.Instance.UnityDatas[i.Key].Attack;  //성안 군사 공격
             i.Value.AtK_zone   = GameData.Instance.UnityDatas[i.Key].Atk_Zone;//성곽공격
+            i.Value.Up_Hp      = GameData.Instance.UnityDatas[i.Key].Up_Hp;    //Update될 체력
             SpriteSlotCom.Add(i.Value); //id만 받아서 
 
         }
@@ -1350,8 +1363,11 @@ public partial class GameManager : MonoBehaviour {
         int RandomCount = UnityEngine.Random.Range(minCount, maxCount);
 
         kingT.postHp(playerLevel);
+        GameData.Instance.curPlayerKingTowerHp = playerLevel;
+
         //kingT.postMan(playerLevelCount);
         kingT2.postHp(6);
+        GameData.Instance.curComKingTowerHp = 6;
         //kingT2.postMan(RandomCount);
     }
 
@@ -1424,6 +1440,10 @@ public partial class GameManager : MonoBehaviour {
         return deleve;
     }
 
+  
+    
+  
+
     //중간에 승패가 갈리면 step의 코루틴을 빠져 나와야 한다.
     IEnumerator VICTORY_OR_DEFEAT()
     {
@@ -1489,6 +1509,48 @@ public partial class GameManager : MonoBehaviour {
         
     }
 
+
+    //GameCard에서 호출될 메소드 부분연결
+    //public void AddKingTower()
+    //{
+    //    if (PlayerKingTowerAddHP != null)
+    //    {
+    //        PlayerKingTowerAddHP(this);
+    //    }
+    //}
+
+
+    
+
+
+    //void PlayerKingTowerAddHP()
+    //{
+    //    int hp  = GameData.Instance.curPlayerKingTowerHp;
+    //    int add = GameData.Instance.PlayerKingTowerAddHp;
+    //    hp += add;
+    //    kingT.postHp(hp);
+    //    //이벤트 적용후 바로 제거한다.
+    //    //GameCardEventOut();
+    //}
+
+    //GameCardSlot에서 이벤트 발생시 동작시킨다.
+    void PlayerKingTowerAdd(object u)
+    {
+        int hp = GameData.Instance.curPlayerKingTowerHp;
+        int add = GameData.Instance.PlayerKingTowerAddHp;
+        hp += add;
+        kingT.postHp(hp);
+    }
+
+    void ComKingTowerAddHp()
+    {
+        int hp = GameData.Instance.curComKingTowerHp;
+        int add = GameData.Instance.ComKingTowerAddHp;
+        kingT2.postHp(hp + add);
+        //이벤트 적용후 바로 제거한다.
+        //GameCardEventOut();
+    }
+
     private void OnDestroy()
     {
         DragSlot.eveClick -= PlayerBlankNum;
@@ -1496,6 +1558,14 @@ public partial class GameManager : MonoBehaviour {
         DragSlot.eveClick -= PlayerBlankAll;
         //playerSlot 이동완료또는 변경후 다시 슬롯의 카드를 재정렬한다.
         DragSlot.eveClick -= PlayerFormArray;
+    }
+
+  
+
+
+    void AddSet()
+    {
+
     }
 
     public void Update()
@@ -1508,7 +1578,8 @@ public partial class GameManager : MonoBehaviour {
         }
         if (Input.GetKeyDown(KeyCode.P))
         {
-            TempCorStop = true;
+            //TempCorStop = true;
+            //AddKingTower();
         }
 
         if (Input.GetKeyDown(KeyCode.S))

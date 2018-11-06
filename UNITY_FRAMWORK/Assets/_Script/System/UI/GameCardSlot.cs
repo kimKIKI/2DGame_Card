@@ -48,7 +48,12 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
     public int        ID;                //GetComponent했을때 카드의 정렬순서를 확인을 위해서 임시로 
 
 
-    
+    //통채로 자기자신을 델리게이트로 넘기기 위해서 
+    //public delegate void CardSendDelegate(object sender);
+    //델리게이트이벤트
+    //public static  event CardSendDelegate CardSendevent;
+    //static GameManager gm;
+                     
     public IList<Card> defectCards = new List<Card>();
     public eBelong eBelongState    = eBelong.NON;   //com & player인지 판단한다.
     public eCardType eType         = eCardType.NON; //센터에 있는지 위치판단
@@ -71,7 +76,7 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
         slotImage = this.GetComponent<Image>();
         itemIcon  = transform.Find("ItemCard").GetComponentInChildren<Image>();
         rpk       = transform.GetComponentInChildren<Text>();
-
+        
        
         mainCamera = GameObject.Find("MainCamera").GetComponent<Camera>();
 
@@ -80,7 +85,6 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
             formation = gameObject.transform.parent.GetComponent<Formation>();
         }
 
-       
     }
 
     void Start()
@@ -93,8 +97,32 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
             eBelongState = eBelong.PLAYER;
             eType        = eCardType.CENTERSLOT;
         }
+
+       // GameManager.AddHPEvent += this.NewAddHP;
     }
 
+    //이벤트 타입등록
+    //void CardSend(object u)
+    //{
+    //    if (CardSendevent != null)
+    //        CardSendevent(u);
+    //}
+
+    //void Temp()
+    //{
+    //    gm = new GameManager();
+    //   // gm.PlayerKingTowerAddHP = NewEX;
+    //}
+    //static void NewEX(object ui)
+    //{
+    //    //이렇게 하면 GameManager의 요소를 사용할수 있는 건가?
+    //    Debug.Log("여기 뭔가 이상함");
+
+    //}
+    //public void NewAddHP(object ui)
+    //{
+      
+    //}
 
     public void SetCardInfo(Card newInfo)
     {
@@ -268,8 +296,7 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
         }
     }
 
-   
-
+  
     public bool ISIconImg()
     {
         if (itemIcon.enabled)
@@ -307,11 +334,12 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
         if (cardInfo == null) return; //빈칸클릭
 
         //센터에 있을때 드레깅을 위한 다운이 안되게 한다.
-        if (eType == eCardType.CENTERSLOT)
+        if (eType == eCardType.CENTERSLOT )
         {
             return;
         }
           
+
 
         //플레이어의 베이스카드가 다시 재정렬되게 한다.
         if (!isPlayer2)
@@ -322,7 +350,7 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
             AppSound.instance.SE_Card_Down.Play();
          
 
-            if (GameData.Instance.IsOnePickUp)
+            if (GameData.Instance.IsOnePickUp && this.eBelongState == eBelong.PLAYER)
             {
                 DragSlot.Instance.PickUp(this, eventData.position);
                 //게임슬롯별이 아닌 전체 게임슬롯타임의적용문제 
@@ -600,8 +628,9 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
                                      "easetype", "easeOutQuart")
                                       );
     }
- 
 
+
+   
     void OnDestroy()
     {
         if (mainCamera != null)
@@ -615,5 +644,7 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
         }
        
     }
+
+
 
 }
