@@ -601,7 +601,6 @@ public class CombatShow : MonoBehaviour
                 //카드가 소진되거나 킹타워가 Hp가 모두 소진됐다면 다음 애니가 실행되지 않고
                 //게임이 끝나게 한다.
 
-
                 break;
         }
     }

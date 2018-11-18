@@ -51,11 +51,11 @@ public class SliderController : MonoBehaviour {
         tx_Hp.text = string.Format("{0}", fHp);
     }
 
+    //슬라이더적용
     public  void Hit(int damage)
     {
         var curHp = Hp - damage;
         var value = curHp * uni; //float
-        //구매시 애니가 작동되어야 한다.
         slider.value = value;
         //tx_Hp.text = string.Format("{0}", curHp);
         //자기 자신의 프로퍼티늘 불러올수 없는데 ... 한번시도 그냥

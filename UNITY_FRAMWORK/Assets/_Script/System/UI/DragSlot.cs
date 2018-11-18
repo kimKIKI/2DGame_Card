@@ -230,7 +230,6 @@ public class DragSlot : GameCardSlot,IComparer<GameCardSlot>
               //TODO 슬롯이 꽉차 있을때 원래 위치로 복원
             else
             {
-
                 baseSlot.SetCardInfo(GetUnityInfo(), eCardType.SLOT);
                 gameObject.SetActive(false);
             }
@@ -240,17 +239,22 @@ public class DragSlot : GameCardSlot,IComparer<GameCardSlot>
     }
 
 
-
-
     public void PlayerCenterSwitch()
     {
        
         if (targetSlot.eType == eCardType.CENTERSLOT)
         {
            targetSlot.SetCardInfo(GetUnityInfo(), eCardType.CENTERSLOT);
+            //player의 센터가 자꾸작아져서 확인겸 추가 한 코드 문제 해결되지 않으면
+            //이부분 삭제해도 무방함
+           if( targetSlot.eBelongState != eBelong.PLAYER)
+                targetSlot.eBelongState = eBelong.PLAYER;
+           // Debug.Log("스위치 작동함..targetSlot .setCardInfo");
+
            targetSlot.EFFECT();
-            //TODO:카드의 특성정보를 읽어서 player타워에 적용
-            //targetSlot.CharacterSticCheck();
+            //TODO:카드의 특성정보를 읽어서 player타워에 적용--------------
+            targetSlot.AddHpSender();
+            //----------------------------------------------------------
             lstTargetSlot.Clear();
             SetCardInfo(null);
             pickedSlot = null;

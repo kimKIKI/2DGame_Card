@@ -1,9 +1,9 @@
 [
     {"ID":1,"Name":"Skull_Crowd","ATK_Type":"bullet","Kinds":"Hero","Coin":300,"Jew":10,"Elixir":3,"HP":100,"Speed":3,"Attack":30,"Atk_Zone":1,"BuildTime":1,"Sp_atk":4,"Up_Hp":1,"Up_atk":8,"Life":0,"EA":6,"SpAble":"AddHP"},
-    {"ID":2,"Name":"Skull_Box","ATK_Type":"bullet","Kinds":"Unit","Coin":300,"Jew":10,"Elixir":3,"HP":1000,"Speed":2,"Attack":30,"Atk_Zone":1,"BuildTime":1,"Sp_atk":0,"Up_Hp":1,"Up_atk":8,"Life":0,"EA":1,"SpAble":"non"},
-    {"ID":3,"Name":"knight","ATK_Type":"bullet","Kinds":"Unit","Coin":400,"Jew":20,"Elixir":3,"HP":1000,"Speed":4,"Attack":30,"Atk_Zone":5,"BuildTime":1,"Sp_atk":0,"Up_Hp":1,"Up_atk":8,"Life":0,"EA":1,"SpAble":"AddCard"},
+    {"ID":2,"Name":"Skull_Box","ATK_Type":"bullet","Kinds":"Unit","Coin":300,"Jew":10,"Elixir":3,"HP":1000,"Speed":2,"Attack":30,"Atk_Zone":1,"BuildTime":1,"Sp_atk":0,"Up_Hp":1,"Up_atk":8,"Life":0,"EA":1,"SpAble":"InSight"},
+    {"ID":3,"Name":"knight","ATK_Type":"bullet","Kinds":"Unit","Coin":400,"Jew":20,"Elixir":3,"HP":1000,"Speed":4,"Attack":30,"Atk_Zone":5,"BuildTime":1,"Sp_atk":0,"Up_Hp":2,"Up_atk":8,"Life":0,"EA":1,"SpAble":"AddCard"},
     {"ID":4,"Name":"Paladin","ATK_Type":"bullet","Kinds":"Hero","Coin":400,"Jew":20,"Elixir":5,"HP":800,"Speed":10,"Attack":20,"Atk_Zone":3,"BuildTime":1,"Sp_atk":300,"Up_Hp":1,"Up_atk":8,"Life":0,"EA":1,"SpAble":"RemoveCard"},
-    {"ID":5,"Name":"Bat","ATK_Type":"the air","Kinds":"Unit","Coin":100,"Jew":7,"Elixir":2,"HP":80,"Speed":3,"Attack":30,"Atk_Zone":1,"BuildTime":1,"Sp_atk":0,"Up_Hp":1,"Up_atk":8,"Life":0,"EA":1,"SpAble":"non"},
+    {"ID":5,"Name":"Bat","ATK_Type":"the air","Kinds":"Unit","Coin":100,"Jew":7,"Elixir":2,"HP":80,"Speed":3,"Attack":30,"Atk_Zone":1,"BuildTime":1,"Sp_atk":0,"Up_Hp":1,"Up_atk":8,"Life":0,"EA":1,"SpAble":"TowerHealing"},
     {"ID":6,"Name":"Maga_minion","ATK_Type":"the air","Kinds":"Rarity","Coin":200,"Jew":8,"Elixir":4,"HP":400,"Speed":4,"Attack":30,"Atk_Zone":1,"BuildTime":1,"Sp_atk":0,"Up_Hp":1,"Up_atk":8,"Life":0,"EA":1,"SpAble":"non"},
     {"ID":7,"Name":"Miner","ATK_Type":"Ground","Kinds":"Legend","Coin":1000,"Jew":50,"Elixir":4,"HP":600,"Speed": 10,"Attack":10,"Atk_Zone":3,"BuildTime":1,"Sp_atk":0,"Up_Hp":1,"Up_atk":8,"Life":0,"EA":1,"SpAble":"non"},
     {"ID":8,"Name":"Ice_Magician","ATK_Type":"Ground","Kinds":"Legend","Coin":1000,"Jew":50,"Elixir":4,"HP":600,"Speed":8,"Attack":30,"Atk_Zone":1,"BuildTime":1,"Sp_atk":0,"Up_Hp":1,"Up_atk":8,"Life":0,"EA":1,"SpAble":"non"},

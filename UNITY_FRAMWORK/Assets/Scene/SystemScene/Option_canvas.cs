@@ -14,27 +14,31 @@ public class Option_canvas : MonoBehaviour {
     Text seValue;                           //sound se value;   효과음
     float bgmT;                             //sound BGM 전역
     float seT;
-
+    bool IsPause;                           //Pause
     Button CloseBtn;                        //창닫기
+    Button PauseBtn;
+    Button ResumBtn;
 
     private void Awake()
     {
-        OptionSound = transform.Find("OptionSound").transform;
+        OptionSound = transform.Find("OptionPanel").transform;
         sounds = GameObject.FindGameObjectsWithTag("Sound");
+
       
+
         for (int i = 0; i < sounds.Length; ++i)
         {
          
             if (sounds[i].gameObject.name == "Slider_BGM")
             {
-                Debug.Log("333333333333333333333333333333");
+               
                 soundsSliderBGM = sounds[i].transform.GetComponent<Slider>();
                 bgmValue = sounds[i].transform.Find("Tx_Value").GetComponent<Text>();
 
             }
             else if (sounds[i].gameObject.name == "Slider_SE")
             {
-                Debug.Log("333333333333333333333333333333");
+              
                 soundsSliderSE = sounds[i].transform.GetComponent<Slider>();
                 seValue = sounds[i].transform.Find("Tx_Value").GetComponent<Text>();
             }
@@ -45,11 +49,26 @@ public class Option_canvas : MonoBehaviour {
         soundsSliderSE.onValueChanged.AddListener(delegate { ValueChangeCheckSE(); });
 
 
-        CloseBtn = transform.Find("OptionSound/Button_Close").GetComponent<Button>();
+        CloseBtn = transform.Find("OptionPanel/Button_Close").GetComponent<Button>();
+        PauseBtn = transform.Find("OptionPanel/Btn_Pause").GetComponent<Button>();
+        ResumBtn = transform.Find("OptionPanel/Btn_Resum").GetComponent<Button>();
 
         CloseBtn.onClick.AddListener(delegate
         {
+            IsPause = false;
+            Pause();
             OptionSound.gameObject.SetActive(false);
+        });
+
+        PauseBtn.onClick.AddListener(delegate
+        {
+            IsPause = !IsPause;
+            Pause();
+        });
+
+        ResumBtn.onClick.AddListener(delegate
+        {
+
         });
 
     }
@@ -66,6 +85,7 @@ public class Option_canvas : MonoBehaviour {
     {
         soundsSliderBGM.value = SaveData.SoundBGMVolume;
         soundsSliderSE.value  = SaveData.SoundSEVolume;
+        ResumBtn.gameObject.SetActive(false);
     }
 
     private void OnDisable()
@@ -95,8 +115,27 @@ public class Option_canvas : MonoBehaviour {
 
     public void OptionButton()
     {
-        Debug.Log("BBBBBBBBBBBBBBBBBBBB");
+        
         OptionSound.gameObject.SetActive(true);
+    }
+
+    private void Pause()
+    {
+        if (IsPause)
+        {
+            Time.timeScale = 0;
+        }
+        else
+        {
+            Time.timeScale = 1f;
+        }
+      
+    }
+
+    public void PauseA()
+    {
+        IsPause = true;
+        Pause();
     }
 
 }

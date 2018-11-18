@@ -47,23 +47,18 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
     [HideInInspector]
     public int        ID;                //GetComponent했을때 카드의 정렬순서를 확인을 위해서 임시로 
 
-
-    //통채로 자기자신을 델리게이트로 넘기기 위해서 
-    //public delegate void CardSendDelegate(object sender);
-    //델리게이트이벤트
-    //public static  event CardSendDelegate CardSendevent;
-    //static GameManager gm;
-                     
     public IList<Card> defectCards = new List<Card>();
     public eBelong eBelongState    = eBelong.NON;   //com & player인지 판단한다.
     public eCardType eType         = eCardType.NON; //센터에 있는지 위치판단
-  
+
+    public delegate void CardSenderDelegate(GameCardSlot gs);
+    public static CardSenderDelegate CardSenderProperty; 
 
     //----------------내부---------------------------------
-  
     public Card cardInfo          = null;
-   
+    public int curLevelHp;          //레벨을 체력으로 적용함..레벨이 놀을수록 체력증가
     private bool isPicked         = false;  // 픽킹 했는가?
+
 
     bool isPlayer2;         //player2  y값으로 반쪽위를 com의 영역으로 분리하기위해 사용
     bool isPlayer;          //Player인지 판단한다.
@@ -97,33 +92,16 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
             eBelongState = eBelong.PLAYER;
             eType        = eCardType.CENTERSLOT;
         }
-
-       // GameManager.AddHPEvent += this.NewAddHP;
     }
 
-    //이벤트 타입등록
-    //void CardSend(object u)
-    //{
-    //    if (CardSendevent != null)
-    //        CardSendevent(u);
-    //}
 
-    //void Temp()
-    //{
-    //    gm = new GameManager();
-    //   // gm.PlayerKingTowerAddHP = NewEX;
-    //}
-    //static void NewEX(object ui)
-    //{
-    //    //이렇게 하면 GameManager의 요소를 사용할수 있는 건가?
-    //    Debug.Log("여기 뭔가 이상함");
+    public  void AddHpSender( )
+    {
+        if (CardSenderProperty != null)
+            CardSenderProperty(this);
+    }
 
-    //}
-    //public void NewAddHP(object ui)
-    //{
-      
-    //}
-
+  
     public void SetCardInfo(Card newInfo)
     {
         //Debug.Log("SetCardInfo(Card newInfo)");
@@ -135,6 +113,7 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
             itemIcon.enabled = true;
             ID = cardInfo.ID;
             Sp = newInfo.Spable;
+            curLevelHp = newInfo.level;
             gameObject.transform.localScale = new Vector3(2, 2, 1);
            
         }
@@ -164,6 +143,7 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
                     itemIcon.enabled     = true;
                     ID                   = cardInfo.ID;
                     Sp                   = newInfo.Spable;
+                    curLevelHp           = newInfo.level;
                 }
                 else
                 {
@@ -181,6 +161,7 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
                     itemIcon.enabled       = true;
                     ID                     = cardInfo.ID;
                     Sp                     = newInfo.Spable;
+                    curLevelHp             = newInfo.level;
                     gameObject.transform.localScale = new Vector3(2, 2, 1);
                    
                 }
@@ -189,8 +170,7 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
                     cardInfo                        = null;
                     itemIcon.enabled                = false;
                     gameObject.transform.localScale = new Vector3(1, 1, 1);
-                   
-
+  
                 }
                 break;
         }
@@ -260,7 +240,7 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
                     itemIcon.enabled     = true;
                     ID                   = cardInfo.ID;
                     Sp                   = newInfo.Spable;
-
+                    curLevelHp           = newInfo.level;
                 }
                 else
                 {
@@ -279,6 +259,7 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
                     itemIcon.enabled     = true;
                     ID                   = cardInfo.ID;
                     Sp                   = newInfo.Spable;
+                    curLevelHp           = newInfo.level;
                     gameObject.transform.localScale = new Vector3(2,2,1);
                 }
                 else
@@ -344,12 +325,9 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
         //플레이어의 베이스카드가 다시 재정렬되게 한다.
         if (!isPlayer2)
         {
-          
             //임시로 꺼줌
             //formation.FormationCardsArc(eGameCardSize.BASE, eBelong.PLAYER,eCardType.SLOT);
             AppSound.instance.SE_Card_Down.Play();
-         
-
             if (GameData.Instance.IsOnePickUp && this.eBelongState == eBelong.PLAYER)
             {
                 DragSlot.Instance.PickUp(this, eventData.position);
@@ -357,7 +335,6 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
                 isPicked = true;
                 StartCoroutine(coIsOneDelay(0.5f));
             }
-           
             //TODO: 드레깅 발생시 자신의 Info상태를 GameData에 전달한다.
             //throw exception 적용해 볼것
         }
@@ -392,7 +369,6 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
         }
         if (eBelongState == eBelong.PLAYER)
             CardSlotPlayerImgBig(false);
-
 
         //if (eBelongState == eBelong.PLAYER && eType ==  eCardType.SLOT)
         //           CardSlotPlayerImgBig(false);
@@ -438,8 +414,7 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
         // throw new System.NotImplementedException();
     }
 
-   
-
+  
     public void OnPointerExit(PointerEventData eventData)
     {
        // Debug.Log("-------OnPointerExit-----");
@@ -469,8 +444,6 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
         {
             transform.Find("ItemCard").GetComponent<RectTransform>().sizeDelta = new Vector2(100f,120f);
         }
-
-       
 
     }
 
@@ -512,7 +485,6 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
                        break;
             }
     }
-
 
     public void CardSetSizeCenter(eGameCardSize eState)
     {
@@ -565,7 +537,7 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
         RpkNumber++;
         if (RpkNumber >= 4)
         {
-            RpkNumber = 0;
+            RpkNumber = 1;
         }
     }
 
@@ -589,20 +561,18 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
                 {
                     case 1:
                         rpk.text = string.Format("{0}", "주먹");
-                       
                         break;
 
                     case 2:
                         rpk.text = string.Format("{0}", "가위");
-                        
                         break;
 
                     case 3:
                         rpk.text = string.Format("{0}", " 보");
-                        
                         break;
                 }
             }
+            Debug.Log("주먹(1), 가위(2),보(3) value :" + value);
             rpkNumber = value;
         }
     }
