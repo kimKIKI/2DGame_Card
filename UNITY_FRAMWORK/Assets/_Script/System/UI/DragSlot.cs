@@ -16,8 +16,8 @@ public class DragSlot : GameCardSlot,IComparer<GameCardSlot>
             return sInstance;
         }
     }
-    public delegate void degClick();
-    public static event degClick eveClick;
+    public delegate   void      degClick();
+    public static     event     degClick    eveClick;
     public List<GameCardSlot> lstTargetSlot = new List<GameCardSlot>();
     public GameCardSlot  targetSlot         = null; 
     public GameCardSlot  pickedSlot         = null;
@@ -41,13 +41,10 @@ public class DragSlot : GameCardSlot,IComparer<GameCardSlot>
     {
         if (lstTargetSlot.Count > 0)
         {
-         
             lstTargetSlot.Sort(this);
             targetSlot = lstTargetSlot[0];
-          
             //클릭 됐을때의 동작 gameCardSlot
             //targetSlot.SlotOn();
-
             //TODO:여기 이거 뭔지 모르겠음
             //for (int i = 1; i < lstTargetSlot.Count; ++i)
             //   lstTargetSlot[i].SlotOff(); // 나머지 전부 오프
@@ -98,6 +95,7 @@ public class DragSlot : GameCardSlot,IComparer<GameCardSlot>
    
     public void PickUp(GameCardSlot itemSlot, Vector2 screenPos)
     {
+        Debug.Log("PickUp ");
         eveClick();
         //빈슬롯을 받는 이벤트 발동 GameManager에 빈슬롯을 찾아서 GameData저장하도록한다.
         //자신의 오브젝트를 활성화 시킨다.
@@ -124,15 +122,15 @@ public class DragSlot : GameCardSlot,IComparer<GameCardSlot>
     public void DragMove(Vector2 screenPos)
     {
         //this.transform.position = new Vector3(screenPos.x,screenPos.y,0);
-        var pos = new Vector3(screenPos.x, screenPos.y, 100);
+        var pos            = new Vector3(screenPos.x, screenPos.y, 100);
         transform.position = mainCameraA.ScreenToWorldPoint(pos);
-        IsDragging = true;
+        IsDragging         = true;
     }
 
 
     public void Drop()
     {
-
+        Debug.Log("--Drop--");
         //바꾸기 위해 이동한 지점의 슬롯 아무것도 없을때
         //드레깅 trigger에 아무것도 잡히지 않을때
         if (targetSlot == null )
@@ -141,7 +139,7 @@ public class DragSlot : GameCardSlot,IComparer<GameCardSlot>
             if (!GameData.Instance.bolPlayerBlankAll)
             {
 
-                Vector3 world = transform.position;
+                Vector3 world      = transform.position;
                 transform.position = world;
                 transform.localScale = new Vector3(1, 1, 1);
                 Vector3 to = GameData.Instance.DrageCardInfoVector3;
@@ -153,16 +151,11 @@ public class DragSlot : GameCardSlot,IComparer<GameCardSlot>
                                       "time", 0.3f,
                                       "easetype", "easeOutQuart")
                                        );
-
-
-
             }
             else
             {
-
                 baseSlot.SetCardInfo(GetUnityInfo(), eCardType.SLOT);
                 gameObject.SetActive(false);
-
             }
             IsDragging = false;
         }
@@ -174,14 +167,13 @@ public class DragSlot : GameCardSlot,IComparer<GameCardSlot>
                     if (pickedSlot.eType == eCardType.SLOT )
                     {   //슬롯에 이미 데이터가 있을때 판단이 없음
                         //타겟이 있을때 center이면
-
                         if (targetSlot.eType == eCardType.CENTERSLOT)
                         {  // 1 --->>>놓을때 타겟이 있을때 타입이 센터라면--------------------
                             if (targetSlot.cardInfo == null)
                             {
-                                Debug.Log("Cardinfo가 없습니다.");
+                               // Debug.Log("Cardinfo가 없습니다.");
                                 targetSlot.SetCardInfo(GetUnityInfo(), eCardType.CENTERSLOT);
-                                targetSlot.EFFECT();
+                                targetSlot.EFFECT(eEFFECT_NAME.SPAWN);
 
                                 lstTargetSlot.Clear();
                                 SetCardInfo(null);
@@ -190,11 +182,9 @@ public class DragSlot : GameCardSlot,IComparer<GameCardSlot>
                             }
                             else
                             {
-                            Debug.Log("Cardinfo가 있습니다.");
-                        
-                           
+                            //Debug.Log("Cardinfo가 있습니다.");
                             baseSlot.SetCardInfo(GetUnityInfo(),eCardType.SLOT);
-                            targetSlot.EFFECT();
+                            targetSlot.EFFECT(eEFFECT_NAME.SPAWN);
                             lstTargetSlot.Clear();
                             SetCardInfo(null);
                             pickedSlot = null;
@@ -205,7 +195,6 @@ public class DragSlot : GameCardSlot,IComparer<GameCardSlot>
                         }
                         else if (targetSlot.eType == eCardType.SLOT)
                         {   ////2---->제자리에서 드레그해서 제자리에 놓았을 경우------------------
-
                                 Vector3 world        = transform.position;
                                 Card pickupCardInfo  = GetUnityInfo();
                                 transform.position   = world;
@@ -219,13 +208,9 @@ public class DragSlot : GameCardSlot,IComparer<GameCardSlot>
                                                       "time", 0.3f,
                                                       "easetype", "easeOutQuart")
                                                        );
-                           
-
                         }
 
                     }
-              
-              
             } //bolPlayerBlankAll
               //TODO 슬롯이 꽉차 있을때 원래 위치로 복원
             else
@@ -241,7 +226,6 @@ public class DragSlot : GameCardSlot,IComparer<GameCardSlot>
 
     public void PlayerCenterSwitch()
     {
-       
         if (targetSlot.eType == eCardType.CENTERSLOT)
         {
            targetSlot.SetCardInfo(GetUnityInfo(), eCardType.CENTERSLOT);
@@ -251,20 +235,17 @@ public class DragSlot : GameCardSlot,IComparer<GameCardSlot>
                 targetSlot.eBelongState = eBelong.PLAYER;
            // Debug.Log("스위치 작동함..targetSlot .setCardInfo");
 
-           targetSlot.EFFECT();
+            targetSlot.EFFECT(eEFFECT_NAME.SPAWN);
             //TODO:카드의 특성정보를 읽어서 player타워에 적용--------------
             targetSlot.AddHpSender();
+            targetSlot.BTN_RPK();
+            
             //----------------------------------------------------------
             lstTargetSlot.Clear();
             SetCardInfo(null);
             pickedSlot = null;
             this.gameObject.SetActive(false);
-          
         }
-
     }
-
-
-
 
 }

@@ -60,6 +60,15 @@ public class AppSound : MonoBehaviour {
     [System.NonSerialized] public AudioSource SE_RESULT_START;    //승패후 상품결과창시작음
     [System.NonSerialized] public AudioSource SE_CARD_PUMP;       //패배한 카드 출현
     [System.NonSerialized] public AudioSource SE_CARD_DEFECTSHOOT;       //패배한 카드 출현
+    [System.NonSerialized] public AudioSource SE_MENU_OPEN_D;     //상품카드오픈시 
+    [System.NonSerialized] public AudioSource SE_CARD_CHOICE;     //카드 선택에서 선택시 음
+    [System.NonSerialized] public AudioSource SE_CARD_BTN;       //카드 선택에서 업데이트및 사용음
+    [System.NonSerialized] public AudioSource SE_CASE_CLOSE;     // 선택창을 닫을때음
+    [System.NonSerialized] public AudioSource SE_SHIP_HIT;     // 선택창을 닫을때음
+
+
+
+
 
     // === 내부 파라미터 ======================================
     string sceneName = "non";
@@ -75,12 +84,12 @@ public class AppSound : MonoBehaviour {
 		BGM_LOGO 				= fm.LoadResourcesSound("BGM","LOGO");
         BGM_MAIN               = fm.LoadResourcesSound("BGM", "MAIN");
         BGM_TITLE 				= fm.LoadResourcesSound("BGM","Title");
-		BGM_HISCORE 			= fm.LoadResourcesSound("BGM","HiScore");
+		//BGM_HISCORE 			= fm.LoadResourcesSound("BGM","HiScore");
 		
 		BGM_STAGEA 				= fm.LoadResourcesSound("BGM","PLAY");
-		BGM_STAGEB 				= fm.LoadResourcesSound("BGM","StageB");
+		//BGM_STAGEB 				= fm.LoadResourcesSound("BGM","StageB");
 		
-		BGM_BOSSA 				= fm.LoadResourcesSound("BGM","BossA");
+		//BGM_BOSSA 				= fm.LoadResourcesSound("BGM","BossA");
 		
 		BGM_ENDING				= fm.LoadResourcesSound("BGM","Ending");
 		
@@ -91,7 +100,10 @@ public class AppSound : MonoBehaviour {
 		SE_MENU_OK 				= fm.LoadResourcesSound("SE","SE_Menu_Ok");
 		SE_MENU_CANCEL  		= fm.LoadResourcesSound("SE","SE_Menu_Cancel");
         SE_MENU_OPEN            = fm.LoadResourcesSound("SE","SE_OpenCard");
-        SE_MENU_ITEMBOXOPEN     = fm.LoadResourcesSound("SE","SE_ItemBoxOpen");
+        SE_MENU_OPEN_D          = fm.LoadResourcesSound("SE", "SE_OpenCardDaily");
+        SE_CARD_CHOICE         = fm.LoadResourcesSound("SE", "SE_CARD_CHOICE");
+        //SE_OpenCardDaily
+        SE_MENU_ITEMBOXOPEN = fm.LoadResourcesSound("SE","SE_ItemBoxOpen");
         SE_MENU_ITEMCOUNTGOLD   = fm.LoadResourcesSound("SE", "SE_ItemCountGold");
 
 
@@ -140,6 +152,10 @@ public class AppSound : MonoBehaviour {
         SE_RESULT_START         = fm.LoadResourcesSound("SE", "Angry_Bird");
         SE_CARD_PUMP            = fm.LoadResourcesSound("SE", "SE_CARD_PUMP");
         SE_CARD_DEFECTSHOOT     = fm.LoadResourcesSound("SE", "SE_CARD_DEFECTSHOOT");
+        SE_CARD_BTN             = fm.LoadResourcesSound("SE", "SE_CARD_BTN");
+        SE_CASE_CLOSE           = fm.LoadResourcesSound("SE", "SE_CASE_CLOSE");
+         SE_SHIP_HIT            = fm.LoadResourcesSound("SE", "SE_SHIP_HIT"); ;     
+
         instance = this;
 	}
 	
@@ -153,69 +169,61 @@ public class AppSound : MonoBehaviour {
 			//음량 설정
 			fm.SetVolume("BGM",SaveData.SoundBGMVolume);
 			fm.SetVolume("SE",SaveData.SoundSEVolume);
-			
-			// BGM 재생
-			if (sceneName == "0_Title_Scene") {
-				BGM_LOGO.Play();
-              
 
-			} else
-			if (sceneName == "2_Main_Scene") {
-				if (!BGM_MAIN.isPlaying) {
-					fm.Stop ("BGM");
-                    //BGM_MAIN.Play();
-					fm.FadeInVolume(BGM_MAIN, 1.0f,1.0f,true);
-				}
-			} else
-				if (sceneName == "Menu_Option"  ||
-				    sceneName == "Menu_HiScore" ||
-				   sceneName == "Menu_Option") {
-			} else
-			if (sceneName == "3_Game_Scene") {
-				fm.Stop ("BGM");
-				fm.FadeOutVolumeGroup("BGM",BGM_STAGEA,0.0f,1.0f,false);
-				fm.FadeInVolume(BGM_TITLE,1.0f,1.0f,true);
-				BGM_STAGEA.loop = true;
-				BGM_STAGEA.Play();
-			} else
-			if (sceneName == "DungeonA") {
-				fm.Stop ("BGM");
-				//fm.FadeOutVolumeGroup("BGM",BGM_DungeonA,0.0f,1.0f,false);
-				fm.FadeInVolume(BGM_TITLE,1.0f,1.0f,true);
-				//BGM_DungeonA.loop = true;
-				//BGM_DungeonA.Play();
-			}
-			
-			
-			
-			else
-			if (sceneName == "StageB_Room") {
-				fm.Stop ("BGM");
-				//BGM_STAGEB_ROOMSAKURA.loop = true;
-				//BGM_STAGEB_ROOMSAKURA.Play();
-			} else
-				if (sceneName == "StageB_Room_A" ||
-				    sceneName == "StageB_Room_B" ||
-				   sceneName == "StageB_Room_C") {
-				fm.Stop ("BGM");
-				BGM_BOSSA.loop = true;
-				BGM_BOSSA.Play();
-			} else
-			if (sceneName == "StageB_Boss") {
-				fm.Stop ("BGM");
-				//BGM_BOSSB.loop = true;
-				//BGM_BOSSB.Play();
-			} else
-			if (sceneName == "StageZ_Ending") {
-				fm.Stop ("BGM");
-				BGM_ENDING.Play();
-			} else {
-				if (!BGM_STAGEB.isPlaying) {
-					fm.Stop ("BGM");
-					BGM_STAGEB.loop = true;
-					BGM_STAGEB.Play();
-				}
-			}
+            // BGM 재생
+            if (sceneName == "0_Title_Scene")
+            {
+                BGM_LOGO.Play();
+            }
+            else
+            if (sceneName == "2_Main_Scene")
+            {
+                //if (!BGM_MAIN.isPlaying)
+                //{
+                //    fm.Stop("BGM");
+                //    BGM_MAIN.Play();
+                //    fm.FadeInVolume(BGM_MAIN, 1.0f, 1.0f, true);
+                //}
+                BGM_MAIN.Play();
+                fm.FadeInVolume(BGM_MAIN, .3f, 0.2f, true);
+            }
+            else
+            if (sceneName == "3_Game_Scene")
+            {
+                fm.Stop("BGM");
+                fm.FadeOutVolumeGroup("BGM", BGM_STAGEA, 0.0f, 1.0f, false);
+                fm.FadeInVolume(BGM_TITLE, 1.0f, 1.0f, true);
+                BGM_STAGEA.loop = true;
+                BGM_STAGEA.Play();
+            }
+           // else
+           // if (sceneName == "DungeonA")
+           // {
+           //     fm.Stop("BGM");
+           //     //fm.FadeOutVolumeGroup("BGM",BGM_DungeonA,0.0f,1.0f,false);
+           //     fm.FadeInVolume(BGM_TITLE, 1.0f, 1.0f, true);
+           //     //BGM_DungeonA.loop = true;
+           //     //BGM_DungeonA.Play();
+           // }
+           
+           //else
+           //if (sceneName == "StageB_Room_A" ||
+           //         sceneName == "StageB_Room_B" ||
+           //        sceneName == "StageB_Room_C")
+           //     {
+           //     fm.Stop("BGM");
+           //     BGM_BOSSA.loop = true;
+           //     BGM_BOSSA.Play();
+           // }
+            else
+            {
+                if (!BGM_STAGEB.isPlaying)
+                {
+                    fm.Stop("BGM");
+                    BGM_STAGEB.loop = true;
+                    BGM_STAGEB.Play();
+                }
+            }
 		}
 	}
 }

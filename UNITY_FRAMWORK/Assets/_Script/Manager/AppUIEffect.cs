@@ -14,7 +14,11 @@ public enum eEFFECT_NAME
     JEW,
     EXPERIENCE,   //경험치
     Destroy_Card, //카드가 사라질때 나오는 이펙트
+    Destroy_SHIP, //우주선 피격 이펙트
     BULLET,       //bullet
+    GLOW,         //화면을 직중시키기 위해서 
+    SPAWN,        //카드가 놓여질때
+    FIRE,         //fire 출력
 }
 
 public class AppUIEffect : MonoBehaviour {
@@ -29,41 +33,49 @@ public class AppUIEffect : MonoBehaviour {
 
     //외부에서 이펙트에 접근할수 인스턴스 생성
     public static AppUIEffect instance = null;
+   
+
+    public static AppUIEffect Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                GameObject go = new GameObject("AppUIEffect");
+                go.AddComponent<AppUIEffect>();
+                //DontDestroyOnLoad(go);
+            }
+            return instance;
+        }
+
+    }
 
     private void Awake()
         {
-            //effs = transform.GetComponents<GameObject>();
-            curEffName = new string[effs.Length];
-            instance = this;
+               
+                    //effs = transform.GetComponents<GameObject>();
+                    curEffName = new string[effs.Length];
+                    instance = this;
+      
         }
 
 
-        void Start()
-        {
+        //void Start()
+        //{
             //핸들러타이밍에 자신의 메소드를  등록한다.
             //CardEff_Result.onUnitySpawn += this.NewEffCreated;
             //CardEff_Result.onUnitySpawn += this.EffCreateDestroy;
             //패배한 카드가 사라질때 생성될 이펙트 
-          
+        //}
 
-       }
-
-        void OnDisable()
-        {
+       // void OnDisable()
+       //{
            // CardEff_Result.onUnitySpawn -= this.NewEffCreated;
            // CardEff_Result.onUnitySpawn -= this.EffCreateLong;
            // CardEff_Result.onUnitySpawn -= this.EffCreateDestroy;
-        }
+       // }
 
-          void EffCreateLong()
-         {
-            EffCreated("MagicSparkles");
-         }
-
-        void EffCreateDestroy()
-         {
-            EffCreated("CuteDeath");
-         }
+       
 
          void EffCreated(string name)
          {
@@ -89,6 +101,7 @@ public class AppUIEffect : MonoBehaviour {
                 effObj.SetActive(true);
                 //복제되는 이펙트는 활성화후 파괴된다.
                 effObj.GetComponent<AutoDestructShuriken>().OnlyDeactivate = false;
+                effObj.GetComponent<AutoDestructShuriken>().RoofClose      = true;
                 break;
             }
         }
@@ -117,11 +130,29 @@ public class AppUIEffect : MonoBehaviour {
                 break;
 
             case eEFFECT_NAME.Destroy_Card:
-                vfxIntance = CreatetEffObj("CuteDeath");
+                vfxIntance = CreatetEffObj("ElectricDeathBlueP");
                 break;
+
+            case eEFFECT_NAME.Destroy_SHIP:
+                vfxIntance = CreatetEffObj("ElectricDeathShip");
+                break;
+
             case eEFFECT_NAME.BULLET:
                 vfxIntance = CreatetEffObj("BulletSmallFire");
                 break;
+
+            case eEFFECT_NAME.GLOW:
+                vfxIntance = CreatetEffObj("Glow");
+                break;
+
+            case eEFFECT_NAME.SPAWN:
+                vfxIntance = CreatetEffObj("MagicNovaBlueP");
+                break;
+
+            case eEFFECT_NAME.FIRE:
+                vfxIntance = CreatetEffObj("EnergyNovaMuzzleBlue");
+                break;
+
         }
 
         return vfxIntance;
@@ -129,7 +160,7 @@ public class AppUIEffect : MonoBehaviour {
 
 
 
-    //네입별로 발사할 부분의 이펙트
+    //네입별로 발사할 부분의 이펙트 
     public GameObject InstanceFIRE(eEFFECT_NAME vfx)
     {
         GameObject vfxIntance = null;
@@ -150,23 +181,41 @@ public class AppUIEffect : MonoBehaviour {
                 break;
 
             case eEFFECT_NAME.Destroy_Card:
-                vfxIntance = CreatetEffObj("CartoonyFightAction2");
+                vfxIntance = CreatetEffObj("ElectricDeathBlueP");
                 break;
+
+            case eEFFECT_NAME.Destroy_SHIP:
+                vfxIntance = CreatetEffObj("ElectricDeathShip");
+                break;
+
             case eEFFECT_NAME.BULLET:
                 vfxIntance = CreatetEffObj("CartoonyFightAction2");
+                break;
+            case eEFFECT_NAME.SPAWN:
+                vfxIntance = CreatetEffObj("MagicNovaBlueP");
+              
+                break;
+
+            case eEFFECT_NAME.FIRE:
+                vfxIntance = CreatetEffObj("EnergyNovaMuzzleBlue");
+
                 break;
         }
 
         return vfxIntance;
     }
 
+    //void OnApplicationQuit()
+    //{
 
+    //    instance = null;
 
+    //}
 
-
-
-
-
+    private void OnDestroy()
+    {
+        instance = null;
+    }
 
 
     //GameData에서 설정된 enum 을 받아서  현재 가지고있는 것을 활성화 시킨다.

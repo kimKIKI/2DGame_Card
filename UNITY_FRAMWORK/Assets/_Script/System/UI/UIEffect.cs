@@ -42,18 +42,18 @@ public class UIEffect : MonoBehaviour
         switch (rock_paper)
         {
             case 1:
-                itemIcon.sprite.name = "rps_0";
-                itemIcon.sprite = SpriteManager.GetSpriteByName("Sprite", itemIcon.sprite.name);
+                //itemIcon.sprite.name = "rps_0";
+                itemIcon.sprite = SpriteManager.GetSpriteByName("Sprite", "rps_0");
                 break;
 
             case 2:
-                itemIcon.sprite.name = "rps_1";
-                itemIcon.sprite = SpriteManager.GetSpriteByName("Sprite", itemIcon.sprite.name);
+                //itemIcon.sprite.name = "rps_1";
+                itemIcon.sprite = SpriteManager.GetSpriteByName("Sprite", "rps_1");
                 break;
 
             case 3:
-                itemIcon.sprite.name = "rps_2";
-                itemIcon.sprite = SpriteManager.GetSpriteByName("Sprite", itemIcon.sprite.name);
+                //itemIcon.sprite.name = "rps_2";
+                itemIcon.sprite = SpriteManager.GetSpriteByName("Sprite", "rps_2");
                 break;
 
         }

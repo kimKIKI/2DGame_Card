@@ -109,7 +109,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     float yPos = -400f;                   //카드가 교체되기 위해서 중심으로 이동하는 y좌표
    
     int[] playerLevel = { 500, 1000, 2000, 3000, 4000, 6000, 8000, 10000, 20000, 30000, 40000, 50000 };
-
+   
 
 
     public bool canvasClick
@@ -129,14 +129,12 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         }
 
         //fadeOut = GameObject.Find("FadeOut").GetComponent<FadeOut>();
-
         experinceText = TopLabel_experience.GetComponentsInChildren<Text>();
         //coinText    = TopLabel_Coins.GetComponentInChildren<Text>();
         jewText       = TopLabel_Jews.GetComponentInChildren<Text>();
         //DontDestroyOnLoad(this.gameObject);
         //Sound Slider 소리조절
     
-
     }
 
     void Start() {
@@ -158,8 +156,6 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         int curPanel                   = GameData.Instance.PanelItem;
 
       
-
-
         //플레이어의 키를 확인 플레이어1의 데이터를 가지고 온다.
         if (GameData.Instance.players.ContainsKey(playerindex))
         {
@@ -179,17 +175,19 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         //FADEBUTTON.Invoke();
         //StartCoroutine(FADEOUT_FLASH());
         //카드의 Icon Imag를 바꿔주기 위해서 시작시 로드한다.
-
+       
         Create_FADEOUT(marketRoyal.parent.parent, 0.8f);
         //----------
         //Tab 에 위치하게될 카드
         //isSelectDeck();
-
-        MarketSetDaily();
         MarketSetNor();
-        MarketSetRoyle();
+     
+        MarketSetDaily();
+     
+        //MarketSetRoyle();
         UnFindCardSet();
         //Market 생성
+        TurnOffPanelItem();
     }
 
 
@@ -244,7 +242,6 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     {
         CardEff_Open.eff         += FadeOutA;
         StrollVertical.moveUp    += TurnOffPanelItem;
-     
         //StrollVertical.eveVerticalMove += DeleteCopyUnity
     }
 
@@ -252,8 +249,6 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     {
         CardEff_Open.eff      -= FadeOutA;
         StrollVertical.moveUp -= TurnOffPanelItem;
-    
-     
     }
 
     //void OnDisable()
@@ -618,7 +613,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
                                                            //arr ---> IdIndex<int>()
                                                            //현재 어느 패널에 있는지 판단
 
-        for (int rp = 0; rp < arr.Count; rp++)         //0~5
+        for (int rp = 0; rp < arr.Count; rp++)             //0~5
         {
             //현재 Switch폴더의 리스트와 비교***1,2,3,4,5,6
             //arrayGrneric 의 id순서 ==현재switchPanel의 id
@@ -683,7 +678,6 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
 
     void ArrayElixerButton()
     {
-
         tempCards.Clear();
         tempCards2.Clear();
         int idIndex = 0;
@@ -793,25 +787,26 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
 
     void MarketSetDaily()
     {
-        IList<DailySale> days = new List<DailySale>();
-        days                  = marketSpecial.gameObject.GetComponentsInChildren<DailySale>();
+        GameData.Instance.days = new List<DailySale>();
+
+        GameData.Instance.days = marketSpecial.gameObject.GetComponentsInChildren<DailySale>();
 
         //리스트를 딕셔너리화 한다. 지정해서 특별한 기능을 추하또는 판단하기 위해서 
-        for (int i = 0; i < days.Count; i++)
+        for (int i = 0; i < GameData.Instance.days.Count; i++)
         {   //list =  파싱된 데이터를 days에 순서대로 대입
             //프로퍼티 ID를 호출해서 네임이 바뀌게 한다.
             //고유아이디
-            days[i].ID          = GameData.Instance.dailys[i].ID;
+            GameData.Instance.days[i].ID          = GameData.Instance.dailys[i].ID;
             //TODO: Image                                      
-            string name         = GameData.Instance.UnityDatas[days[i].ID -1].Name;
-            days[i].priceCoin   = GameData.Instance.dailys[i].Gold;
-            days[i].priceJew    = GameData.Instance.dailys[i].Jew;
-            days[i].ea          = GameData.Instance.dailys[i].EA;
-            days[i].main.sprite = SpriteManager.GetSpriteByName("Sprite", name);
+            string name         = GameData.Instance.UnityDatas[GameData.Instance.days[i].ID -1].Name;
+            GameData.Instance.days[i].priceCoin   = GameData.Instance.dailys[i].Gold;
+            GameData.Instance.days[i].priceJew    = GameData.Instance.dailys[i].Jew;
+            GameData.Instance.days[i].ea          = GameData.Instance.dailys[i].EA;
+            GameData.Instance.days[i].main.sprite = SpriteManager.GetSpriteByName("Sprite", name);
             //이벤트 메니저에 등록한다.
             //ERROR 작동안함
-            days[i].StartManager();
-            days[i].Slider(GameData.Instance.dailys[i].ID);
+            GameData.Instance.days[i].StartManager();
+            GameData.Instance.days[i].Slider(GameData.Instance.dailys[i].ID);
 
             //index 와 스크립트를 어떻게 연결할 것인가?
         }
@@ -823,6 +818,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     {
         IList<Button_Base> Nors = new List<Button_Base>();
         Nors                    = marketNor.gameObject.GetComponentsInChildren<Button_Base>();
+
         for (int i = 0; i < Nors.Count; i++)
         {
             Nors[i].SetInfo(GameData.Instance.nors[i]);
@@ -1028,8 +1024,6 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     }
 
 
-    
-
     IEnumerator coSwitchMoveStart()
     {
         yield return new WaitForSeconds(0.1f);
@@ -1111,7 +1105,6 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
 
     void UnFindCardSet()
     {
-
         IList<int> hasId   = new List<int>();
         IList<int> datasId = new List<int>();
 
@@ -1166,7 +1159,6 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     //UI bottom메뉴에서 선택되지 않은 버튼의 화살표를 숨긴다.
     public void TurnOffPanelItem()
     {
-
         for (int i = 0; i < panelItems.Length; i++)
         {
             //PanelItem 1 ~4 
@@ -1185,12 +1177,10 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     //상품 선물캔버스가 동작하게 한다.
     public void SelectCaseItem()
     {
-        CaseItem[0].SetActive(true);
-      
-       
+        CaseItem[0].SetActive(true); 
     }
 
-   
+    
 
 
 }

@@ -159,14 +159,11 @@ public class UI_TabControl : Singleton<UI_TabControl>
     IList<int> curTabSelectCards(int curtab)
     {
         IList<int> curCardsIds = new List<int>();
-       
-        
         switch (curtab)
         {
             case 1:
                 for (int i = 0; i < slots1.Length; ++i)
                 {
-                    
                     curCardsIds.Add(slots1[i].GetComponentInChildren<UnityCard>().iD);
                 }
                 break;
@@ -187,18 +184,14 @@ public class UI_TabControl : Singleton<UI_TabControl>
         return curCardsIds;
     }
 
-    //텝별로 playerSelectDecks에서 직접불러옴
+      //텝별로 playerSelectDecks에서 직접불러옴
     void tabPosition(int btnPos)
-    {      //btn [1,2,3]   default = 0    
-
-      
+    { //btn [1,2,3]   default = 0    
       //맨처음 btn = 0 이므로 처음로딩시 btn 1,2,3,이 모두 생성됨
       // 두번째 실행시 GameData.Instance에서 자동으로 1 로 되므로 
       // 1이 실행이 안되고 2,3만 생성됨
         if (btnPos != GameData.Instance.CurTab)
         {
-         
-
             int[] tempbtn      = new int[4];
             IList<int> hasTemp = new List<int>();          //tab의 카드를 빼기 위해서 임시로 생성
             int[] tem          = new int[4];               //확인필요 tab 당 원소는4 에 선택된 카드
@@ -665,7 +658,6 @@ public class UI_TabControl : Singleton<UI_TabControl>
 
     public void HideSelectItem()
     {
-       
         StartCoroutine(ShowItem(0));
     }
 
@@ -726,6 +718,7 @@ public class UI_TabControl : Singleton<UI_TabControl>
     {
         HideSelectInt(GameData.Instance.CurTab);
     }
+
     //num 1,2,3
     void HideSelectInt(int Num)
     {
@@ -761,11 +754,16 @@ public class UI_TabControl : Singleton<UI_TabControl>
                int num = swSlots1.Count;
               
                for (int i = 0; i < num; i++)
-                {
-                    swSlots1[i].GetComponentInChildren<UnityCard>().hideButton.gameObject.SetActive(false);
-                    swSlots2[i].GetComponentInChildren<UnityCard>().hideButton.gameObject.SetActive(false);
-                    swSlots3[i].GetComponentInChildren<UnityCard>().hideButton.gameObject.SetActive(false);
-                }
+               {
+                      if(swSlots1[i].GetComponentInChildren<UnityCard>())
+                      swSlots1[i].GetComponentInChildren<UnityCard>().hideButton.gameObject.SetActive(false);
+
+                     if (swSlots2[i].GetComponentInChildren<UnityCard>())
+                      swSlots2[i].GetComponentInChildren<UnityCard>().hideButton.gameObject.SetActive(false);
+
+                     if (swSlots3[i].GetComponentInChildren<UnityCard>())
+                      swSlots3[i].GetComponentInChildren<UnityCard>().hideButton.gameObject.SetActive(false);
+               }
      }
 
    
@@ -857,7 +855,6 @@ public class UI_TabControl : Singleton<UI_TabControl>
                     lsSlots3[curSlot].GetComponentInChildren<UnityCard>().mainICon.sprite = SpriteManager.GetSpriteByName("Sprite", name5);
                     lsSlots3[curSlot].GetComponentInChildren<UnityCard>().iconName.text = name5;
 
-
                     string name6 = GameData.Instance.UnityDatas[swSlots3[curSlot].GetComponentInChildren<UnityCard>().ID -1].Name;
                     swSlots3[curSlot].GetComponentInChildren<UnityCard>().mainICon.sprite = SpriteManager.GetSpriteByName("Sprite", name6);
                     swSlots3[curSlot].GetComponentInChildren<UnityCard>().iconName.text = name6;
@@ -881,23 +878,24 @@ public class UI_TabControl : Singleton<UI_TabControl>
         }
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Debug.Log("----.hasCard[9]-----" +
-                GameData.Instance.hasCard[9].level);
-            Debug.Log("----hasCard[1]-----" +
-               GameData.Instance.hasCard[1].level);
-        }
-    }
+    //private void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.Space))
+    //    {
+    //        Debug.Log("----.hasCard[9]-----" +
+    //            GameData.Instance.hasCard[9].level);
+    //        Debug.Log("----hasCard[1]-----" +
+    //           GameData.Instance.hasCard[1].level);
+    //    }
+    //}
+
     private void OnDestroy()
     {
         StrollVertical.stopMoveTrue -= HideAllUnChoice;
         StrollVertical.CloseCards -= SelectUnChoice;
         UI_Close.eveDegClose -= SelectUnChoice;
         //화면 전환시 GameData에 저장해서 게임씬에서 카드를 배열할수 있도록한다.
-        Debug.Log("======="+curTab);
+        //Debug.Log("======="+curTab);
         GameData.Instance.curSlotCards =  curTabSelectCards(curTab);
        
     }

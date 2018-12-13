@@ -56,9 +56,8 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
     private void Awake()
     {
         //Debug발생으로 처리한 코드부분 만약 한칸 건너서 없은곳 보일때 다시수정필요
-        // StartCoroutine(coReConFirm());
+        //StartCoroutine(coReConFirm());
         //DontDestroyOnLoad(this.gameObject);
-
         //MainScrollView.instance = this;
         iPanelNum = panelRECT.Length;
         stPanels  = new PanelNUM[iPanelNum];
@@ -75,9 +74,8 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
         ped = new PointerEventData(null);
         //화면 고정 스트롤을 해제하는 이벤트
         StrollVertical.stopMoveTrue += PanelReTrue; //false바꿈
-        
-       //시작시 이전의 패널로 돌아간다.ㅡ
-       SetPanel();
+        //시작시 이전의 패널로 돌아간다.
+        SetPanel();
     }
 
    
@@ -87,14 +85,13 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
       
         StrollVertical.eveVerticalMove += PanelMove;
         UnityCard.evReScroll           += PanelReTrue;
-       
     }
+
     private void OnDisable()
     {
         StrollVertical.stopMoveTrue    -= PanelReTrue; //false바꿈
         StrollVertical.eveVerticalMove -= PanelMove;
         UnityCard.evReScroll           -= PanelReTrue;
-       
     }
 
     private void OnDestroy()
@@ -123,6 +120,7 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
 
         }
     }
+
 
     public void RightMove()
     {
@@ -245,8 +243,11 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
 
                 break;
             case 4:
-                v3movePanel = new Vector3((width * 4 - width * 0.5f) * -1, 0, 0);
-                SetCurPanelID_4();
+                //4번째는 옵션으로 창이 이동하지 않게 하기 위해서 3과 동일한 panel value 적용
+                v3movePanel = new Vector3((width * 3 - width * 0.5f) * -1, 0, 0);
+                //v3movePanel = new Vector3((width * 4 - width * 0.5f) * -1, 0, 0);
+                //SetCurPanelID_Option();
+                //SetCurPanelID_4();
                 break;
         }
        
@@ -292,7 +293,7 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
             if (curPanel != afterPanel)
             {
                 afterPanel = curPanel;
-                curPanel = value;
+                curPanel   = value;
             }
         }
     }
@@ -394,11 +395,23 @@ public class MainScrollView : MonoBehaviour //,IDragHandler, IBeginDragHandler, 
         }
     }
 
-    //터치로 패널이동시 하단의 툴바에서 버튼이동표현을 한다.
-    void SetCurPaneMoveTouch()
+    public void SetCurPanelID_Option()
     {
-
+        Vector3 selectNextBox = new Vector3(bottomPanelRect[3].anchoredPosition.x, initY, 0);
+        buttonBackGround.transform.localPosition = new Vector3(bottomPanelRect[3].anchoredPosition.x, initY, 0);
+        iTween.MoveTo(bottomMoveRect.gameObject, iTween.Hash("islocal", true,
+                                                          "position", selectNextBox,
+                                                          "oncomplete", "afterChange",
+                                                          "easetype", "easeOutQuart",
+                                                          "time", .7f));
     }
+
+
+        //터치로 패널이동시 하단의 툴바에서 버튼이동표현을 한다.
+        void SetCurPaneMoveTouch()
+        {
+
+        }
 
     void afterChange()
     {

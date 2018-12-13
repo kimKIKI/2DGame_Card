@@ -71,7 +71,7 @@ public partial class GameManager : MonoBehaviour {
             else if (gameState == eGameState.COM_CARDMOVE)
             {  //com의 카드가 이동완료후 가위바위보 설정
                 eText.text = String.Format("{0} :", "COM_CARDMOVE");
-
+                eveCardIn();
                 //TODO:간헐적으로 에러발생
                 StartCoroutine(CardMove(1f));
                 yield return new WaitForSeconds(5f);
@@ -86,11 +86,42 @@ public partial class GameManager : MonoBehaviour {
             }
             else if (gameState == eGameState.PLAYER_CARDDISTRIBUTION)
             {   //player가 주먹가위보 선택------------
+                //만약 선택없이 대기 시간이 길어진다면 알림메세지 발동한다.
+
+                if(!throwMessagePlay)
+                StartCoroutine(checkMessageTime(10f));
+
+                if (throwMessage)
+                {
+                    Debug.Log("안내를 시작합니다.");
+                    //TODO:안내가 끝나면 throwMessagPlay 를 다시  fale로 놓아야 한다.
+                    throwMessage = false;
+                }
+
+                //turn버튼이 클릭 가능한 상태일때 player에게 확실히 알려주어야 한다.
+                //player의 카드가없을때도 턴이 가능하다.따라서 슬롯이 빈상태일때 검사는 안됨..
+                // 컴퓨터가 배치되고 난후 일정시간이후에 turn 활성화시킨다.
                 eText.text     = String.Format("{0} :", "PLAYER_CARDDISTRIBUTION");
-                //누룰수 있게 표시 
-                imgbtnColor    = Color.white;
-                //color을 컴포넌트에 적용
-                btnImg.color   = imgbtnColor;
+                //이펙트추가 필요: 중앙부터 버튼까지 이동
+                //누룰수 있게 표시  한번만 실행
+                if (IsTurn)
+                {
+                    if (centerEffect.gameObject != null)
+                        centerEffect.gameObject.SetActive(true);
+
+                    //SOUND 생성   AppSound.instance.SE_COMBAT_OUT.Play();
+                    if (EffTurn.gameObject != null)
+                    {
+                        //Debug.Log("비어 있지 않습니다.");
+                        EffTurn.gameObject.SetActive(true);
+                        Vector3 pos = buttonTurn.position;
+                        iTween.MoveTo(EffTurn.gameObject, iTween.Hash("position", pos,"easetype", iTween.EaseType.easeInOutQuint, "time", 0.3f));
+                    }
+                    imgbtnColor = Color.white;
+                    //color을 컴포넌트에 적용
+                    btnImg.color = imgbtnColor;
+                    IsTurn = false;
+                }
 
                 if (tem)
                 {
@@ -103,16 +134,18 @@ public partial class GameManager : MonoBehaviour {
                     //버튼칼라변경
                     imgbtnColor  = Color.black;
                     btnImg.color = imgbtnColor;
-
                     gameState    = eGameState.JUDGEMENT;
 
+                    EffTurn.gameObject.SetActive(false);
+                    EffTurn.gameObject.transform.position = new Vector3(0, 0, 0);
+                    //새로운 턴이 발생시 버튼이펙트가 작동되게 한다.
+                    IsTurn       = true;
                 }
                 yield return null;
-
             }
             else if (gameState == eGameState.JUDGEMENT)
             {
-                eText.text      = String.Format("{0} :", "JUDGEMENT");
+                eText.text      = String.Format("{0} :","JUDGEMENT");
                 //보류 :TODO 별로임
                 //MoviesEffect(0);
                 //슬롯의 가위바위보정보를 델리게이트가 호출되는 곳에 전달한다.
@@ -134,8 +167,20 @@ public partial class GameManager : MonoBehaviour {
                 for (int i = 0; i < 3; i++)
                 {
                     ResultAniStart(i);
+                    float delayAdd = 0;
+                    //TODO: 무승부가 아닐경우 이펙트 시간을 늘려줘야 한다.
+                    //무승부일때2일때 추가시간0,승패애니있을때 1추가 
+                    if (onlyVictoryResult1(i) == 2)
+                    {
+                        delayAdd = 0f;
+                    }
+                    else
+                    {
+                        delayAdd = 3f;
+                    }
+
                     //1이 끝날때 까지 어떻게 기다리게 하는가?
-                    yield return new WaitForSeconds(5.5f);
+                    yield return new WaitForSeconds(5.5f+delayAdd);
                     //슬롯이 비어있지 안다면 판정및 삭제애니 실행됨
                     // TODO : 타워의 인원이나 피가 다 됐는지 판단한다.
 
@@ -160,9 +205,7 @@ public partial class GameManager : MonoBehaviour {
                 //TODO: 잘 작동하는지 의심스러움..
                 AppSound.instance.SE_COMBAT_START.Stop();
                 yield return new WaitForSeconds(1f);
-
                 gameState = eGameState.JUDGEMENT_NEXT;
-
             }
             else if (gameState == eGameState.JUDGEMENT_NEXT)
             {
@@ -171,8 +214,6 @@ public partial class GameManager : MonoBehaviour {
                 //버튼부모 이미지의 칼라를 변경한다.버튼 칼라가 클릭후 적용되지 안아서 적용
                 imgbtnColor = Color.black;
                 btnImg.color = imgbtnColor;
-
-
                 // com의 베이스와 센터에 카드가 남아 있는지 판단한다.
                 if (formation2.CardFindsNumCom() > 0 || ComRemainCenterCard() > 0 || formation.CardFindsNum() > 0 || RemainCenterCard() > 0)
                 {  //   com의 Base 숫자      com의  slot
@@ -185,7 +226,6 @@ public partial class GameManager : MonoBehaviour {
             else if (gameState == eGameState.COM_DISTRIBUTION)
             {
                 eText.text = String.Format("{0} :", "COM_DISTRIBUTION");
-
                 yield return new WaitForSeconds(0.2f);
                 //com의 자동으로 가위바위보 입력
                 InputRPS();

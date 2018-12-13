@@ -66,10 +66,7 @@ public class Option_canvas : MonoBehaviour {
             Pause();
         });
 
-        ResumBtn.onClick.AddListener(delegate
-        {
-
-        });
+     
 
     }
 
@@ -136,6 +133,12 @@ public class Option_canvas : MonoBehaviour {
     {
         IsPause = true;
         Pause();
+    }
+
+    //외부에서 옵션창을 닫을수 있도록한다.
+    public void Option_canvasClose()
+    {
+        OptionSound.gameObject.SetActive(false);
     }
 
 }

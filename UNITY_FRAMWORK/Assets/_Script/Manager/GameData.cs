@@ -124,6 +124,11 @@ public sealed class GameData
     //덱의 선택에 필요한 정보를 담는다.
     public Dictionary<int, int[]> playerSelectDecks     = new Dictionary<int, int[]>();
 
+    //상품업데이트후 DailySale에 접근할수 있도록 싱글톤으로 
+    public IList<DailySale> days;
+    //카드의 업데이트를 전달하기 위해서 
+    public IList<UnityCard> uCards = new List<UnityCard>();
+
     public Dictionary<int, MarketInfo>  dailys          = new Dictionary<int, MarketInfo>();
     //판매가격및 아이템카드의 오브젝트를 세팅한다.
     public Dictionary<int, MarketRoyle> royles          = new Dictionary<int, MarketRoyle>();

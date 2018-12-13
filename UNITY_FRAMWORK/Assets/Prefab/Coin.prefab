@@ -76,6 +76,7 @@ MonoBehaviour:
   _animationSpeed: 3
   _image: {fileID: 114784666796661198}
   _animationRunning: 0
+  Amount: 1
 --- !u!114 &114784666796661198
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -95,7 +96,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300026, guid: f89e927d8eef9cd4494f7709d6d974e7, type: 3}
+  m_Sprite: {fileID: 21300006, guid: b230a6fd0f5928147a7232b5b42be45b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

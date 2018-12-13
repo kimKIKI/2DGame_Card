@@ -263,7 +263,6 @@ public class Formation : MonoBehaviour {
                         cardsLength[i].eBelongState = eBelong.COM;
                         cardsLength[i].eType        = eCardType.SLOT;
 
-
                     //TODO: 출발하는 위치 값을 여기서 설정해 주어야 한다.
                     iTween.MoveTo(cardsLength[i].gameObject, iTween.Hash("islocal", true,
                                                        "position", moveTarget,

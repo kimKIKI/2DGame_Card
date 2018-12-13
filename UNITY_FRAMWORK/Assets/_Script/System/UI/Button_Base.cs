@@ -92,7 +92,7 @@ public class Button_Base : MonoBehaviour {
     //스스로 변경되게 델리게이트 이벤트의 이벤트 시스템이용
     void CheckAmount()
     {
-        Debug.Log("여기 NorMarke 의 eventManager은 작동회고 있는 거야");
+        //Debug.Log("여기 NorMarke 의 eventManager은 작동회고 있는 거야");
         curhasGold = GameData.Instance.players[1].coin;
         //Debug.Log("costGold :"+costGold + "- curhasGold :"+curhasGold);
         if (CurhasGold < costGold)
@@ -110,34 +110,40 @@ public class Button_Base : MonoBehaviour {
     //case 의 Item객체를세팅한다.
     public  void SetInfo(NorInfo info)
     {
-       txLabel.text  = string.Format("{0}", info.PriceGold); 
-       txLabel2.text = string.Format("{0}", info.caseName);
-       costGold      = info.PriceGold;
-        if (info.caseName == "LunchyCase")
+         txLabel.text  = string.Format("{0}", info.PriceGold);
+         txLabel2.text = string.Format("{0}", info.caseName);
+
+         //TODO:여기 있음 Button_Base가 비활성화 안되는 문제 발생함
+         //원인 모름
+         //costGold      = info.PriceGold;
+
+         if (info.caseName == "LunchyCase")
         {
-            Debug.Log("역기 문제 없나요 LunchyCase");
             //sprite이름대입
-            name             = "luckyCase";
-            main.sprite.name = name;
-            main.sprite      = SpriteManager.GetSpriteByName("Sprite", main.sprite.name);
-            //GameData.Instance.dic_SetItems의 키값
-            keyName = "lunchyCase";
-        }
-        else if (info.caseName == "legendaryCase")
-        {   //sprite네임
-            Debug.Log("역기 문제 없나요 legendaryCase");
-            name             = "legendaryCase";
-            main.sprite.name = name;
-            main.sprite      = SpriteManager.GetSpriteByName("Sprite", main.sprite.name);
-            keyName          = "legendaryCase";
-        }
-        else if (info.caseName == "HeroCase")
-        {   //sprite네임
-            Debug.Log("역기 문제 없나요 HeroCase");
-            name             ="giantCase";
-            main.sprite.name = name;
-            main.sprite      = SpriteManager.GetSpriteByName("Sprite", main.sprite.name);
-            keyName          = "HeroCase";
+             name             = "luckyCase";
+                          //main.sprite.name = name;
+             main.sprite      = SpriteManager.GetSpriteByName("Sprite",name);
+                          //GameData.Instance.dic_SetItems의 키값
+             keyName = "lunchyCase";
+          
+         }
+         else if (info.caseName == "legendaryCase")
+         {   //sprite네임
+           
+             name             = "legendaryCase";
+                             //main.sprite.name = name;
+             main.sprite      = SpriteManager.GetSpriteByName("Sprite", name);
+             keyName          = "legendaryCase";
+         
+          }
+          else if (info.caseName == "HeroCase")
+          {                    //sprite네임
+                             //Debug.Log("역기 문제 없나요 HeroCase");
+             name             = "HeroCase";
+                             //main.sprite.name = name; 
+             main.sprite      = SpriteManager.GetSpriteByName("Sprite", name);
+             keyName          = "HeroCase";
+          
         }
     }
 
@@ -155,7 +161,6 @@ public class Button_Base : MonoBehaviour {
         CardEff_Open.keyName = keyName;
         iTween.ValueTo(gameObject, iTween.Hash("from",ScaleY, "to", OrigScale.y, "easetype", iTween.EaseType.easeOutBack, "onupdate", "ScaleButton", "time", .7));
         //움직임
-     
         AppSound.instance.SE_MENU_OPEN.Play();
         //다른 클래스에서 변경됐을때 그 값을 적용받기 위해서 
         //한번더 값을 받아 온다.

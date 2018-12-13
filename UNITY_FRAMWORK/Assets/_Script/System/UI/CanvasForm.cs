@@ -60,6 +60,8 @@ public class CanvasForm : MonoBehaviour
                 updateBoxBtn = updateBox.GetComponentInChildren<Button>();
                 updateBoxBtn.onClick.AddListener(delegate
                 {
+                    AppSound.instance.SE_CARD_CHOICE.Play();
+
                     //돈이 업데이트금액보다 만을때
                     if (nextUpGold < ItemDisplayer.instance_ItemDisplayer.CurhasGold )
                     {
@@ -90,18 +92,22 @@ public class CanvasForm : MonoBehaviour
                 UpdateShowCloseBtn = updateShow.transform.Find("Button_Close").GetComponent<Button>();
                 UpdateShowCloseBtn.onClick.AddListener(delegate
                 {
+                    AppSound.instance.SE_CARD_CHOICE.Play();
                         updateShow.SetActive(false);
                         GameData.Instance.isStopScroview = false;
                         GameData.Instance.IsShowCard     = false;
                         //TODO: 여기서 활성화된 backCard를 다시 하이드 해줘야 한다.
+
                         card.GetComponent<UnityCard>().transform.Find("Panel").gameObject.SetActive(false);
                         //가격전달 메소드
                 });
 
                 puchaseBtn = purchaseBox.transform.Find("Button").GetComponent<Button>();
+
                 puchaseBtn.onClick.AddListener(delegate
                 {
-                    if(!isOne)
+                    AppSound.instance.SE_CARD_CHOICE.Play();
+                    if (!isOne)
                     CountAnime();
 
                     SaleObj.GetComponent<DailySale>().PurchaseSend();
@@ -115,6 +121,7 @@ public class CanvasForm : MonoBehaviour
                 purchaseCloseBtn = purchaseBox.transform.Find("Button_Close").GetComponent<Button>();
                 purchaseCloseBtn.onClick.AddListener(delegate
                  {
+                     AppSound.instance.SE_CASE_CLOSE.Play();
                      if (isPurchase)
                      {
                          SaleObj.GetComponent<DailySale>().PurchaseEnd();
@@ -346,40 +353,42 @@ public class CanvasForm : MonoBehaviour
     public virtual void SetUpdateShowOne(int id, GameObject obj, GameObject form)
     {
 
-        ID = id;
-        card = obj.GetComponent<UnityCard>();
-
+        ID         = id;
+        card       = obj.GetComponent<UnityCard>();
         LevelCount = form.transform.Find("tx_LevelCount").GetComponentInChildren<Text>();
         ownCards   = form.transform.Find("tx_Amount").GetComponentInChildren<Text>();
         mainICon   = form.transform.Find("Icon").GetComponentInChildren<Image>();
         slider     = form.GetComponentInChildren<Slider>();
-        cost       =   form.transform.Find("Button/tx_Coin").GetComponentInChildren<Text>();
+        cost       = form.transform.Find("Button/tx_Coin").GetComponentInChildren<Text>();
         name       = form.transform.Find("txIcon_Name").GetComponentInChildren<Text>();
         exitImg    = form.transform.Find("Button_Close").GetComponent<Image>();
         buttonE    = form.transform.Find("Button").GetComponent<Transform>();
 
+        //TODO: 여기에 DailyCard의 카드량에도 바뀐량을 적용시켜야 한다.
+      
+
         if (GameData.Instance.hasCard.ContainsKey(ID))
         {   //가지고 있는 카드의 tatal value
-            int hasCards = GameData.Instance.hasCard[ID].hasCard;
+            int hasCards       = GameData.Instance.hasCard[ID].hasCard;
             //현재 카드가 레벨업된value 
-            int level = GameData.Instance.hasCard[ID].level;
+            int level          = GameData.Instance.hasCard[ID].level;
             //현재까지의 레벨로 총카드숫자로 변환
-            int curLevel = GameData.Instance.Level[level-1];
+            int curLevel       = GameData.Instance.Level[level-1];
             //업데이트하고 남은 카드의 value
-            remainCards = LevelUpRemain(ID);
+            remainCards        = LevelUpRemain(ID);
             //next level의 전체 카드 value 
-            nextRemainCards = GameData.Instance.Level[level];
-            nextUpGold = GameData.Instance.LevelCost[level - 1];
+            nextRemainCards    = GameData.Instance.Level[level];
+            nextUpGold         = GameData.Instance.LevelCost[level - 1];
             //현재레벨에서 다음레벨까지  필요한 카드의 value
             int curRemainCards = nextRemainCards - curLevel;
 
-            LevelCount.text = string.Format("{0} / {1}", nextRemainCards, nextRemainCards);
+            LevelCount.text   = string.Format("{0} / {1}", nextRemainCards, nextRemainCards);
             //value 카드단위당 증가할 vale설정 백분율
-            float uni = 1f / nextRemainCards;
+            float uni         = 1f / nextRemainCards;
             //최대값이 1이므로 1실수율로 변환
-            float value = remainCards * uni;
+            float value       = remainCards * uni;
             //구매시 애니가 작동되어야 한다.
-            slider.value = value;
+            slider.value      = value;
 
             //다음 레벨에  업글가능한 카드가 존재할때
             if (remainCards >= curRemainCards)
@@ -393,7 +402,7 @@ public class CanvasForm : MonoBehaviour
 
             name.text       = string.Format("{0} X ", cardName);
             nextCardAmount  = nextRemainCards;
-            CountSlider     = value;         //증가될 수치
+            CountSlider     = value;             //증가될 수치
             CountEa         = uni;               //계산된 증가량
             resultCard      = remainCards - nextRemainCards;
 
@@ -511,5 +520,8 @@ public class CanvasForm : MonoBehaviour
             }
 
 
-
+    private void OnDestroy()
+    {
+        Instance = null;
+    }
 }

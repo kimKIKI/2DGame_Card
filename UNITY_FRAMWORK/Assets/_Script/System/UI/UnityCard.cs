@@ -29,15 +29,15 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
     [HideInInspector]
     public GameObject frontobj;       //업데이트후 리턴값을 받기 위해서 
 
-    public Transform  panelSwitch;    //자신이 위치 하게될 부모루트
-    public GameObject arrow;          //자동으로 컨트롤하기 위해서 
-    public Transform  hideButton;     //버튼이 선택시 가려지게할 버튼
-    public Transform  updateCard;     //업데이트를 위한 카드
-    public Transform  updateShow = null;    //업데이트 선택후에 업데이트이펙트가 발생하는 쇼
-    public Button     updateBtn  = null;     //업데이트에 필요한 버튼
-    public Button     mainButton = null;     //선택카드박스를 열어주는 버튼
-    public Button     tabButton = null;      //같은 클래스이므로 top에서 사용시 
-                                             //버튼의 위치를 다르게 해서 사용했음
+    public Transform  panelSwitch;            //자신이 위치 하게될 부모루트
+    public GameObject arrow;                  //자동으로 컨트롤하기 위해서 
+    public Transform  hideButton;             //버튼이 선택시 가려지게할 버튼
+    public Transform  updateCard;             //업데이트를 위한 카드
+    public Transform  updateShow = null;      //업데이트 선택후에 업데이트이펙트가 발생하는 쇼
+    public Button     updateBtn  = null;      //업데이트에 필요한 버튼
+    public Button     mainButton = null;      //선택카드박스를 열어주는 버튼
+    public Button     tabButton  = null;      //같은 클래스이므로 top에서 사용시 
+                                              //버튼의 위치를 다르게 해서 사용했음
     public GameObject IsOneUpdate;            //클릭발생시 업데이트 버튼을 감춘다.
 
      public   delegate  void  ReScroll();
@@ -90,12 +90,10 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
 
     //임시로 public 
     public int     iD;         //datas에서 고유아이디
-  
-
            int     hasCardNum;  //전체 카드 숫자
            int     levelCardNum;//현재레벨업된 카드숫자
           
-    //UnityForm      updateBox;   //box
+    //UnityForm    updateBox;   //box
     UnityForm      updateBox2;  //Show
     public int     SlotIndex;  //슬록몇번째에 있는가 확인, 교체시 사용하게됨
 
@@ -103,18 +101,23 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
     private int level;       //카드의 현재 레벨
     [SerializeField]
     public int     LevelCards;  //Level*필요한 카드숫자 ..즉 Leve[ 0,2,4,10,...]
-
-
-    public int rootIndex;       //설정된 부모 slot
+    public int     rootIndex;       //설정된 부모 slot
 
     [HideInInspector]
     public float width;         //slot 의 widthf간결
     [HideInInspector]
     public float height;        //slot의   height간격
 
-    bool isSwitch;
+    bool    isSwitch;
     Vector3 localScale;
     Vector3 curScale;
+    Color   enableArrowColor;   //업그레이드가 가능한경우 색이 바뀌게 한다.
+    Color   arrowBaseColor;
+    Color   hpBarBaseColor;     //hp바의 원래칼라
+    Image   arrowImg;
+    Image   HpImg;
+    string  strArrowImg       = "arrow_down";
+    string  strArrowUpImg     = "arrow_up";
 
     [HideInInspector]
     public Vector3 fromVector3;  //현재 slot의 좌표를 입력받는다.
@@ -139,7 +142,6 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
     {
         //if (updateCard != null)
         //    updateBox = updateCard.gameObject.GetComponent<UnityForm>();
-
         //if (updateShow != null)
         //    updateBox2 = updateShow.gameObject.GetComponent<UnityForm>();
         // TODO: enum할당을 Start에서 하는데 문제 있을지
@@ -148,10 +150,10 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
                 {
                     updateBtn.onClick.AddListener(delegate
                     {
-                        Debug.Log(" updateBtn 작동합니다.");
+                       // Debug.Log(" updateBtn 작동합니다.");
+                        AppSound.instance.SE_CARD_BTN.Play();
                         if (enableUpdate(ID, UpEnable))
                         {
-
                             //주의>> 여기서 대입해줘야 호출이 가능하다.
                             CanvasForm.Instance.purchaseBox = this.purchaseBox;
                             CanvasForm.Instance.updateBox   = this.updateBox;
@@ -162,6 +164,7 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
                             CanvasForm.Instance.updateBox.SetActive(true);
                             CanvasForm.Instance.SetUpdate(ID, updateBox);
 
+                   
                             IsOpenbutton = true;  
                             //TODO: 2개의 카드로 위치를 보여주게 되서 생긴문제.
                             if (this.frontobj)
@@ -179,11 +182,12 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
                 {
                 mainButton.onClick.AddListener(delegate
                     {
-                        Debug.Log("mainButton클릭");
+                        //Debug.Log("mainButton클릭");
                         //뒤에 활성화 되는 카드에 자신을 연결하기 위해서 
                         UI_TabControl.Instance.forntObject = this.gameObject;
                         SendID();
                         UI_TabControl.Instance.showSelectItem();
+                        AppSound.instance.SE_CARD_CHOICE.Play();
                     });
                 }
       
@@ -191,7 +195,8 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
                 {    // ItemSampleTop선택중일때 스와치 이동이 되게 한다.
                     tabButton.onClick.AddListener(delegate
                     {
-                        Debug.Log("tabButton작동합니다.");
+                       // Debug.Log("tabButton작동합니다.");
+                        AppSound.instance.SE_CARD_BTN.Play();
                         //SetUpdateShowOne(ID, card.gameObject, updateShow);
                         //를실행시키기 위해서 true 업데이트 버튼이 활성화 된상태 
                         //ID만전달
@@ -206,7 +211,6 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
                         UI_TabControl.Instance.SwitchSlot();
                         //개별적으로 ButtonS를 찾아서 꺼주는 역할
                         UI_TabControl.Instance.HideSelectItem();
-
                         //tabButton.gameObject.GetComponentInChildren<Image>().enabled = true;
                         //tabButton.gameObject.GetComponentInChildren<Text>().enabled = true;
 
@@ -215,20 +219,19 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
                         {
                             if (GameData.Instance.IsShowCard || IsOpenbutton)
                             {
-                                Debug.Log("updateBtn 비활성화 성공");
+                                  //Debug.Log("updateBtn 비활성화 성공");
                                 if (updateBtn.gameObject.activeSelf == true)
                                 {
                                     updateBtn.gameObject.SetActive(false);
                                     IsOpenbutton = false;
                                     CanvasForm.Instance.IsTop = false;
                                 }
-                               
                             }
                             else if (!GameData.Instance.IsShowCard)
                             {
                                 if (updateBtn.gameObject.activeSelf == false)
                                 {
-                                    Debug.Log("updateBtn 활성화 성공");
+                                    //Debug.Log("updateBtn 활성화 성공");
                                     CanvasForm.Instance.IsTop = true;
                                     updateBtn.gameObject.SetActive(true);
                                     IsOpenbutton = true;
@@ -237,7 +240,9 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
                             }
                         }
                     });
-                } 
+                }
+
+        
     }
 
    
@@ -250,6 +255,7 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
         if (arrow != null)
         {
             localScale = arrow.transform.localScale;
+
         }
         rt = gameObject.GetComponent<RectTransform>();
       
@@ -262,17 +268,33 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
         CanvasForm.eveLevelUp += ReSetting;
         //CanvasForm.collLeveUp += LevelUp;
         ReSetting();
+        //-----------
+        GameData.Instance.uCards.Add(this);
+        //----------
     }
+
+   public  void OnEventUpdate()
+    {
+        CardEff_Open.cardUp += ReSetting;
+    }
+
+    public void OnEventUpdateDis()
+    {
+        CardEff_Open.cardUp -= ReSetting;
+    }
+    
 
     void OnDisable()
     {
-        CanvasForm.eveLevelUp -= ReSetting;
+        CanvasForm.eveLevelUp  -= ReSetting;
        // CanvasForm.collLeveUp -= LevelUp;
     }
 
+    
     void OnDestroy()
     {
         CanvasForm.eveLevelUp -= ReSetting;
+        GameData.Instance.uCards.Remove(this);
     }
     
     //이벤트메니저에 등록되는 시점
@@ -330,9 +352,31 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
             Slider();
 
             //다음 레벨에  업글가능한 카드가 존재할때
+            //TODO: 
             if (remainCards >= curRemainCards)
             {
-               
+                arrowImg         = arrow.transform.GetComponent<Image>();
+                arrowImg.sprite  = SpriteManager.GetSpriteByName("Sprite", strArrowUpImg);
+                arrowBaseColor   = arrow.transform.GetComponent<Image>().color;
+                enableArrowColor = Color.yellow;
+                arrowImg.color   = enableArrowColor;
+              
+                //-------보류 에러원인 모름..
+                //HpImg              = slider.GetComponentInChildren<Image>();
+                //TODO: 이부분ERROR 발생함
+                //hpBarBaseColor    = slider.GetComponentInChildren<Image>().color;
+                //HpImg.color         = new Color(0, 0, 0);
+
+            }
+            else
+            {
+                arrowImg         = arrow.transform.GetComponent<Image>();
+                arrowImg.sprite  = SpriteManager.GetSpriteByName("Sprite",strArrowImg);
+                hpBarBaseColor   = arrow.transform.GetComponent<Image>().color;
+                enableArrowColor = Color.white;
+                arrowImg.color   = enableArrowColor;
+               // Image hp = slider.GetComponentInChildren<Image>();
+               // hp.color = Color.white;
                
             }
         }
@@ -549,11 +593,24 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
         int remain           = LevelUpRemain(ID);
         int level            = GameData.Instance.hasCard[ID].level;
         int nextRemainCards  = GameData.Instance.Level[level];
+        ///color 변함//
+        ///
+        //버튼칼라변경
+        //Color imgbtnColor;
+        //btnImg = buttonTurn.GetComponent<Image>();
+        //imgbtnColor = btnImg.color;
+        //imgbtnColor = Color.black;
+        //btnImg.color = imgbtnColor;
 
         if (nextRemainCards < remain)
         {
             //가능할때 true;
             enable = true;
+
+            if(enable)
+            arrowImg.sprite = SpriteManager.GetSpriteByName("Sprite", strArrowUpImg);
+
+
         }
         return enable;
     }
@@ -617,7 +674,7 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
           bool a =   GameData.Instance.isSwitch;
           bool b =   GameData.Instance.IsShowCard;
           // IsOpenbutton
-          Debug.Log("isSwitch:  "+a+" IsShowCard:"+b +" ISOpenbutton :"+IsOpenbutton);
+          //Debug.Log("isSwitch:  "+a+" IsShowCard:"+b +" ISOpenbutton :"+IsOpenbutton);
         }
     }
 
@@ -693,8 +750,8 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
         get { return kinds; }
         set
         {
-            kinds = value;
-            Array arr = Enum.GetValues(typeof(Card_Kinds));
+            kinds              = value;
+            Array arr          = Enum.GetValues(typeof(Card_Kinds));
             List<string> Kinds = new List<string>(arr.Length);
 
             for (int i = 0; i < arr.Length; i++)

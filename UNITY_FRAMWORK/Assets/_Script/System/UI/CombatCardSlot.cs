@@ -11,13 +11,11 @@ public class CombatCardSlot : MonoBehaviour {
     public Card cardInfo = null;
     [HideInInspector]
     public Image itemIcon;   // 아이템 아이콘(이미지)
-
-
-
+   
     private void Awake()
     {
         slotImage = this.GetComponent<Image>();
-        itemIcon = transform.Find("ItemCard").GetComponentInChildren<Image>();
+        itemIcon  = transform.Find("ItemCard").GetComponentInChildren<Image>();
     }
 
     private void Start()
@@ -30,15 +28,16 @@ public class CombatCardSlot : MonoBehaviour {
             if (newInfo != null)
             {
             itemIcon.enabled = true;
-            cardInfo = newInfo;
+            cardInfo         = newInfo;
+            string name      = cardInfo.IconName;
          
-            itemIcon.sprite.name = cardInfo.IconName;
-            itemIcon.sprite = SpriteManager.GetSpriteByName("Sprite", itemIcon.sprite.name);
-            //itemIcon.sprite = SpriteManager.GetSpriteByName("Sprite", itemIcon.sprite.name);
+         
+            itemIcon.sprite      = SpriteManager.GetSpriteByName("Sprite",name);
+            //itemIcon.sprite    = SpriteManager.GetSpriteByName("Sprite", itemIcon.sprite.name);
             }
             else
             {
-            cardInfo = null;
+            cardInfo         = null;
             itemIcon.enabled = false;
            }
      }

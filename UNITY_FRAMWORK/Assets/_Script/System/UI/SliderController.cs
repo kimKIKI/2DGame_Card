@@ -16,7 +16,7 @@ public class SliderController : MonoBehaviour {
 
 
     //-----------내부-------------------
-    Text tx_Hp;
+    public Text tx_Hp;
     Slider slider;
     float uni;
 
@@ -37,7 +37,7 @@ public class SliderController : MonoBehaviour {
     private void Awake()
     {   //Awak에서는 찾을것을 명시적으로 처음부터 하자
         slider = GetComponentInChildren<Slider>();
-        tx_Hp  = transform.Find("Text_Wall").GetComponentInChildren<Text>();
+        //tx_Hp  = transform.Find("Text_Wall").GetComponentInChildren<Text>();
     }
 
     public  void Init(int fHp)

@@ -8,25 +8,31 @@ public class GameCardSlot2 : MonoBehaviour {
 
     private Image slotImage;        // 슬롯 이미지
     private Image itemIcon;         // 아이템 아이콘(이미지)
-    private int   rpkNumber;       //가위바위보를 숫자로 출력
-    private Text  rpk;             //주먹,가위,보의 문자출력
-            bool  IsBase;          //기본상태
+    private int   rpkNumber;        //가위바위보를 숫자로 출력
+    private Text  rpk;              //주먹,가위,보의 문자출력
+            bool  IsBase;           //기본상태
             bool  IsCard;           //카드배분상태
+
+    public Text txPlus;
+    public int plus;
+
     Camera maincamera;
 
     void Awake()
     {
         slotImage = this.GetComponent<Image>();
-        itemIcon = transform.Find("ItemCard").GetComponentInChildren<Image>();
-        rpk = transform.GetComponentInChildren<Text>();
+        itemIcon  = transform.Find("ItemCard").GetComponentInChildren<Image>();
+        rpk       = transform.GetComponentInChildren<Text>();
         rpk.gameObject.SetActive(false);
         maincamera = GameObject.Find("MainCamera").GetComponent<Camera>();
+        txPlus.text = null;
     }
 
     private void OnEnable()
     {
         GameManager.eveCardIn += ChildCount;
     }
+
     void OnDisable()
     {
         GameManager.eveCardIn -= ChildCount;
@@ -51,11 +57,11 @@ public class GameCardSlot2 : MonoBehaviour {
                 switch (value)
                 {
                     case 1:
-                        rpk.text = string.Format("{0}", "주먹");
+                        rpk.text = string.Format("{0}", "가위");
                         break;
 
                     case 2:
-                        rpk.text = string.Format("{0}", "가위");
+                        rpk.text = string.Format("{0}", "주먹");
                         break;
 
                     case 3:
@@ -71,6 +77,7 @@ public class GameCardSlot2 : MonoBehaviour {
 
         }
     }
+
     public void ChildCount()
     {
        int num = transform.childCount;
@@ -79,10 +86,10 @@ public class GameCardSlot2 : MonoBehaviour {
             //새로운 오브젝트가 포함된 상태(카드배분)
             IsBase = true;
             string str = transform.GetChild(2).name;
+            //Debug.Log("getChild(2) name : "+str);
             transform.Find(str).transform.localScale = new Vector3(0.5f, 0.5f, 1);
             transform.Find(str).transform.localRotation = Quaternion.identity;
         
-
             //시간차로 커지게 한다.
             StartCoroutine(coChildCount(0.3f));
         }
@@ -92,6 +99,23 @@ public class GameCardSlot2 : MonoBehaviour {
     {
         yield return new WaitForSeconds(t);
         gameObject.transform.localScale = new Vector3(2, 2, 2);
+    }
+
+    public void PlusHp()
+    {
+        if (txPlus != null)
+        {
+            txPlus.text = string.Format("+{0}", plus);
+            iTween.ScaleFrom(txPlus.gameObject, iTween.Hash("x", 2, "y", 2, iTween.EaseType.easeInOutBounce, .3f));
+            StartCoroutine(reHide(2f));
+        }
+
+    }
+
+    IEnumerator reHide(float t)
+    {
+        yield return new WaitForSeconds(t);
+        txPlus.text = null;
     }
 
     void  AddEffect()

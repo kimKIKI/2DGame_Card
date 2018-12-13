@@ -12,7 +12,8 @@ public class Game_Scene : MonoBehaviour {
         //System.GC.Collect();
         // !!!!!!!!!!!!!!!!!!!!!
         fadeOut = GameObject.Find("FadeOut").GetComponent<FadeOut>();
-        StartCoroutine(FADEOUT_FLASH());
+        //TODO: 씬에서 고정적으로 Fade를 처리할경우 
+        //StartCoroutine(FADEOUT_FLASH());
         GameData.Instance.PanelItem = 3;
     }
 

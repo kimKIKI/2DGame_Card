@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class UI_Icon : MonoBehaviour {
 
 
     public GameObject hideImageLeft;
     public GameObject hideImageRight;
+    public GameObject openImg;
+
     public RectTransform icon;
     public int PanelItem;            //4개의 항목, gameScene,MarketScene,Button_CardScene,Button_E,
 
@@ -20,27 +23,33 @@ public class UI_Icon : MonoBehaviour {
     {
         hideImageLeft.SetActive(true);
         hideImageRight.SetActive(true);
+        openImg.SetActive(true);
+        icon.gameObject.SetActive(false);
         icon.localScale = new Vector3(1.1f, 1.1f, 1.1f);
         //Vector3  move = new Vector3(0, 20, 0);
        
-        iTween.MoveTo(icon.gameObject, iTween.Hash("islocal", true,
+        iTween.MoveTo(openImg.gameObject, iTween.Hash("islocal", true,
                                                           "y", 20,
                                                           "easetype", "easeOutQuart",
+                                                         
                                                           "time", 1f));
 
         iTween.MoveTo(hideImageLeft.gameObject, iTween.Hash("islocal", true,
                                                           "x", -60,
                                                           "easetype", "easeOutElastic",
+                                                          
                                                           "time", 1f));
         iTween.MoveTo(hideImageRight.gameObject, iTween.Hash("islocal", true,
                                                          "x", 60,
                                                          "easetype", "easeOutElastic",
+                                                        
                                                          "time", 1f));
     }
 
     public void SetActivateHideA()
     {
-       
+        openImg.SetActive(false);
+        icon.gameObject.SetActive(true);
         icon.localScale = new Vector3(.8f, .8f, .8f);
         //icon.localPosition = new Vector3(0, 0, 0);
         iTween.MoveTo(icon.gameObject, iTween.Hash("islocal", true,
@@ -51,12 +60,18 @@ public class UI_Icon : MonoBehaviour {
         hideImageRight.transform.localPosition = new Vector3(30, 0, 0);
         hideImageLeft.SetActive(false);
         hideImageRight.SetActive(false);
+        
     }
 
     public void SendPanelItem()
     {
         GameData.Instance.PanelItem = PanelItem;
        
+    }
+
+    void ShowOpen()
+    {
+        openImg.SetActive(true);
     }
 
     public void IconEff()
@@ -66,7 +81,7 @@ public class UI_Icon : MonoBehaviour {
         {
             hideImageLeft.SetActive(true);
             hideImageRight.SetActive(true);
-
+           
         }
     }
 

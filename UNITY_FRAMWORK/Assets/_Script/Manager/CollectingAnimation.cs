@@ -69,6 +69,7 @@ public class CollectingAnimation : MonoBehaviour {
 		float t = 0;
 		float speed = 1.0f;
 
+      
 		// 첫 실행시 소리발생
 		if (_playSoundMode == PLAY_SOUND_MODE.AT_BEGINNING) {			
 			_collectinEffectController.PlayCollectingSound ();

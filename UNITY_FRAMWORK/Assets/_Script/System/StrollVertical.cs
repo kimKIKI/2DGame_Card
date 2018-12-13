@@ -68,10 +68,7 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
     {
         myRect = GetComponent<RectTransform>();
         myScrol = GetComponent<ScrollRect>();
-
-
         DontDestroyOnLoad(this.gameObject);
-
     }
 
     private void Start()
@@ -83,10 +80,10 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
 
     void Init()
     {
-        basePosX = myRect.localPosition.x;
-        basePosY = myRect.localPosition.y;
-        CurPosX = myRect.localPosition.x;
-        CurPosY = myRect.localPosition.y;
+        basePosX  = myRect.localPosition.x;
+        basePosY  = myRect.localPosition.y;
+        CurPosX   = myRect.localPosition.x;
+        CurPosY   = myRect.localPosition.y;
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -94,7 +91,7 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
         endMouseX = Input.mousePosition.x;
         endMouseY = Input.mousePosition.y;
         //float distanceX = Mathf.distance
-        Debug.Log("end:" + new Vector2(endMouseX, endMouseY));
+        //Debug.Log("end:" + new Vector2(endMouseX, endMouseY));
         //스톱되어 있는 스트롤을 재시작하기 위해서 설정에서 좌우이동이 되지 안게한다.
         if (GameData.Instance.isStopScroview)
             stopMoveTrue();
@@ -132,12 +129,15 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
             disY = endMouseY - startMouseY;
         }
 
+
         if (disX >= disY)
         {
             //Debug.Log("x 가 길어요");
             if (isLeft)
             {
+
                 int curItem = GameData.Instance.PanelItem;
+                Debug.Log("Left :" +curItem);
                 //TODO:MainScrollView의 curPanel ++오른쪽
 
                 if (curItem == 0)
@@ -155,15 +155,15 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
                     GameData.Instance.PanelItem = 3;
                     InitPosition();
                 }
-              
             }
             else
             {
                 int curItem = GameData.Instance.PanelItem;
-                Debug.Log("curItem :" + curItem);
+                Debug.Log("right : " + curItem);
+
                 if (curItem == 0)
                 {
-                    //맨왼쪽이라 더이상 왼쪽으로 못감
+                    Debug.Log("맨왼쪽이라 더이상 왼쪽으로 못감");
                 }
                 else if (curItem == 1)
                 {
@@ -180,7 +180,12 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
                     GameData.Instance.PanelItem = 2;
                     InitPosition();
                 }
-               
+                else if (curItem == 4)
+                {
+                    //여기가 작동하고 이동이됨?
+                    Debug.Log("<----------==============");
+                }
+
             }
 
             if (eveVerticalMove != null)
@@ -211,9 +216,7 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
 
         startMouseX = Input.mousePosition.x;
         startMouseY = Input.mousePosition.y;
-        // Debug.Log("onBeginDrag---->>"+startMouseX+"--"+ startMouseY);
-
-      
+        //Debug.Log("onBeginDrag---->>"+startMouseX+"--"+ startMouseY);
         //선택카드가 열리고 좌우 스트롤이 고정됐을때 모두 해제한다.
         //선택했다가 이동중간에 그만둔 상태인경우
         if (!GameData.Instance.isStopScroview  && GameData.Instance.IsShowCard)
@@ -229,16 +232,12 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
         {//화면이 정지가 아니고  열리지도 안은상태
             CloseCards();
         }
-
-
     }
 
     void IDragHandler.OnDrag(PointerEventData eventData)
     {
-       
         endMouseX = Input.mousePosition.x;
         endMouseY = Input.mousePosition.y;
-
 
         if (isDragOn)
         {
@@ -252,7 +251,6 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
             //더이상 밑으로 드레깅되지 않게 한다.
             curPosY = -200f;
             StartCoroutine(coMove(myRect, curPosY, 0, 5f));
-
             return;
         }
 
@@ -265,8 +263,8 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
         while (t <= 1)
         {
             //현재 이동중일때
-            t += Time.deltaTime * speed;
-            float move = Mathf.Lerp(start, end, t);
+            t                += Time.deltaTime * speed;
+            float move        = Mathf.Lerp(start, end, t);
             obj.localPosition = new Vector3(obj.localPosition.x, move, obj.localPosition.z);
             yield return null;
         }
@@ -276,11 +274,9 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
     public void SwitchTopPosition()
     {
         //화면이 바뀔수 있는 위치로 이동
-        myRect.anchoredPosition = new Vector2(myRect.anchoredPosition.x, 0);
-        myScrol.content.anchoredPosition = new Vector2(0, startAnchorPos);
-
+        myRect.anchoredPosition           = new Vector2(myRect.anchoredPosition.x, 0);
+        myScrol.content.anchoredPosition  = new Vector2(0, startAnchorPos);
         //Debug.Log("myRect.anchorPostion" + myRect.anchoredPosition);
-     
     }
 
     public void InitPosition()
@@ -305,10 +301,10 @@ public class StrollVertical : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
         {   //보간을 적용해서 pos------->_itemDisplayer의 위치로 이동하게 한다.
              t += Time.deltaTime * speed;
              myScrol.content.anchoredPosition = new Vector3(0, Mathf.Lerp(ypos,- 1000f, t), 0);
-         
-            yield return new WaitForFixedUpdate();
+             yield return new WaitForFixedUpdate();
         }
     }
+
 
   
 }

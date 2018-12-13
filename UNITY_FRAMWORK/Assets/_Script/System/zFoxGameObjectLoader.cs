@@ -8,8 +8,9 @@ public class zFoxGameObjectLoader : MonoBehaviour {
 	public GameObject [] LoadGameObjectList_Start;
 	public GameObject [] LoadGameObjectList_Update;
 	public GameObject [] LoadGameObjectList_FixedUpdate;
+  
 
-	[System.NonSerialized] public Dictionary<string,GameObject>  loadedGameObjectList_Awake = new Dictionary<string,GameObject>();
+    [System.NonSerialized] public Dictionary<string,GameObject>  loadedGameObjectList_Awake = new Dictionary<string,GameObject>();
 	[System.NonSerialized] public bool loaded_Awake = false;
 	[System.NonSerialized] public Dictionary<string,GameObject>  loadedGameObjectList_Start = new Dictionary<string,GameObject>();
 	[System.NonSerialized] public bool loaded_Start = false;
@@ -20,7 +21,10 @@ public class zFoxGameObjectLoader : MonoBehaviour {
 
 	bool loaded =false;
 
-	void Awake(){
+
+    
+   
+    void Awake(){
 		//각 게임이 로드 됐는지 검사 
 		bool loadedAll = false;
 		GameObject[] gos = GameObject.FindObjectsOfType(typeof(GameObject)) as GameObject[];
@@ -56,7 +60,10 @@ public class zFoxGameObjectLoader : MonoBehaviour {
 			LoadGameObject(LoadGameObjectList_Update,loadedGameObjectList_Update);
 		}
 	}
-	void FixedUpdate(){
+
+   
+
+    void FixedUpdate(){
 		if(!loaded_FixedUpdate){
 			loaded_FixedUpdate = true;
 			LoadGameObject(LoadGameObjectList_FixedUpdate,loadedGameObjectList_FixedUpdate);
@@ -72,11 +79,15 @@ public class zFoxGameObjectLoader : MonoBehaviour {
 				if(LoadGameObjectList.ContainsKey(go.name)){
 
 				}else{
-					GameObject goInstance = Instantiate(go) as GameObject;
-					goInstance.name = go.name;
-					goInstance.transform.parent = gameObject.transform;
-					LoadGameObjectList.Add (go.name,goInstance);
-					Debug.Log (string.Format("Loaded GameOject{0}",go.name));
+                  
+                        GameObject goInstance = Instantiate(go) as GameObject;
+                        goInstance.name = go.name;
+                        goInstance.transform.parent = gameObject.transform;
+                        LoadGameObjectList.Add(go.name, goInstance);
+                        Debug.Log(string.Format("Loaded GameOject{0}", go.name));
+                   
+
+                  
 				}
 			}
 		}

@@ -6,25 +6,25 @@ using UnityEngine.SceneManagement;
 
 
 
-public class CardEff_Result : MonoBehaviour {
-
-
-    public Transform PanelTop;    //Top의 화면 
-    public GameObject card;       //승리한 카드
-    public Transform EndEffect;    //패배한 카드가 동전으로 변하기전 이동할 위치
-    public Transform gridGroup;    //패배한 카드요소
-    public Transform VicgridGroup; //승리한 카드의 위치
-    public Transform spec_Text;    //특별기능 TEXT
+public class CardEff_Result : MonoBehaviour
+{
+    //public Transform PanelTop;     //Top의 화면 
+    public GameObject card;         //승리한 카드
+    public Transform EndEffect;     //패배한 카드가 동전으로 변하기전 이동할 위치
+    public Transform gridGroup;     //패배한 카드요소
+    public Transform VicgridGroup;  //승리한 카드의 위치
+    public Transform spec_Text;     //특별기능 TEXT
     int vic;                        //승리한 편
 
 
-    public Transform title;       //카드의 이름
-    public GameObject arrowLevel;  //card amount 증가
+    //public Transform title;        //카드의 이름
+    //public GameObject arrowLevel;  //card amount 증가
     public GameObject arrowGold;   //골드 증가
-    public GameObject arrowJew;    //보석 증가
+    //public GameObject arrowJew;    //보석 증가
     public GameObject arrow;       //화살표의 위로올라가는 애니
     public GameObject cardNum;     //상자가 열렸을때  몇개의 상품항목이 있는지 보여줄 것
     public GameObject experience;  //경험치 오브젝트패널
+    public Transform  effectPos;    //동전 이펙트가 터질때 보여야될 위치
 
     Text txGold;
     Text txJew;
@@ -32,7 +32,7 @@ public class CardEff_Result : MonoBehaviour {
     Text itemNum;                   //상자내 표시 카운트 
     Text txExperienceLevel;         //경험치 레벨표시
     Text txExperienceCount;         //경험치 레벨카운트
-    Text[] titleNames;
+    //Text[] titleNames;
     Text txSpecText;                //특수한 기능이 있음을 알린다.
 
     int spawnNum = 5;                //스폰될 량
@@ -66,12 +66,12 @@ public class CardEff_Result : MonoBehaviour {
         //보이는 위치가 아니므로 gradGroup와 같이 한다.
 
         txGold            = arrowGold.GetComponentInChildren<Text>();
-        txJew             = arrowJew.GetComponentInChildren<Text>();
-        txLevel           = arrowLevel.GetComponentInChildren<Text>();
+        //txJew             = arrowJew.GetComponentInChildren<Text>();
+        //txLevel           = arrowLevel.GetComponentInChildren<Text>();
         txExperienceLevel = experience.transform.Find("Text_LevelNum").GetComponent<Text>();        //경험치 레벨표시
         txExperienceCount = experience.transform.Find("Text_Value").GetComponent<Text>(); ;         //경험치 레벨카운트
         //titleName[0] Title [1] Kinds  [2] Level
-        titleNames        = title.GetComponentsInChildren<Text>();
+        //titleNames        = title.GetComponentsInChildren<Text>();
         txSpecText        = spec_Text.GetComponentInChildren<Text>();
     }
 
@@ -92,7 +92,7 @@ public class CardEff_Result : MonoBehaviour {
                         txExperienceCount.text = string.Format("{0} / {1}", count, defaultExp);
 
                         txGold.text            = string.Format("{0}", GameData.Instance.players[1].coin);
-                        txJew.text             = string.Format("{0}", GameData.Instance.players[1].jew);
+                        //txJew.text             = string.Format("{0}", GameData.Instance.players[1].jew);
 
 
                     }
@@ -111,12 +111,12 @@ public class CardEff_Result : MonoBehaviour {
                     txExperienceCount.text = string.Format("{0} / {1}", count, defaultExp);
 
                     txGold.text            = string.Format("{0}", GameData.Instance.players[1].coin);
-                    txJew.text             = string.Format("{0}", GameData.Instance.players[1].jew);
+                    //txJew.text             = string.Format("{0}", GameData.Instance.players[1].jew);
                     //시작과동시에 다시 자신의 골드를 프로퍼티로 사용학 위해서  데이터에 저장한다.
                     //titleName[0] Title [1] Kinds  [2] Level
-                    titleNames[0].text     = string.Format("{0}", "");
-                    titleNames[1].text     = string.Format("{0}", "");
-                    titleNames[2].text     = string.Format("{0}", "");
+                    //titleNames[0].text     = string.Format("{0}", "");
+                    //titleNames[1].text     = string.Format("{0}", "");
+                    //titleNames[2].text     = string.Format("{0}", "");
 
                     int curPanel           = GameData.Instance.PanelItem;
                     //Debug.Log("현재panel:" + curPanel);
@@ -185,7 +185,6 @@ public class CardEff_Result : MonoBehaviour {
             //승리한 카드 
             GameObject newCard0 = Instantiate(card, VicgridGroup);
             Card vCardVic       = new Card();
-           
             vCardVic.ID         = id.Key;
             //TODO: 배열에 들어가면서 이름이달라지는에러발생 배열은0,실제아이디는 1부터라 생기는원인
             int tempInt         = id.Key - 1;
@@ -197,22 +196,33 @@ public class CardEff_Result : MonoBehaviour {
             // newCard0.GetComponent<VictoryCard>().vicCards = new List<Card>();
             newCard0.transform.localPosition = new Vector3(0, 0, 0);
 
+            //플레이어 승리카드playerVic,컴승리카드 comVic ;
+
+
 
             //승리한 카드가 패배시킨 카드들
             IList<Card> cards = new List<Card>();
             if (GameData.Instance.playerVic.TryGetValue(id.Key, out cards))
             {
-                for (int d = cards.Count - 1; d >= 0; d--)
+                if (cards.Count >= 1)
                 {
-                    GameObject newCard             = Instantiate(card, gridGroup);
-                    Card vCard                     = new Card();
-                    vCard.ID                       = cards[d].ID;
-                    vCard.IconName                 = GameData.Instance.UnityDatas[cards[d].ID].Name;
-                 
-                    newCard.GetComponent<VictoryCard>().SetCardInfo(vCard);
-                    newCard.transform.localPosition = new Vector3(0, 0, 0);
-                    newCard0.GetComponent<VictoryCard>().vicCards.Add(vCard);
+                    for (int d = cards.Count - 1; d >= 0; d--)
+                    {
+
+                        if (cards[d] == null)
+                            continue;
+
+                        GameObject newCard = Instantiate(card, gridGroup);
+                        Card vCard = new Card();
+                        vCard.ID = cards[d].ID;
+                        vCard.IconName = GameData.Instance.UnityDatas[cards[d].ID -1].Name;
+
+                        newCard.GetComponent<VictoryCard>().SetCardInfo(vCard);
+                        newCard.transform.localPosition = new Vector3(0, 0, 0);
+                        newCard0.GetComponent<VictoryCard>().vicCards.Add(vCard);
+                    }
                 }
+             
             }
         }
     } //FormationCard END
@@ -239,9 +249,9 @@ public class CardEff_Result : MonoBehaviour {
             Vector3 pos = new Vector3(2400 + sideAmount, 50, 0);
             //titleName[0] Title [1] Kinds  [2] Level
                                    //승리한 카드의 정보
-            titleNames[0].text = VicgridGroup.transform.GetChild(i).transform.GetComponent<VictoryCard>().iconName.text;
-            titleNames[1].text = string.Format("{0}", "");
-            titleNames[2]      = VicgridGroup.transform.GetChild(i).transform.GetComponent<VictoryCard>().txLevelNum;
+            //titleNames[0].text = VicgridGroup.transform.GetChild(i).transform.GetComponent<VictoryCard>().iconName.text;
+            //titleNames[1].text = string.Format("{0}", "");
+            //titleNames[2]      = VicgridGroup.transform.GetChild(i).transform.GetComponent<VictoryCard>().txLevelNum;
             iTween.MoveTo(VicgridGroup.transform.GetChild(i).gameObject, iTween.Hash("islocal", true, "position", pos, "time", 0.6f,
                                                 "onstart", "VicCardStart", "onstarttarget", gameObject, "easetype", "easeOutQuart"));
             //위치를정렬시킨다.
@@ -452,7 +462,9 @@ public class CardEff_Result : MonoBehaviour {
         CollectingEffectController._instance.CollectItem(amount);
         //스폰될 갯수의 개당 value;
         CollectingEffectController._instance.Amount = 100;
-        AppUIEffect.instance.InstanceVFX(eEFFECT_NAME.GOLD);
+
+        if(effectPos != null)
+        AppUIEffect.instance.InstanceVFX(eEFFECT_NAME.GOLD).transform.position = effectPos.position;
         //코인애니메이션실행
     }
 
@@ -484,77 +496,77 @@ public class CardEff_Result : MonoBehaviour {
         AppSound.instance.SE_CARD_DEFECTSHOOT.Play();
     }
 
-     // TEST   Dictionary<int, IList<Card>> vicCard;
-     //private void Update()
-     // {
-     //   if (Input.GetKeyDown(KeyCode.A))
-     //   {
-     //       OnCoinAnime(5);
-     //   }
-     //   #region AATemp
-     //   if (Input.GetKeyDown(KeyCode.L))
-     //   {
+    // TEST   Dictionary<int, IList<Card>> vicCard;
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            OnCoinAnime();
+        }
+        //#region AATemp
+        //if (Input.GetKeyDown(KeyCode.L))
+        //{
 
-     //       //임시로 카드를 넣고 테스트 하기 위해서 작성
-     //       int[] temp = { 2, 5, 4, 7 }; //일단 같은 카드가 없도록 한다.                     
-     //       int[] temp2 = { 9, 8 };
-     //       int[] temp3 = { 1, 6 };
-     //       int[] victemp = { 3, 4, 1 };    //최종 승리한 카드 
+        //    //임시로 카드를 넣고 테스트 하기 위해서 작성
+        //    int[] temp = { 2, 5, 4, 7 }; //일단 같은 카드가 없도록 한다.                     
+        //    int[] temp2 = { 9, 8 };
+        //    int[] temp3 = { 1, 6 };
+        //    int[] victemp = { 3, 4, 1 };    //최종 승리한 카드 
 
-     //       vicCard = new Dictionary<int, IList<Card>>();
+        //    vicCard = new Dictionary<int, IList<Card>>();
 
 
-     //       IList<Card> newList = new List<Card>();
+        //    IList<Card> newList = new List<Card>();
 
-     //       for (int i = 0; i < temp.Length; i++)
-     //       {
-     //           Card newCard = new Card();
-     //           newCard.ID = GameData.Instance.UnityDatas[temp[i]].Id;
-     //           newList.Add(newCard);
-     //       }
-     //       vicCard.Add(victemp[0], newList);
+        //    for (int i = 0; i < temp.Length; i++)
+        //    {
+        //        Card newCard = new Card();
+        //        newCard.ID = GameData.Instance.UnityDatas[temp[i]].Id;
+        //        newList.Add(newCard);
+        //    }
+        //    vicCard.Add(victemp[0], newList);
 
-     //       IList<Card> newList2 = new List<Card>();
-     //       for (int i = 0; i < temp2.Length; i++)
-     //       {
-     //           Card newCard = new Card();
-     //           newCard.ID = GameData.Instance.UnityDatas[temp2[i]].Id;
-     //           newList2.Add(newCard);
-     //       }
-     //       vicCard.Add(victemp[1], newList2);
+        //    IList<Card> newList2 = new List<Card>();
+        //    for (int i = 0; i < temp2.Length; i++)
+        //    {
+        //        Card newCard = new Card();
+        //        newCard.ID = GameData.Instance.UnityDatas[temp2[i]].Id;
+        //        newList2.Add(newCard);
+        //    }
+        //    vicCard.Add(victemp[1], newList2);
 
-     //       IList<Card> newList3 = new List<Card>();
-     //       for (int i = 0; i < temp3.Length; i++)
-     //       {
-     //           Card newCard = new Card();
-     //           newCard.ID = GameData.Instance.UnityDatas[temp3[i]].Id;
-     //           newList3.Add(newCard);
-     //       }
-     //       vicCard.Add(victemp[2], newList3);
+        //    IList<Card> newList3 = new List<Card>();
+        //    for (int i = 0; i < temp3.Length; i++)
+        //    {
+        //        Card newCard = new Card();
+        //        newCard.ID = GameData.Instance.UnityDatas[temp3[i]].Id;
+        //        newList3.Add(newCard);
+        //    }
+        //    vicCard.Add(victemp[2], newList3);
 
-     //       if (Input.GetKeyDown(KeyCode.K))
-     //       {
-     //           FormationCard();
-     //       }
+        //    if (Input.GetKeyDown(KeyCode.K))
+        //    {
+        //        FormationCard();
+        //    }
 
-     //       if (Input.GetKeyDown(KeyCode.S))
-     //       {
-     //           //StartCoroutine(ResultAnimation());
-     //       }
-     //       #endregion
+        //    if (Input.GetKeyDown(KeyCode.S))
+        //    {
+        //        //StartCoroutine(ResultAnimation());
+        //    }
+        //    #endregion
 
-     //       if (Input.GetKeyDown(KeyCode.P))
-     //       {
+        //    if (Input.GetKeyDown(KeyCode.P))
+        //    {
 
-     //           // public Dictionary<int, IList<Card>> playerVic;
-     //           // public Dictionary<int, IList<Card>> comVic;
-     //           //public Dictionary<int, IList<Card>> defectPlayer;
-     //           // GameData.Instance.playerVic
+        //        // public Dictionary<int, IList<Card>> playerVic;
+        //        // public Dictionary<int, IList<Card>> comVic;
+        //        //public Dictionary<int, IList<Card>> defectPlayer;
+        //        // GameData.Instance.playerVic
 
-     //       }
-     //     }
-     //    }//UPdate END
-     }
+        //    }
+        //}
+    }//UPdate END
+}
 
 
 

@@ -61,14 +61,14 @@ public  class FileDataManager  {
             //"Sp_atk":4,"Up_Hp":10,"Up_atk":10,"Life":0,"EA":1},
             UnityInfo unit = new UnityInfo();
             //유닛의 고유ID 와 맞출려고 +1함
-            unit.Id       = (int)jsonUnitydata[i]["ID"];
+            unit.Id       = (int) jsonUnitydata[i]["ID"];
             unit.Name     = jsonUnitydata[i]["Name"].ToString();
             unit.Atk_Type = jsonUnitydata[i]["ATK_Type"].ToString(); //유닛타입 지상,공중
             unit.Kinds    = jsonUnitydata[i]["Kinds"].ToString();
-            unit.Coin     = (int)jsonUnitydata[i]["Coin"];
-            unit.Jew      = (int)jsonUnitydata[i]["Jew"];
-            unit.HP       = (int)jsonUnitydata[i]["HP"];
-            unit.Speed    = (int)jsonUnitydata[i]["Speed"];
+            unit.Coin     = (int) jsonUnitydata[i]["Coin"];
+            unit.Jew      = (int) jsonUnitydata[i]["Jew"];
+            unit.HP       = (int) jsonUnitydata[i]["HP"];
+            unit.Speed    = (int) jsonUnitydata[i]["Speed"];
             unit.Attack   = (int) jsonUnitydata[i]["Attack"];
             unit.Atk_Zone = (int) jsonUnitydata[i]["Atk_Zone"];
             unit.Build    = (int) jsonUnitydata[i]["BuildTime"];
@@ -76,7 +76,7 @@ public  class FileDataManager  {
             unit.Up_atk   = (int) jsonUnitydata[i]["Up_atk"];
             unit.Up_Hp    = (int) jsonUnitydata[i]["Up_Hp"];
             unit.SpawnEA  = (int) jsonUnitydata[i]["EA"];
-            unit.Elixir   = (int)jsonUnitydata[i]["Elixir"];
+            unit.Elixir   = (int) jsonUnitydata[i]["Elixir"];
             unit.SpAble   = jsonUnitydata[i]["SpAble"].ToString();
             //파일의 내용을 딕셔너리에 저장한다.
             GameData.Instance.UnityDatas.Add(unit);
@@ -223,7 +223,7 @@ public  class FileDataManager  {
         ItemBoxInfo newItemBox    = new ItemBoxInfo();
         newItemBox.boxName     = "lunchyCase";
       
-        newItemBox.Jew            = (int)jsonUnitydata["Market"]["lunchyCase"][0]["Jew"];
+        //newItemBox.Jew            = (int)jsonUnitydata["Market"]["lunchyCase"][0]["Jew"];
         newItemBox.generalNum     = (int)jsonUnitydata["Market"]["lunchyCase"][0]["generalNum"];
         newItemBox.RareNum        = (int)jsonUnitydata["Market"]["lunchyCase"][0]["rareNum"];
         newItemBox.HeroNum        = (int)jsonUnitydata["Market"]["lunchyCase"][0]["heroNum"];
@@ -246,9 +246,6 @@ public  class FileDataManager  {
         newItemBox3.LengendaryNum  = (int)jsonUnitydata["Market"]["legendaryCase"][0]["legendaryNum"];
         newItemBox3.productNum     = (int)jsonUnitydata["Market"]["legendaryCase"][0]["product"];
         GameData.Instance.dic_SetItems.Add("legendaryCase", newItemBox3);
-
-
-      
 
     }
 

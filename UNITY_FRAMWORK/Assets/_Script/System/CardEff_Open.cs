@@ -6,8 +6,9 @@ using UnityEngine.UI;
 
 public class CardEff_Open : MonoBehaviour {
 
-    public delegate void CardEff();
-    public static event CardEff eff;
+    public   delegate   void    CardEff();
+    public   static     event   CardEff  eff;
+    public   static     event   CardEff  cardUp;
 
     enum eState
     {
@@ -49,19 +50,20 @@ public class CardEff_Open : MonoBehaviour {
     float        openImgScAmount = 5f;//크기를 조절할수있게 
     Vector3      openImglocalScale;   //openImage원래 크기 
 
-    Image iconImg;                    //바뀌어 보이는 이미지
-    Image opImg;
-    Image closeImg;
+    Image        iconImg;                    //바뀌어 보이는 이미지
+    Image        opImg;
+    Image        closeImg;
     // Use this for initialization
-    Image icon;                      //카드의 케릭터 이미지 
-    Image cardbase;                  //카드의 테두리 이미지 
-    int   Gold;
+    Image        icon;                      //카드의 케릭터 이미지 
+    Image        cardbase;                  //카드의 테두리 이미지 
+    int          Gold;
+    int          index;                     //현제 선택된 카드의 인덱스 Datas -1되어 있음
     RectTransform rtImg;             //default  width:200  height:240
    // Vector2 rtImg;
-    Vector3 initScale;
-    float height;
-    float width;
-    Button btn;
+    Vector3      initScale;
+    float        height;
+    float        width;
+    Button       btn;
 
     //public Transform[] path;
 
@@ -95,7 +97,12 @@ public class CardEff_Open : MonoBehaviour {
     int Addheros2;
     int Addlengends;
 
-
+    string legOpenImg   = "legendaryCase_bottom";
+    string legCloseImg  = "legendaryCase";
+    string luckOpenImg  = "luckyCase_bottom";
+    string luckCloseImg = "luckyCase";
+    string heroOpenImg  = "HeroCase";
+    string heroCloseImg = "HeroCase";
 
     [SerializeField]
      eOpen curOpen = eOpen.OPEN;
@@ -142,14 +149,84 @@ public class CardEff_Open : MonoBehaviour {
 
     }
 
-  
+    //string name = GameData.Instance.UnityDatas[ID - 1].Name;
+    //main.sprite = SpriteManager.GetSpriteByName("Sprite", name);
 
     private void OnEnable()
     {
-        Create_FADEOUT(FadeOut,transform.parent.parent);
+        Create_FADEOUT(FadeOut, transform.parent.parent);
         StartCoroutine(SetCardOpen());
+
+        opImg.enabled    = false;
+        closeImg.enabled = true;
+        //데이터가 연동되어야할 UnityCard,Daily그룹에 자신의 이벤트를 등록시킨다.
+        for (int i = 0; i < GameData.Instance.days.Count; i++)
+        {
+            GameData.Instance.days[i].GetComponent<DailySale>().CardEff_Event();
+        }
+
+        for (int i = 0; i < GameData.Instance.uCards.Count; i++)
+        {
+            GameData.Instance.uCards[i].GetComponent<UnityCard>().OnEventUpdate();
+        }
     }
 
+
+    //상품선택시 업데이트된 내용을 다른 카드들에 전달한다.
+    void updateCard()
+    {
+            switch (curOpen)
+            {
+                case eOpen.OPEN:
+
+
+                    break;
+                case eOpen.GOLD:
+                  
+                    break;
+               
+                case eOpen.UNITY:
+
+                    //ID 번호로 hasCard의 값을 변경시킨다.
+                    if (GameData.Instance.hasCard.ContainsKey(index))
+                    {     //key
+                        GameData.Instance.hasCard[index].hasCard += Addunits;
+                    }
+
+                    break;
+                case eOpen.RARES:
+                    
+                    if (GameData.Instance.hasCard.ContainsKey(index))
+                    {     //key
+                        GameData.Instance.hasCard[index].hasCard += Addrarts;
+                        
+                    }
+
+                    break;
+                case eOpen.HEROS:
+
+                  
+                    if (GameData.Instance.hasCard.ContainsKey(index))
+                    {     //key
+                        GameData.Instance.hasCard[index].hasCard += Addheros;
+                    }
+
+                    break;
+
+                case eOpen.LEGENDS:
+
+                  
+                    if (GameData.Instance.hasCard.ContainsKey(index))
+                    {     //key
+                        GameData.Instance.hasCard[index].hasCard += Addlengends;
+                    }
+                    break;
+
+                case eOpen.CLOSE:
+
+                    break;
+            }
+    }
 
     //TODO:제너릭으로 바꿔야 할부분
     public IList<UnityInfo> shuffle(IList<UnityInfo> source)
@@ -179,22 +256,32 @@ public class CardEff_Open : MonoBehaviour {
                 // ItemBoxInfo 
                 var caseBox = GameData.Instance.dic_SetItems["lunchyCase"];
 
-                AddJew = caseBox.Jew;
-                Addunits = caseBox.generalNum;
-                Addrarts = caseBox.RareNum;
-                Addheros = caseBox.HeroNum;
-                Addlengends = caseBox.LengendaryNum;
+                //AddJew        = caseBox.Jew;
+                Addunits        = caseBox.generalNum;
+                Addrarts        = caseBox.RareNum;
+                Addheros        = caseBox.HeroNum;
+                Addlengends     = caseBox.LengendaryNum;
                 this.productNum = caseBox.productNum;
 
+               
+                //상자가 아직 안열렸을때 이미지
+                closeImg.sprite = SpriteManager.GetSpriteByName("Sprite",luckCloseImg);
+                //열렸을때 이미지 
+                opImg.sprite = SpriteManager.GetSpriteByName("Sprite", luckOpenImg);
 
             }
             else if (keyName == "legendaryCase")
             {
                 var caseBox = GameData.Instance.dic_SetItems["legendaryCase"];
 
-                AddJew          = caseBox.Jew;
+                //AddJew          = caseBox.Jew;
                 Addlengends     = caseBox.LengendaryNum;
                 this.productNum = caseBox.productNum;
+
+                //상자가 아직 안열렸을때 이미지
+                closeImg.sprite = SpriteManager.GetSpriteByName("Sprite", legCloseImg);
+                //열렸을때 이미지 
+                opImg.sprite = SpriteManager.GetSpriteByName("Sprite", legOpenImg);
 
             }
             else if (keyName == "HeroCase")
@@ -206,8 +293,11 @@ public class CardEff_Open : MonoBehaviour {
                 Addheros2 = caseBox.HeroNum3;
                 this.productNum = caseBox.productNum;
 
+                //상자가 아직 안열렸을때 이미지
+                closeImg.sprite = SpriteManager.GetSpriteByName("Sprite", heroCloseImg);
+                //열렸을때 이미지 
+                opImg.sprite = SpriteManager.GetSpriteByName("Sprite", heroOpenImg);
             }
-
         }
 
 
@@ -219,7 +309,6 @@ public class CardEff_Open : MonoBehaviour {
             {
                 //일반
                 units.Add(cardKind);
-
             }
             else if (cardKind.Kinds == "Rarity")
             {
@@ -264,6 +353,7 @@ public class CardEff_Open : MonoBehaviour {
                 rairtysSuffle   = shuffle(rairtys);
                 herosSuffle     = shuffle(heros);
                 legenardsSuffle = shuffle(legenards);
+                
             }
             else if (keyName == "legendaryCase")
             {
@@ -276,7 +366,7 @@ public class CardEff_Open : MonoBehaviour {
         }
     }
 
-
+    
 
     //private void Update()
     //{
@@ -307,6 +397,12 @@ public class CardEff_Open : MonoBehaviour {
         panel.gameObject.SetActive(false);
         //fadeIN,Out실행이벤트
         eff();
+        UnityCard.evReScroll -= updateCard;
+
+        for (int i = 0; i < GameData.Instance.days.Count; i++)
+        {
+            GameData.Instance.days[i].GetComponent<DailySale>().CardEff_EventDis();
+        }
     }
 
     //Title 의 내용물
@@ -337,13 +433,13 @@ public class CardEff_Open : MonoBehaviour {
                 arrowGold.SetActive(isEnable);
 
                 break;
-            case eOpen.JEW:
-                title.gameObject.SetActive(isEnable);
-                cardNum.SetActive(isEnable);
-                arrowJew.SetActive(isEnable);
-              
 
-                break;
+            //case eOpen.JEW:
+            //    title.gameObject.SetActive(isEnable);
+            //    cardNum.SetActive(isEnable);
+            //    arrowJew.SetActive(isEnable);
+            // break;
+
             case eOpen.UNITY:
                 title.gameObject.SetActive(isEnable);
                 cardNum.SetActive(isEnable);
@@ -386,7 +482,7 @@ public class CardEff_Open : MonoBehaviour {
         isClick = true;
         //TODO: 플레이어의 가지고 있는 정보를 담는다.
         curGold = GameData.Instance.players[1].coin;
-        curJew  = GameData.Instance.players[1].jew;
+        //curJew  = GameData.Instance.players[1].jew;
 
         opImg.enabled    = true;
         closeImg.enabled = false;
@@ -403,7 +499,6 @@ public class CardEff_Open : MonoBehaviour {
             //상자에서 나온카드가 보여지게 된다.
             ShowCard();
             //처음시작시 현재의증가할 정보를 담는다. 여기 왜 0이 나오는지 알수 없음?혹시 초기값문제인지 확인?
-           
         }
        else
         {
@@ -442,11 +537,11 @@ public class CardEff_Open : MonoBehaviour {
                     switch (productNum)
                     {
                
-                        case 5:
-                            curOpen = eOpen.JEW;
-                            OpenCase();
-                            isReOpen = true;
-                            break;
+                        //case 5:
+                        //    curOpen = eOpen.JEW;
+                        //    OpenCase();
+                        //    isReOpen = true;
+                        //    break;
                         case 4:
                             curOpen = eOpen.UNITY;
                             OpenCase();
@@ -541,9 +636,6 @@ public class CardEff_Open : MonoBehaviour {
                     }
                 }
         }// isClik END
-
-       
-      
     }
 
     void IdleCase()
@@ -570,8 +662,6 @@ public class CardEff_Open : MonoBehaviour {
     void OpenCards()
     {
         SetActiviteTitle(true);
-    
-
         switch (curOpen)
         {
             case eOpen.OPEN:
@@ -586,17 +676,19 @@ public class CardEff_Open : MonoBehaviour {
                 titleNames[2].text = "내골드";
                 productNum--;
                 itemNum.text = string.Format("{0}", productNum);
+                iconImg.sprite = SpriteManager.GetSpriteByName("Sprite", "UI_coin");
                 isClick = false;
                 break;
-            case eOpen.JEW:                                    
-                iTween.ValueTo(gameObject, iTween.Hash("from", curJew, "to", curJew + AddJew, "time", .6, "onUpdate", "UpdateGoldDisplay", "oncompletetarget", gameObject));
-                titleNames[0].text = "JEW";
-                titleNames[1].text = "광물자원";
-                titleNames[2].text = "내보석";
-                productNum--;
-                itemNum.text = string.Format("{0}", productNum);
-                isClick = false;
-                break;
+            //case eOpen.JEW:                                    
+            //    iTween.ValueTo(gameObject, iTween.Hash("from", curJew, "to", curJew + AddJew, "time", .6, "onUpdate", "UpdateGoldDisplay", "oncompletetarget", gameObject));
+            //    titleNames[0].text = "JEW";
+            //    titleNames[1].text = "광물자원";
+            //    titleNames[2].text = "내보석";
+            //    productNum--;
+               
+            //    iconImg.sprite = SpriteManager.GetSpriteByName("Sprite", "UI_Icon_0");
+            //    isClick = false;
+            //    break;
             case eOpen.UNITY:
                                            
                 int[] level1   = new int[2];
@@ -604,9 +696,23 @@ public class CardEff_Open : MonoBehaviour {
                 int cur1       = level1[0];
                 baseLevel      = level1[1];  //level Amount
 
+
+              
                 iTween.ValueTo(gameObject, iTween.Hash("from", cur1, "to", cur1 + Addunits, "time", .6, "onUpdate", "UpdateGoldDisplay", "oncompletetarget", gameObject));
                 productNum--;
                 itemNum.text = string.Format("{0}", productNum);
+                string name = GameData.Instance.UnityDatas[index-1].Name;
+                Debug.Log("name :"+name +" == index" +index);
+                iconImg.sprite = SpriteManager.GetSpriteByName("Sprite", name);
+
+                //ID 번호로 hasCard의 값을 변경시킨다.
+                if (GameData.Instance.hasCard.ContainsKey(index))
+                {     //key
+                    GameData.Instance.hasCard[index].hasCard += Addunits;
+                    cardUp();
+                }
+
+
                 isClick = false;
                 break;
             case eOpen.RARES:
@@ -614,9 +720,22 @@ public class CardEff_Open : MonoBehaviour {
                 level2       = ShowTitle();
                 int cur2     = level2[0];
                 baseLevel    = level2[1];  //level Amount
+
+
+                //cardUp();
+                //ID 번호로 hasCard의 값을 변경시킨다.
+                if (GameData.Instance.hasCard.ContainsKey(index))
+                {     //key
+                   GameData.Instance.hasCard[index].hasCard += Addrarts;
+                   cardUp();
+                }
+
                 iTween.ValueTo(gameObject, iTween.Hash("from", cur2, "to", cur2 + Addrarts, "time", .6, "onUpdate", "UpdateGoldDisplay", "oncompletetarget", gameObject));
                 productNum--;
                 itemNum.text = string.Format("{0}", productNum);
+                string name2 = GameData.Instance.UnityDatas[index-1].Name;
+                iconImg.sprite = SpriteManager.GetSpriteByName("Sprite", name2);
+
                 isClick = false;
                 break;
             case eOpen.HEROS:
@@ -626,10 +745,21 @@ public class CardEff_Open : MonoBehaviour {
                 int cur3     = level3[0];
                 baseLevel    = level3[1];  //level Amount
 
+                //cardUp();
+                if (GameData.Instance.hasCard.ContainsKey(index))
+                {     //key
+                    GameData.Instance.hasCard[index].hasCard += Addheros;
+                    cardUp();
+                }
+           
+
                 iTween.ValueTo(gameObject, iTween.Hash("from", cur3, "to", cur3 + Addheros, "time", .6, "onUpdate", "UpdateGoldDisplay", "oncompletetarget", gameObject));
                 productNum--;
                 itemNum.text = string.Format("{0}", productNum);
                 isClick = false;
+
+                string name3   = GameData.Instance.UnityDatas[index-1].Name;
+                iconImg.sprite = SpriteManager.GetSpriteByName("Sprite", name3);
                 break;
 
             case eOpen.LEGENDS:
@@ -639,10 +769,22 @@ public class CardEff_Open : MonoBehaviour {
                 int cur4     = level4[0];
                 baseLevel    = level4[1];  //level Amount
 
+                //cardUp();
+                if (GameData.Instance.hasCard.ContainsKey(index))
+                {     //key
+                    GameData.Instance.hasCard[index].hasCard += Addlengends;
+                    cardUp();
+
+                }
+
+             
                 iTween.ValueTo(gameObject, iTween.Hash("from", cur4, "to", cur4 + Addlengends, "time", .6, "onUpdate", "UpdateGoldDisplay", "oncompletetarget", gameObject));
                 productNum--;
                 itemNum.text = string.Format("{0}", productNum);
                 //다시 버튼이 클릭될수 있도록한다.
+
+                string name4 = GameData.Instance.UnityDatas[index-1].Name;
+                iconImg.sprite = SpriteManager.GetSpriteByName("Sprite", name4);
                 isClick = false;
                 break;
 
@@ -657,6 +799,8 @@ public class CardEff_Open : MonoBehaviour {
     {
         float dur = 1f;
         cardbase.enabled = true;
+
+     
         //이미지가 작은 사이즈에서 원래 사이즈로 돌아오게한다.
         iTween.MoveFrom(Image.gameObject, iTween.Hash("y", 260, "easetype", iTween.EaseType.easeInOutCirc, "time", dur / 2, "oncomplete", "ReForm", "oncompletetarget", this.gameObject));
         //이미지가 한바퀴 도는 애니 발생시킨다.
@@ -749,13 +893,15 @@ public class CardEff_Open : MonoBehaviour {
         //감춰진 이미지가 보여지게 
         iconImg.enabled = true;
         //TODO  : 이곳에 넣으면 이미지 후 나온다.
+       // string name = GameData.Instance.UnityDatas[index].Name;
+        //iconImg.sprite = SpriteManager.GetSpriteByName("Sprite", name);
         OpenCards();
     }
 
-    //TODO;Ramndom한 카드 구하는 방식이 이상함
+    //TODO;Random한 카드 구하는 방식이 이상함
     int[] ShowTitle()
     {
-        int index = 0;
+        index = 0;
         switch (curOpen)
         {
             case eOpen.OPEN:
@@ -770,17 +916,14 @@ public class CardEff_Open : MonoBehaviour {
             case eOpen.UNITY:
                 //상품케이스가 열렸을때 한번만 유닛카드가 선택되므로 그냥 첫번째걸로 정함
                 index = unitsSuffle[productNum - 1].Id;
-
+              
                 break;
             case eOpen.RARES:
                 //상품케이스가 열렸을때 한번만 유닛카드가 선택되므로 그냥 첫번째걸로 정함
                 index = rairtysSuffle[productNum - 1].Id;
-
               
-
                 break;
             case eOpen.HEROS:
-
                 //뒤에서 부터 하나씩 출력 2,1,0 3번선택받는다.
                index =  herosSuffle[productNum - 1].Id;
             
@@ -790,7 +933,7 @@ public class CardEff_Open : MonoBehaviour {
             case eOpen.LEGENDS:
                 //상품케이스가 열렸을때 한번만 유닛카드가 선택되므로 그냥 첫번째걸로 정함
                 index = legenardsSuffle[productNum-1].Id;
-
+             
                 break;
 
             case eOpen.CLOSE:
@@ -816,6 +959,8 @@ public class CardEff_Open : MonoBehaviour {
             titleNames[2].text = string.Format("{0}", level);
             leve[0]            = hasCardNums; //가지고 있는 카드
             leve[1]            = levelremain; //업레벨까지의 카드량 
+                                              //클릭됐을때 카드의 업데이트를 알린다.
+           
         }
         else
         {

@@ -26,9 +26,11 @@ public class DailySale : MonoBehaviour {
     public float timeCost  ;  //시간별 줄어들 량
     public float _coolTime ;  //실제로 카운트 되는 시간
     public Text  charName;    //Item의 네임 ID 를 확인해서 얻어와햐 한다.
-    public Image arrow;       //화살표
+   
+    public Image arrow;    //화살표
     public Image icon;        //coinImage
     public Image imgTime;     //구매후 타임을 보여주기 위한 타이밍
+    public Image imgTimeBack; //구매후 앞면을 가려줄 뒤면
     public Image imgTimeFill; //구매후타임을 보여주기 위한 타이머 이미지
     public Image btnImg;      //구매할수 없을때 색깔변경을 위해서 
     public GameObject set;    //구매됐을때 가려줘야할 부분들
@@ -39,8 +41,11 @@ public class DailySale : MonoBehaviour {
     int     curhasGold;        //현재 플레이어가 가지고 있는 코인량
     Button  button;         
     Color   imgbtnColor;
+    Color   arrowBaseColor;
     Slider  slider;
     private int playerGold;
+    string strArrowImg   = "arrow_down";
+    string strArrowUpImg = "arrow_up";
 
     //이미 오브젝트가 생성된후 데이터 대입방법이므로 프로퍼티화 한다.
     private void Awake()
@@ -51,6 +56,7 @@ public class DailySale : MonoBehaviour {
                 //Main_Scene.OPenPurchaseBox;
                 CanvasForm.Instance.purchaseBox.SetActive(true);
                 CanvasForm.Instance.Set(itemId, priceCoin, ea,this.gameObject);
+                AppSound.instance.SE_MENU_OPEN_D.Play();
             });
 
         slider = GetComponentInChildren<Slider>();
@@ -94,12 +100,40 @@ public class DailySale : MonoBehaviour {
         set.SetActive(true);
         StartCoroutine(coLateSet());
         CheckAmount();
+        CanvasForm.eveLevelUp += ReSlider;
+        ReSlider();
     }
 
     //TODO: ERROR 작동안함 ..
     public void StartManager()
     {
         EventManager.Instance.AddListener(EVENT_TYPE.GOLD_CHANGE, OnEvent);
+    }
+
+
+    private void OnEnable()
+    {
+        CanvasForm.eveLevelUp += ReSlider;
+    }
+
+
+    private void OnDestroy()
+    {
+        CanvasForm.eveLevelUp -= ReSlider;
+    }
+
+    public void CardEff_Event()
+    {   //nor에서 카드가 업데이트 됐을때 DailySale도 업데이트하기 위해서 
+        CardEff_Open.cardUp += ReSlider;
+    }
+
+    public void CardEff_EventDis()
+    {   //nor에서 카드가 업데이트 됐을때 DailySale도 업데이트하기 위해서 
+        CardEff_Open.cardUp -= ReSlider;
+    }
+    void ReSlider()
+    {
+        Slider(ID);
     }
 
     IEnumerator coLateSet()
@@ -170,6 +204,7 @@ public class DailySale : MonoBehaviour {
     {
         imgTime.gameObject.SetActive(true);
         imgTimeFill.gameObject.SetActive(true);
+        imgTimeBack.gameObject.SetActive(true);
         isPurchase = true;
         StartCoroutine(MatketTime(1f));
     }
@@ -223,7 +258,7 @@ public class DailySale : MonoBehaviour {
 
     public  void Slider(int ID)
     {
-        //level 에 필요한 모든 카드의 합
+        //레벨업되고 남은 카드량
         int remainCards = LevelUpRemain(ID);
         int level       = GameData.Instance.hasCard[ID].level;
 
@@ -241,6 +276,28 @@ public class DailySale : MonoBehaviour {
         float value = remainCards * uni;
         //구매시 애니가 작동되어야 한다.
         slider.value = value;
+
+        if (remainCards >= nextRemainCards)
+        {
+            arrow.sprite   = SpriteManager.GetSpriteByName("Sprite", strArrowUpImg);
+            arrowBaseColor = arrow.color;
+            arrow.color    = Color.yellow;
+            //-------보류 에러원인 모름..
+            //HpImg              = slider.GetComponentInChildren<Image>();
+            //TODO: 이부분ERROR 발생함
+            //hpBarBaseColor    = slider.GetComponentInChildren<Image>().color;
+            //HpImg.color         = new Color(0, 0, 0);
+
+        }
+        else
+        {
+            arrow.sprite = SpriteManager.GetSpriteByName("Sprite", strArrowImg);
+            arrow.color = Color.white;
+            // Image hp = slider.GetComponentInChildren<Image>();
+            // hp.color = Color.white;
+
+        }
+    
     }
 
     //현재 ID의 카드가 레베업되고 남은 카드량
@@ -327,10 +384,13 @@ public class DailySale : MonoBehaviour {
         imgTimeFill.fillAmount = 1;
         imgTime.gameObject.SetActive(false);
         imgTimeFill.gameObject.SetActive(false);
+        imgTimeBack.gameObject.SetActive(false);
         TimeCount.gameObject.SetActive(false);
 
     Slider(ID);
     }
+
+     
 
    
 }

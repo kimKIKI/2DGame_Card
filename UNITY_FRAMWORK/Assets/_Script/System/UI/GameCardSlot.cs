@@ -30,49 +30,56 @@ public enum eCardType
   SLOT,
 }
 
-public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler,IPointerEnterHandler,IPointerExitHandler
+public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
 {
-    //eGameCardSize eGameCardState = eGameCardSize.BASE;
-   
-    Image     slotImage;                 // 슬롯 이미지
-            Formation formation;
-            int       curIndex;          //현재 소속된 인덱스번호
+    public delegate void CardSenderDelegate(GameCardSlot gs);
+    public static CardSenderDelegate CardSenderProperty;
+ 
+
+    Image slotImage;         // 슬롯 이미지
+    Formation formation;
+    int curIndex;          //현재 소속된 인덱스번호
     [HideInInspector]
-    public Image      itemIcon;          // 아이템 아이콘(이미지)
-                                         // public Image itemIcon;
-    private int       rpkNumber;         //가위바위보를 숫자로 출력
-    private Text      rpk;               //주먹,가위,보의 문자출력
-            string    Sp;                //특별한 장군능력 출력
+    public Image itemIcon;          // 아이템 아이콘(이미지)
+                                    // public Image itemIcon;
+    public Text txPlus;
+    private int rpkNumber;         //가위바위보를 숫자로 출력
+    private Text rpk;               //주먹,가위,보의 문자출력
+    string Sp;                //특별한 장군능력 출력
 
     [HideInInspector]
-    public int        ID;                //GetComponent했을때 카드의 정렬순서를 확인을 위해서 임시로 
+    public int ID;                //GetComponent했을때 카드의 정렬순서를 확인을 위해서 임시로 
+
+
+    public Transform explainCard;        //카드의 기능을 보여줄 이미지
 
     public IList<Card> defectCards = new List<Card>();
-    public eBelong eBelongState    = eBelong.NON;   //com & player인지 판단한다.
-    public eCardType eType         = eCardType.NON; //센터에 있는지 위치판단
+    public eBelong eBelongState = eBelong.NON;   //com & player인지 판단한다.
+    public eCardType eType = eCardType.NON; //센터에 있는지 위치판단
 
-    public delegate void CardSenderDelegate(GameCardSlot gs);
-    public static CardSenderDelegate CardSenderProperty; 
-
+    Text txExplainCard;
+    public int plus;
     //----------------내부---------------------------------
-    public Card cardInfo          = null;
-    public int curLevelHp;          //레벨을 체력으로 적용함..레벨이 놀을수록 체력증가
-    private bool isPicked         = false;  // 픽킹 했는가?
-
+    public Card cardInfo = null;
+    public int curLevelHp;                   //레벨을 체력으로 적용함..레벨이 놀을수록 체력증가
+    public Transform Cardbackground = null;  //카드의 뒤배경
+    Image cardBack;                 //배열되는 카드의 뒤배경
+    public Transform RPKImg;                //가위바위보 이미지
+    Image rpkImg;
+    private bool isPicked = false;  // 픽킹 했는가?
 
     bool isPlayer2;         //player2  y값으로 반쪽위를 com의 영역으로 분리하기위해 사용
     bool isPlayer;          //Player인지 판단한다.
     bool IsOne = true;      //한번만 실행되도록 판단하기 위해서 설정
-   
+
     Camera mainCamera;
 
-    protected  void Awake()
+    protected void Awake()
     {
         slotImage = this.GetComponent<Image>();
-        itemIcon  = transform.Find("ItemCard").GetComponentInChildren<Image>();
-        rpk       = transform.GetComponentInChildren<Text>();
-        
-       
+        itemIcon = transform.Find("ItemCard").GetComponentInChildren<Image>();
+      
+          
         mainCamera = GameObject.Find("MainCamera").GetComponent<Camera>();
 
         if (gameObject.transform.parent != null)
@@ -80,6 +87,17 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
             formation = gameObject.transform.parent.GetComponent<Formation>();
         }
 
+        if (Cardbackground != null)
+        {
+            cardBack = Cardbackground.gameObject.GetComponent<Image>();
+        }
+
+        if (RPKImg != null)
+        {
+            rpkImg = RPKImg.gameObject.GetComponent<Image>();
+            rpk = transform.Find("Image/Text_RPS").GetComponent<Text>();
+            rpk.text = null;
+        }
     }
 
     void Start()
@@ -90,41 +108,93 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
         if (other == "Player")
         {
             eBelongState = eBelong.PLAYER;
-            eType        = eCardType.CENTERSLOT;
+            eType = eCardType.CENTERSLOT;
         }
     }
 
+    void OnEnable()
+    {
+        //if (explainCard.gameObject == null)
+        //{
+        //    Debug.Log(" ++++++++++++++++++++++++++");
+        //}
+        //else
+        //{
+        //    txExplainCard = explainCard.gameObject.GetComponentInChildren<Text>();
+        //    Debug.Log("==================================");
+        //}
 
-    public  void AddHpSender( )
+        //상속받은 DragSlot에서는 explainCard가 존재하지 안기 때문에 null Exception발생함
+
+        //Debug.Log("gameCardSlot : OnEnable");
+        if (explainCard ?? false)
+        {
+
+            txExplainCard = explainCard.gameObject.GetComponentInChildren<Text>();
+            explainCard.gameObject.SetActive(false);
+        }
+
+
+    }
+
+
+
+    public void PlusHp()
+    {
+        if (txPlus != null)
+        {
+            txPlus.text = string.Format("+{0}", plus);
+            iTween.ScaleFrom(txPlus.gameObject, iTween.Hash("x", 2, "y", 2, iTween.EaseType.easeInOutBounce, .3f));
+            StartCoroutine(reHide(2f));
+        }
+      
+    }
+
+    IEnumerator reHide(float t)
+    {
+        yield return new WaitForSeconds(t);
+        txPlus.text = null;
+    }
+
+    public void AddHpSender()
     {
         if (CardSenderProperty != null)
             CardSenderProperty(this);
     }
 
-  
+
     public void SetCardInfo(Card newInfo)
     {
         //Debug.Log("SetCardInfo(Card newInfo)");
         if (newInfo != null)
         {
             cardInfo = newInfo;
-            itemIcon.sprite.name = cardInfo.IconName;
-            itemIcon.sprite = SpriteManager.GetSpriteByName("Sprite", itemIcon.sprite.name);
+            string name = cardInfo.IconName;
+            if (itemIcon == null)
+            {
+                itemIcon = transform.Find("ItemCard").GetComponentInChildren<Image>();
+            }
+            itemIcon.sprite = SpriteManager.GetSpriteByName("Sprite", name);
             itemIcon.enabled = true;
             ID = cardInfo.ID;
             Sp = newInfo.Spable;
             curLevelHp = newInfo.level;
             gameObject.transform.localScale = new Vector3(2, 2, 1);
-           
+            cardBack.enabled = true;
+
+
         }
         else
         {
-            cardInfo         = null;
+            cardInfo = null;
             itemIcon.enabled = false;
             gameObject.transform.localScale = new Vector3(1, 1, 1);
-        
+            if (cardBack != null)
+            {
+                cardBack.enabled = false;
+            }
         }
-        
+
     }
 
     ////슬롯에 오브젝트 카드를 위치 시킨다.
@@ -137,40 +207,80 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
                 eType = type;
                 if (newInfo != null)
                 {
-                    cardInfo             = newInfo;
-                    itemIcon.sprite.name = cardInfo.IconName;
-                    itemIcon.sprite      = SpriteManager.GetSpriteByName("Sprite", itemIcon.sprite.name);
-                    itemIcon.enabled     = true;
-                    ID                   = cardInfo.ID;
-                    Sp                   = newInfo.Spable;
-                    curLevelHp           = newInfo.level;
+                    cardInfo = newInfo;
+                    string name = cardInfo.IconName;
+                    if (itemIcon == null)
+                    {
+                        itemIcon = transform.Find("ItemCard").GetComponentInChildren<Image>();
+                    }
+                    itemIcon.sprite = SpriteManager.GetSpriteByName("Sprite", name);
+                    itemIcon.enabled = true;
+                    ID = cardInfo.ID;
+                    Sp = newInfo.Spable;
+                    curLevelHp = newInfo.level;
+                    Debug.Log("setCardInfo  ID : " + ID);
+
+                    //처음 생성될때는 적용되지 안고 있음
+                    if (cardBack != null)
+                    {
+                        cardBack.enabled = true;
+                    }
+
                 }
                 else
                 {
-                    cardInfo             = null;
-                    itemIcon.enabled     = false;
+                    cardInfo = null;
+                    itemIcon.enabled = false;
+                    if (cardBack != null)
+                    {
+                        cardBack.enabled = false;
+                    }
                 }
                 break;
             case eCardType.CENTERSLOT:
                 eType = type;
                 if (newInfo != null)
                 {
-                    cardInfo               = newInfo;
-                    itemIcon.sprite.name   = cardInfo.IconName;
-                    itemIcon.sprite        = SpriteManager.GetSpriteByName("Sprite", itemIcon.sprite.name);
-                    itemIcon.enabled       = true;
-                    ID                     = cardInfo.ID;
-                    Sp                     = newInfo.Spable;
-                    curLevelHp             = newInfo.level;
+                    cardInfo = newInfo;
+                    string name = cardInfo.IconName;
+                    if (itemIcon == null)
+                    {
+                        itemIcon = transform.Find("ItemCard").GetComponentInChildren<Image>();
+                    }
+                    itemIcon.sprite = SpriteManager.GetSpriteByName("Sprite", name);
+                    itemIcon.enabled = true;
+                    ID = cardInfo.ID;
+                    Sp = newInfo.Spable;
+                  
+                    plus = GameData.Instance.UnityDatas[ID - 1].Up_Hp;
+                    PlusHp();
+                    curLevelHp = newInfo.level;
                     gameObject.transform.localScale = new Vector3(2, 2, 1);
-                   
+
+                    //"Atk_Zone" 적 공격력 "Up_Hp"성벽Hp증가량 Up_atk":공격증가량,
+                    //"SpAble":"non" 특수능력
+                    if (explainCard ?? false)
+                    {
+                        if (ID >= 1)
+                        {
+                            //Debug.Log(" GameCardSlot ----ID :" + ID);
+                            string iconName = GameData.Instance.UnityDatas[ID - 1].Name;
+                            string Spable = GameData.Instance.UnityDatas[ID - 1].SpAble;      //특수 능력
+                            int AtK_zone = GameData.Instance.UnityDatas[ID - 1].Atk_Zone;     //성곽공격
+                            int Up_Hp = GameData.Instance.UnityDatas[ID - 1].Up_Hp;
+                            int Up_atk = GameData.Instance.UnityDatas[ID - 1].Up_atk;
+                            txExplainCard.text = string.Format("\n\n{0}\n {1}\n 기지공격력:{2}\n 체력증가:{3}\n 공력증가:{4}\n", iconName, Spable, AtK_zone, Up_Hp, Up_atk);
+                        }
+
+                    }
+
                 }
                 else
                 {
-                    cardInfo                        = null;
-                    itemIcon.enabled                = false;
+                    cardInfo = null;
+                    itemIcon.enabled = false;
                     gameObject.transform.localScale = new Vector3(1, 1, 1);
-  
+
                 }
                 break;
         }
@@ -188,13 +298,13 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
                 curIndex = gameObject.transform.GetSiblingIndex();
                 gameObject.transform.SetAsLastSibling();
                 CardSetSize(eGameCardSize.EXPAND);
-               
+
             }
 
             if (eType == eCardType.CENTERSLOT)
             {
                 CardSetSizeCenter(eGameCardSize.EXPAND);
-               
+
             }
             else
             {
@@ -212,6 +322,8 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
                 //카드의 이미지의 크기를 2배로 확대한다.
                 CardSlotPlayerImgBig(true);
                 isPlayer = true;
+                explainCard.gameObject.SetActive(true);
+
             }
             else if (eType == eCardType.CENTERSLOT)
             {
@@ -222,62 +334,113 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
     }
 
     ////슬롯에 오브젝트 카드를 위치 시킨다.
-    public void SetCardInfo(Card newInfo, eBelong man ,eCardType type)
+    public void SetCardInfo(Card newInfo, eBelong man, eCardType type)
     {
-       // Debug.Log("SetCardInfo(Card newInfo, eBelong man ,eCardType type)");
         eBelongState = man;
-        eType        = type;
-       
+        eType = type;
+
         switch (type)
         {
             case eCardType.SLOT:
-             
+
                 if (newInfo != null)
                 {
                     cardInfo = newInfo;
-                    itemIcon.sprite.name = cardInfo.IconName;
-                    itemIcon.sprite      = SpriteManager.GetSpriteByName("Sprite", itemIcon.sprite.name);
-                    itemIcon.enabled     = true;
-                    ID                   = cardInfo.ID;
-                    Sp                   = newInfo.Spable;
-                    curLevelHp           = newInfo.level;
+
+                    if (itemIcon == null)
+                    {
+                        itemIcon = transform.Find("ItemCard").GetComponentInChildren<Image>();
+                    }
+
+                    string name = cardInfo.IconName;
+                    itemIcon.sprite = SpriteManager.GetSpriteByName("Sprite", name);
+                    itemIcon.enabled = true;
+                    ID = cardInfo.ID;
+
+                    Sp = newInfo.Spable;
+                    curLevelHp = newInfo.level;
+                    //null이 아닐때 gameobject null이면 false
+                    if (explainCard ?? false)
+                    {
+                        if (ID >= 1)
+                        {
+                            string iconName = GameData.Instance.UnityDatas[ID - 1].Name;
+                            string Spable = GameData.Instance.UnityDatas[ID - 1].SpAble;      //특수 능력
+                            int AtK_zone = GameData.Instance.UnityDatas[ID - 1].Atk_Zone;     //성곽공격
+                            int Up_Hp = GameData.Instance.UnityDatas[ID - 1].Up_Hp;
+                            int Up_atk = GameData.Instance.UnityDatas[ID - 1].Up_atk;
+                            txExplainCard.text = string.Format("\n\n{0}\n {1}\n 기지공격력:{2}\n 체력증가:{3}\n 공력증가:{4}\n", iconName, Spable, AtK_zone, Up_Hp, Up_atk);
+                        }
+
+                    }
+
+
+                    if (cardBack != null)
+                    {
+                        cardBack.enabled = true;
+                    }
+
+                    //ERROR ------->>>원인모름
+                    //"Atk_Zone" 적 공격력 "Up_Hp"성벽Hp증가량 Up_atk":공격증가량,
+                    //"SpAble":"non" 특수능력
+
                 }
                 else
                 {
                     cardInfo = null;
                     itemIcon.enabled = false;
-                   
+
+                    if (cardBack != null)
+                    {
+                        cardBack.enabled = false;
+                    }
+
                 }
                 break;
-            case eCardType. CENTERSLOT:
-                
+            case eCardType.CENTERSLOT:
+
                 if (newInfo != null)
                 {
                     cardInfo = newInfo;
-                    itemIcon.sprite.name = cardInfo.IconName;
-                    itemIcon.sprite      = SpriteManager.GetSpriteByName("Sprite", itemIcon.sprite.name);
-                    itemIcon.enabled     = true;
-                    ID                   = cardInfo.ID;
-                    Sp                   = newInfo.Spable;
-                    curLevelHp           = newInfo.level;
-                    gameObject.transform.localScale = new Vector3(2,2,1);
+                    string name = cardInfo.IconName;
+                    if (itemIcon == null)
+                    {
+                        itemIcon = transform.Find("ItemCard").GetComponentInChildren<Image>();
+                    }
+                    itemIcon.sprite = SpriteManager.GetSpriteByName("Sprite", name);
+                    itemIcon.enabled = true;
+                    ID = cardInfo.ID;
+                    Sp = newInfo.Spable;
+                    plus = GameData.Instance.UnityDatas[ID - 1].Up_Hp;
+                    PlusHp();
+                    curLevelHp = newInfo.level;
+
+                    gameObject.transform.localScale = new Vector3(2, 2, 1);
+
+                  
+                  
                 }
                 else
                 {
-                    cardInfo              = null;
-                    itemIcon.enabled      = false;
+                    cardInfo = null;
+                    itemIcon.enabled = false;
                     gameObject.transform.localScale = new Vector3(1, 1, 1);
-                    //Debug
-                    //if (cardInfo == null)
-                    //{
-                    //    IsCard = false;
-                    //}
+                    if (explainCard ?? false)
+                    {
+
+                        string iconName = null;
+                        string Spable = null;
+                        int AtK_zone = 0;
+                        int Up_Hp = 0;
+                        int Up_atk = 0;
+                        txExplainCard.text = string.Format("\n\n{0}\n {1}\n 기지공격력:{2}\n 체력증가:{3}\n 공력증가:{4}\n", iconName, Spable, AtK_zone, Up_Hp, Up_atk);
+                    }
                 }
                 break;
         }
     }
 
-  
+
     public bool ISIconImg()
     {
         if (itemIcon.enabled)
@@ -287,7 +450,7 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
         return true;
     }
 
-   
+
     public Card GetUnityInfo()
     {
         if (cardInfo == null)
@@ -297,14 +460,14 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
         return cardInfo;
     }
 
-   
+
 
     public void OnDrag(PointerEventData eventData)
     {
         if (isPicked == false) return;
 
         DragSlot.Instance.DragMove(eventData.position);
-       
+
         if (eType == eCardType.CENTERSLOT) return;
     }
 
@@ -315,11 +478,11 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
         if (cardInfo == null) return; //빈칸클릭
 
         //센터에 있을때 드레깅을 위한 다운이 안되게 한다.
-        if (eType == eCardType.CENTERSLOT )
+        if (eType == eCardType.CENTERSLOT)
         {
             return;
         }
-          
+
 
 
         //플레이어의 베이스카드가 다시 재정렬되게 한다.
@@ -345,8 +508,11 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
         }
         //커졌다면 원래대로 돌려놓는다.
         if (eBelongState == eBelong.PLAYER)
+        {
             CardSlotPlayerImgBig(false);
-
+            //설명함 꺼지게 한다.
+            explainCard.gameObject.SetActive(false);
+        }
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -358,11 +524,11 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
         {
             AppSound.instance.SE_Card_PickUp.Play();
             DragSlot.Instance.Drop();
-            isPicked   = false;
+            isPicked = false;
             //드레깅을 false로 돌려 놓는다.
         }
-       
-      
+
+
         if (IsInvoking("InvExplainCard"))
         {
             CancelInvoke("InvExplainCard");
@@ -389,12 +555,13 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
         //현재카드의 상태가 슬롯이고 player일때 GameData에 등록한다.
         if (eBelongState == eBelong.PLAYER && eType == eCardType.CENTERSLOT)
         {
-            GameData.Instance.DrageCardInfo        = cardInfo;
+            GameData.Instance.DrageCardInfo = cardInfo;
             GameData.Instance.DrageCardInfoVector3 = transform.position;
+            explainCard.gameObject.SetActive(true);
         }
 
         float clampY = this.gameObject.transform.position.y;
-       
+
         if (clampY > 1300f)
         {    //clampY 1300 컴의 상단위치
             isPlayer2 = true;
@@ -414,10 +581,10 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
         // throw new System.NotImplementedException();
     }
 
-  
+
     public void OnPointerExit(PointerEventData eventData)
     {
-       // Debug.Log("-------OnPointerExit-----");
+        // Debug.Log("-------OnPointerExit-----");
         if (IsInvoking("InvExplainCard"))
         {
             CancelInvoke("InvExplainCard");
@@ -427,8 +594,8 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
 
         if (eBelongState == eBelong.SYSCOM)
         {
-            if(eType == eCardType.SLOT)
-            gameObject.transform.SetSiblingIndex(curIndex);
+            if (eType == eCardType.SLOT)
+                gameObject.transform.SetSiblingIndex(curIndex);
 
             if (eType == eCardType.CENTERSLOT)
             {
@@ -442,7 +609,7 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
         //현재의 게임카드가 플레이어 && 센터슬롯에 있을때 사이즈 조절
         if (eBelongState == eBelong.PLAYER && eType == eCardType.CENTERSLOT)
         {
-            transform.Find("ItemCard").GetComponent<RectTransform>().sizeDelta = new Vector2(100f,120f);
+            transform.Find("ItemCard").GetComponent<RectTransform>().sizeDelta = new Vector2(100f, 120f);
         }
 
     }
@@ -450,7 +617,7 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
     //슬롯에 있을때 카드가 확대해서 보이게 한다.
     public void CardSlotPlayerImgBig(bool able)
     {
-        var min = 2f;
+        var min = 1f;
         if (able)
         {
             //이미 커진 상태라면 더이사 커지지 않게 한다.
@@ -461,29 +628,31 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
         else
         {
             itemIcon.transform.localScale = new Vector3(1, 1, 1);
-           
+
         }
+
+        explainCard.gameObject.SetActive(false);
 
     }
 
-    public  void  CardSetSize (eGameCardSize eState)
+    public void CardSetSize(eGameCardSize eState)
     {
         switch (eState)
-            {
-                case eGameCardSize.BASE:
-                       gameObject.transform.localScale = new Vector3(1, 1, 1);
+        {
+            case eGameCardSize.BASE:
+                gameObject.transform.localScale = new Vector3(1, 1, 1);
 
-                       break;
-                case eGameCardSize.MINI:
-                   
-                       gameObject.transform.localScale = new Vector3(0.5f, 0.5f , 1);
-               
-                       break;
-                case eGameCardSize.EXPAND:
-                     
-                       gameObject.transform.localScale = new Vector3(1.5f , 1.5f, 1f);
-                       break;
-            }
+                break;
+            case eGameCardSize.MINI:
+
+                gameObject.transform.localScale = new Vector3(0.5f, 0.5f, 1);
+
+                break;
+            case eGameCardSize.EXPAND:
+
+                gameObject.transform.localScale = new Vector3(1.1f, 1.1f, 1f);
+                break;
+        }
     }
 
     public void CardSetSizeCenter(eGameCardSize eState)
@@ -508,15 +677,15 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
     //TODO: ERROR로 수정필요함
     //public void SlotOff()
     //{
-        //원래의 슬롯색으로 바꾸어 놓는다.
-        // formation.FormationCardsArc(eGameCardSize.BASE,eBelong.PLAYER,eCardType.SLOT);
+    //원래의 슬롯색으로 바꾸어 놓는다.
+    // formation.FormationCardsArc(eGameCardSize.BASE,eBelong.PLAYER,eCardType.SLOT);
     //}
 
-    public void EFFECT()
+    public void EFFECT(eEFFECT_NAME SPAWN)
     {
         var wor = mainCamera.ScreenToWorldPoint(Vector3.zero);
         //TODO:이펙트 발생시키는 애니 실행시킨다.
-        GameObject ef = AppUIEffect.instance.InstanceVFX(eEFFECT_NAME.Destroy_Card);
+        GameObject ef = AppUIEffect.instance.InstanceVFX(SPAWN);
         //ERROR : 픽업되는 카드가 부모가 됨..놓는위치가 부모가 되어야 한다.수정
         ef.transform.SetParent(transform);
         ef.transform.localPosition = new Vector3(wor.x, wor.y, wor.z + 10);
@@ -524,10 +693,10 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
 
     // public void SlotOn()
     //{
-        //카드가 빠졌을때 다시 재정렬한다.
+    //카드가 빠졌을때 다시 재정렬한다.
     //    if (gameObject.transform.parent != null)
     //    {
-            //formation.FormationCardsArc();
+    //formation.FormationCardsArc();
     //    }
     //}
 
@@ -560,24 +729,31 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
                 switch (value)
                 {
                     case 1:
-                        rpk.text = string.Format("{0}", "주먹");
+                        rpk.text = string.Format("{0}", "가위");
+                        string name1 = "rps_0";
+                        rpkImg.sprite = SpriteManager.GetSpriteByName("Sprite", name1);
+
                         break;
 
                     case 2:
-                        rpk.text = string.Format("{0}", "가위");
+                        rpk.text = string.Format("{0}", "주먹");
+                        string name = "rps_1";
+                        rpkImg.sprite = SpriteManager.GetSpriteByName("Sprite", name);
                         break;
 
                     case 3:
                         rpk.text = string.Format("{0}", " 보");
+                        string name3 = "rps_2";
+                        rpkImg.sprite = SpriteManager.GetSpriteByName("Sprite", name3);
                         break;
                 }
             }
-            Debug.Log("주먹(1), 가위(2),보(3) value :" + value);
+            //Debug.Log("주먹(1), 가위(2),보(3) value :" + value);
             rpkNumber = value;
         }
     }
 
-    
+
 
     public void MoveSlot(Vector3 to)
     {
@@ -600,8 +776,7 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
     }
 
 
-   
-    void OnDestroy()
+    public void DestroyEffect()
     {
         if (mainCamera != null)
         {
@@ -612,9 +787,9 @@ public class GameCardSlot : MonoBehaviour, IPointerDownHandler, IDragHandler, IP
             ef.transform.SetParent(transform.parent);
             ef.transform.localPosition = new Vector3(wor.x, wor.y, wor.z + 10);
         }
-       
     }
 
+  
 
 
 }

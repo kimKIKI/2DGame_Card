@@ -6,7 +6,7 @@ using UnityEngine.Animations;
 public class VictoryCard : MonoBehaviour {
 
     public IList<Card> vicCards = new List<Card>();      //승리한 카드르 리스트로 가진다.
-    Card cardInfo = null;
+    Card cardInfo               = null;
     
     //Shape
     public     Image       levelImg;       //레벨 뒤화면 이미지
@@ -44,8 +44,6 @@ public class VictoryCard : MonoBehaviour {
 
     void Start()
     {
-      
-
         if (arrow != null)
         {
             localScale = arrow.transform.localScale;
@@ -134,11 +132,12 @@ public class VictoryCard : MonoBehaviour {
     {
         if (cardInfo == null)
         {
-        cardInfo = newCard;
-        iconName.text = string.Format("{0}", newCard.IconName);
-        mainICon.sprite.name = newCard.IconName;
-        mainICon.sprite = SpriteManager.GetSpriteByName("Sprite", mainICon.sprite.name);
-        mainICon.enabled = true;
+        cardInfo             = newCard;
+        iconName.text        = string.Format("{0}", newCard.IconName);
+        string name          = newCard.IconName;
+        //mainICon.sprite.name = newCard.IconName;
+        mainICon.sprite      = SpriteManager.GetSpriteByName("Sprite",name);
+        mainICon.enabled     = true;
            
         }
         else
