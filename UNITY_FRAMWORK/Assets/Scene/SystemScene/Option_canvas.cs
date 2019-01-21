@@ -141,4 +141,17 @@ public class Option_canvas : MonoBehaviour {
         OptionSound.gameObject.SetActive(false);
     }
 
+    //안드로이드에서 게임을 종료시킨다.
+    public void Quit()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#elif UNITY_WEBPLAYER
+        Application.OpenURL("http://google.com");
+#else
+        Application.Quit();
+#endif
+    }
+
+   
 }

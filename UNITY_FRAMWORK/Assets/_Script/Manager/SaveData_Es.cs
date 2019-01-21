@@ -8,7 +8,7 @@ public class SaveData_Es : MonoBehaviour {
     public int   GoldAmount;
     public int   JewAmount;
     public int   ExpLevel;     //경험치 레벨
-    public float ExpAmount;  //경험치 수치
+    public float ExpAmount;    //경험치 수치
     //카드별 증가한 카드량?
 
 }

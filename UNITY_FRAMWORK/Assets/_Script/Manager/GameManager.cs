@@ -1062,9 +1062,11 @@ public partial class GameManager : MonoBehaviour {
         return result;
     }
 
-    //비었는지 판단하고 승패 리턴한다. 승리3:패배1
+    //combat에서 비었는지 판단하고 승패 리턴한다. 승리3:패배1
+    //3개중 첫번째 슬롯부터 검사 한다.
      int Victory_pntEMPT(int index)
      {
+       
        int result = 1;
 
         //각각의 slot가 비었는지 확인한다.-1이면 있는거고 0보다 크면 비어있는 상태임
@@ -1144,7 +1146,7 @@ public partial class GameManager : MonoBehaviour {
     }
 
     //승리시 했을때의 결과 처리로 카드의 특성에 맞게 기능을 추가한다.
-    // 카드가 완전히 사라졌을때 ,부전승일때도 호출됨XXXX 부전승일때 호출되면 안됨 인덱스에서 에러발생,
+    //카드가 완전히 사라졌을때 ,부전승일때도 호출됨XXXX 부전승일때 호출되면 안됨 인덱스에서 에러발생,
     //카드가 파괴될때 호출한다.
     void Victory_AddCard(int index , ePlayer player)
     {
@@ -1155,110 +1157,115 @@ public partial class GameManager : MonoBehaviour {
         switch (player)
         {
             case ePlayer.PLAYER:
-              
+
                 if (centerSlots[index].cardInfo != null)
                 {
-                          id              = centerSlots[index].cardInfo.Spable;
-                          copySlot        = playerForm.GetComponent<Formation>().card;
-                          trans           = playerForm.transform;
+                    id = centerSlots[index].cardInfo.Spable;
+                    copySlot = playerForm.GetComponent<Formation>().card;
+                    trans = playerForm.transform;
 
-                          
-                          Card cardcur     = centerSlots[index].cardInfo;
-                          Card defCard     = null;
-                         //패배한 카드의 슬롯이 비어있지 않을때
-                         if (centerSlots2[index].GetComponentInChildren<GameCardSlot>() != null)
-                         {   //com슬롯의 카드정보를 담는다.
-                             defCard  = centerSlots2[index].GetComponentInChildren<GameCardSlot>().cardInfo;
-                            //패배한 카드의 체력을 깍는다.승리한 카드의 공력력은 임시로 1로 정함       
-                         }
 
-                            //카드의 체력까지 완전히 패배시켰을때
-                            //승리카드------------------------------------------------------
-                            //TODO:승리했을때 카드슬롯에 접근해서 추가 할수 있는 기능부분
-                 
-                            //--------------------------------------------------------------
+                    Card cardcur = centerSlots[index].cardInfo;
+                    Card defCard = null;
+                    //패배한 카드의 슬롯이 비어있지 않을때
+                    if (centerSlots2[index].GetComponentInChildren<GameCardSlot>() != null)
+                    {   //com슬롯의 카드정보를 담는다.
+                        defCard = centerSlots2[index].GetComponentInChildren<GameCardSlot>().cardInfo;
+                        //패배한 카드의 체력을 깍는다.승리한 카드의 공력력은 임시로 1로 정함       
+                    }
 
-                            //승리한 카운트가 0일때
-                            if (GameData.Instance.playerVic.Count == 0)
-                            {
-                                IList<Card> vicCar = new List<Card>();
-                                GameData.Instance.playerVic.Add(cardcur.ID, vicCar);
-                                GameData.Instance.playerVic[cardcur.ID].Add(defCard);
-                            }//승리한 카운트가 0보다 클때
-                            else if (GameData.Instance.playerVic.Count > 0)
-                            {
-                                    if (GameData.Instance.playerVic.ContainsKey(cardcur.ID))
-                                    {
-                                    //승리한 카드의 리스트키값이 있으면 패배한 카드를 바로 추가하고 
-                                    //DEGUG:패배한 카드가 확실한지 확인필요함..헷갈림
-                                    GameData.Instance.playerVic[cardcur.ID].Add(defCard);
-                                    }
-                                    else
-                                    { //새로운 승리한 카드일때는 새로이 리스트를 작성한다.
-                                    IList<Card> vicCar = new List<Card>();
-                                    GameData.Instance.playerVic.Add(cardcur.ID, vicCar);
-                                    GameData.Instance.playerVic[cardcur.ID].Add(defCard);
-                                    }
-                       
-                            } //vicList에 추가 END
-                    
-                            if (id == "AddCard")
-                            {
-                                int MaxCount = 1;
-                                for (int i = 0; i < cardSlots.Length; i++)
-                                {
-                                        if (cardSlots[i].cardInfo != null)
-                                        {
-                                            MaxCount++;
-                                            continue;
-                                        }
-                                        else
-                                        {
-                                            Card newCard = new Card();
-                                            //TODO:여기에 
-                                            //ID;level;hasCard; Name; Shap;IconName;Spable;
-                                            //추가되는 카드의 이름
-                                            string IconName ="supplies_HP";
-                                            //card 클래스의 프로퍼티이다. 카드의 이미지 네임이 바뀌는 것이 아님
-                                            //ID로 선택하는 사항이 있기 때문에 꼭줘야함
-                                            newCard.IconName = IconName;
-                                            newCard.ID = 11;
-                                            //카드 추가시 문제 발생..
-                                            cardSlots[i].SetCardInfo(newCard, eBelong.SYSCOM,eCardType.SLOT);
-                                            formation.FormationCardsArc(eGameCardSize.BASE,eBelong.PLAYER,eCardType.SLOT);
-                                            break;
-                                        }
-                                }
-                                //모든 슬롯이 다 채워져 있을경우 
-                                // maxCount 는 최대카운트10   > 전체 기본갯수9
-                                if (MaxCount > MaxSlotCount)
-                                {
-                                 //복제대상playerForm.GetComponent<Formation>().card
-                                 GameObject newCardSlot = Instantiate(copySlot, trans);
-                                 Card newCard = new Card();
-                                 //TODO:여기에 
-                                 //ID;level;hasCard; Name; Shap;IconName;Spable;
-                                 string IconName = "supplies_HP";
-                                 newCard.ID = 11;
-                                 // newCard.sprite = SpriteManager.GetSpriteByName("Sprite", IconName);
-                                 newCard.IconName = IconName;
-                                  
-                                 newCardSlot.GetComponent<GameCardSlot>().SetCardInfo(newCard, eBelong.SYSCOM,eCardType.SLOT);
-                                 formation.FormationCardsArc(eGameCardSize.BASE,eBelong.PLAYER,eCardType.SLOT);
+                    //카드의 체력까지 완전히 패배시켰을때
+                    //승리카드------------------------------------------------------
+                    //TODO:승리했을때 카드슬롯에 접근해서 추가 할수 있는 기능부분
 
-                                 StartCoroutine(CoShowShowAddCardPlayer(0.3f));
-                                }
-                            }    // "AddCard"END
-                            else if (id == "RemoveCard")
+                    //--------------------------------------------------------------
+
+                    //승리한 카운트가 0일때
+                    if (GameData.Instance.playerVic.Count == 0)
+                    {
+                        IList<Card> vicCar = new List<Card>();
+                        GameData.Instance.playerVic.Add(cardcur.ID, vicCar);
+                        GameData.Instance.playerVic[cardcur.ID].Add(defCard);
+                    }//승리한 카운트가 0보다 클때
+                    else if (GameData.Instance.playerVic.Count > 0)
+                    {
+                        if (GameData.Instance.playerVic.ContainsKey(cardcur.ID))
+                        {
+                            //승리한 카드의 리스트키값이 있으면 패배한 카드를 바로 추가하고 
+                            //DEGUG:패배한 카드가 확실한지 확인필요함..헷갈림
+                            GameData.Instance.playerVic[cardcur.ID].Add(defCard);
+                        }
+                        else
+                        { //새로운 승리한 카드일때는 새로이 리스트를 작성한다.
+                            IList<Card> vicCar = new List<Card>();
+                            GameData.Instance.playerVic.Add(cardcur.ID, vicCar);
+                            GameData.Instance.playerVic[cardcur.ID].Add(defCard);
+                        }
+
+                    } //vicList에 추가 END
+
+                    if (id == "AddCard")
+                    {
+                        int MaxCount = 1;
+                        for (int i = 0; i < cardSlots.Length; i++)
+                        {
+                            if (cardSlots[i].cardInfo != null)
                             {
-                                    //컴퓨터의 base 카드중 하나를 랜덤하게 제거한다.
-                                    //랜덤하게 삭제후 다시 slot[]를 재정렬되어야 한다.
-                                    if (playerForm2.childCount >= 1)
-                                    {   //인덱스 로 찾아야 하므로 0 ~시작
-                                        int choice = UnityEngine.Random.Range(1, playerForm2.childCount - 1);
-                                        Destroy(cardSlots2[choice].gameObject);
-                                    }
+                                MaxCount++;
+                                continue;
                             }
+                            else
+                            {
+                                Card newCard = new Card();
+                                //TODO:여기에 
+                                //ID;level;hasCard; Name; Shap;IconName;Spable;
+                                //추가되는 카드의 이름
+                                string IconName = "supplies_HP";
+                                //card 클래스의 프로퍼티이다. 카드의 이미지 네임이 바뀌는 것이 아님
+                                //ID로 선택하는 사항이 있기 때문에 꼭줘야함
+                                newCard.IconName = IconName;
+                                newCard.ID = 11;
+                                //카드 추가시 문제 발생..
+                                cardSlots[i].SetCardInfo(newCard, eBelong.SYSCOM, eCardType.SLOT);
+                                formation.FormationCardsArc(eGameCardSize.BASE, eBelong.PLAYER, eCardType.SLOT);
+                                break;
+                            }
+                        }
+                        //모든 슬롯이 다 채워져 있을경우 
+                        // maxCount 는 최대카운트10   > 전체 기본갯수9
+                        if (MaxCount > MaxSlotCount)
+                        {
+                            //복제대상playerForm.GetComponent<Formation>().card
+                            GameObject newCardSlot = Instantiate(copySlot, trans);
+                            Card newCard = new Card();
+                            //TODO:여기에 
+                            //ID;level;hasCard; Name; Shap;IconName;Spable;
+                            string IconName = "supplies_HP";
+                            newCard.ID = 11;
+                            // newCard.sprite = SpriteManager.GetSpriteByName("Sprite", IconName);
+                            newCard.IconName = IconName;
+
+                            newCardSlot.GetComponent<GameCardSlot>().SetCardInfo(newCard, eBelong.SYSCOM, eCardType.SLOT);
+                            formation.FormationCardsArc(eGameCardSize.BASE, eBelong.PLAYER, eCardType.SLOT);
+
+                            StartCoroutine(CoShowShowAddCardPlayer(0.3f));
+                        }
+                    }    // "AddCard"END
+                    else if (id == "RemoveCard")
+                    {
+                        //컴퓨터의 base 카드중 하나를 랜덤하게 제거한다.
+                        //랜덤하게 삭제후 다시 slot[]를 재정렬되어야 한다.
+                        if (playerForm2.childCount > 1)
+                        {   //인덱스 로 찾아야 하므로 0 ~시작
+
+                            int choice = UnityEngine.Random.Range(1, playerForm2.childCount - 1);
+                            Destroy(cardSlots2[choice].gameObject);
+                        }
+                        else if(playerForm2.childCount == 1)
+                        {
+
+                        }
+                    }
                  
                 }
                 
@@ -1653,6 +1660,60 @@ public partial class GameManager : MonoBehaviour {
         return BankNum;
     }
 
+    //모든카드가 비었는지 판단한다.
+    //player 1 ,com 2,
+    bool EMP(int player)
+    {
+        int empPlayer = 0;
+        int empBasePlayer = 0;
+        bool fullEmp = false;
+
+        if (player == 1)
+        {
+            for (int i = 0; i < 3; ++i)
+            {
+                if (centerSlots[i].GetComponentInChildren<GameCardSlot>().cardInfo == null)
+                {
+                    empPlayer++;
+                }
+            }
+            //cardSlots[num].SetCardInfo(SpriteSlot[num], eBelong.PLAYER, eCardType.SLOT);
+            int count = cardSlots.Length;
+
+            for (int i = 0; i < count; ++i)
+            {
+                if (cardSlots[i].cardInfo == null)
+                {
+                    empBasePlayer++;
+                }
+            }
+            if (empPlayer == 2 && empBasePlayer == (count - 1))
+            { //cardSlots[4].cardInfo == null
+                fullEmp = true;
+            }
+            Debug.Log("empPlayer : " + empPlayer + " || empBasePlayer" + empBasePlayer);
+        }
+        else if (player == 2)
+        { //com centerSlots2[idex].GetComponentInChildren<GameCardSlot>() != null
+            
+            GameCardSlot[] centerSlots2 = centerformation2.GetComponentsInChildren<GameCardSlot>();
+            empPlayer = centerSlots2.Length;
+            //cardSlots[num].SetCardInfo(SpriteSlot[num], eBelong.PLAYER, eCardType.SLOT);
+            //TODO: 카드를 파괴하므로 남는 결국 남는 숫자가 됨
+
+            cardSlots2 = playerForm2.GetComponentsInChildren<GameCardSlot>();
+            int count = cardSlots2.Length;
+
+            if (empPlayer == 0 && count <= 0)
+            { //cardSlots[4].cardInfo == null
+                fullEmp = true;
+                Debug.Log("카드가 없습니다. 끝내야 해");
+            }
+            Debug.Log("empPlayer : " + empPlayer + " || empBasePlayer" + count);
+        }
+       
+        return fullEmp;
+    }
 
     //델리게이트 이벤트 형식으로 바꾸기
     public void ComCheckRemainCard()
@@ -1769,7 +1830,7 @@ public partial class GameManager : MonoBehaviour {
     {
         yield return new WaitForSeconds(t);
         cardSlots2 = playerForm2.GetComponentsInChildren<GameCardSlot>();
-        int last = cardSlots2.Length;
+        int last   = cardSlots2.Length;
         cardSlots2[last - 1].itemIcon.enabled = true;
     }
 
@@ -1914,6 +1975,7 @@ public partial class GameManager : MonoBehaviour {
 
   
     //중간에 승패가 갈리면 step의 코루틴을 빠져 나와야 한다.
+    //트로피 증가 애니가 보여가 한다.
     IEnumerator VICTORY_OR_DEFEAT()
     {
         yield return new WaitForSeconds(0.1f);
@@ -1948,6 +2010,8 @@ public partial class GameManager : MonoBehaviour {
                     startLabel.SetActive(true);
                     labelText.text = string.Format("{0}", " DEFEATED ");
                     StartLabelEff(startLabel);
+
+                   //TODO:트로피감소
                     yield return new WaitForSeconds(1f);
                     TempCorStop = true;
                     SceneChange();
@@ -1962,7 +2026,15 @@ public partial class GameManager : MonoBehaviour {
 
                     startLabel.SetActive(true);
                     labelText.text = string.Format("{0}", " VICTORY");
+                   //TODO: 승리시 프로피및 경험치 증가율추가 한다.
+                   //result에서 추가시킬수 있다.
+                    GameData.Instance.curAddTrophy   = 20;
+                    //result화면후 추가 애니때 보여준다
+                    GameData.Instance.curAddExpCount = 500;
+                  
+
                     StartLabelEff(startLabel);
+                   
                     yield return new WaitForSeconds(1f);
                     TempCorStop = true;
                     SceneChange();
@@ -2019,6 +2091,8 @@ public partial class GameManager : MonoBehaviour {
         {
             //TempCorStop = true;
             //AddKingTower();
+            //EMP(1);
+            EMP(2);
         }
 
         if (Input.GetKeyDown(KeyCode.S))

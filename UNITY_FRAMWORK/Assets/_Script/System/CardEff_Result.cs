@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class CardEff_Result : MonoBehaviour
 {
-    //public Transform PanelTop;     //Top의 화면 
+    //public Transform PanelTop;    //Top의 화면 
     public GameObject card;         //승리한 카드
     public Transform EndEffect;     //패배한 카드가 동전으로 변하기전 이동할 위치
     public Transform gridGroup;     //패배한 카드요소
@@ -19,15 +19,20 @@ public class CardEff_Result : MonoBehaviour
 
     //public Transform title;        //카드의 이름
     //public GameObject arrowLevel;  //card amount 증가
-    public GameObject arrowGold;   //골드 증가
+    public GameObject arrowGold;     //골드 증가
+    public GameObject addTrophy;     //프로피증가
     //public GameObject arrowJew;    //보석 증가
-    public GameObject arrow;       //화살표의 위로올라가는 애니
-    public GameObject cardNum;     //상자가 열렸을때  몇개의 상품항목이 있는지 보여줄 것
-    public GameObject experience;  //경험치 오브젝트패널
-    public Transform  effectPos;    //동전 이펙트가 터질때 보여야될 위치
+    public GameObject arrow;         //화살표의 위로올라가는 애니
+    public GameObject cardNum;       //상자가 열렸을때  몇개의 상품항목이 있는지 보여줄 것
+    public GameObject experience;    //경험치 오브젝트패널
+    public Transform  effectPos;     //동전 이펙트가 터질때 보여야될 위치
+
+    public CollectingEffectController  collectCoinController;
+    public CollectingEffectController  collectTrophyController;
+    public CollectingEffectController  collectExController;
 
     Text txGold;
-    Text txJew;
+    Text txTrophy;
     Text txLevel;
     Text itemNum;                   //상자내 표시 카운트 
     Text txExperienceLevel;         //경험치 레벨표시
@@ -46,11 +51,13 @@ public class CardEff_Result : MonoBehaviour
     public static   event   UnitEventHandler    onUnityDestroy;
 
     public delegate  void   ItemDelegate();
-    public static    event  ItemDelegate itemEvent;
+    public static    event  ItemDelegate      itemEvent;
     //Level 단계
     int[] playerLevel = { 500, 1000, 2000, 3000, 4000, 6000, 8000, 10000, 20000, 30000, 40000, 50000 };
-   
-
+    //카드레벨업에 필요한 카드의 수량
+    //public int[] Level = { 0, 2, 4, 10, 20, 50, 100, 200, 400, 1000, 2000, 4000, 5000 };
+    //카드레벨업당 필요한 금액
+    //public int[] LevelCost = { 5, 20, 50, 150, 400, 1000, 2000, 4000, 8000, 20000, 50000, 100000 };
     public enum eDEFECTCARD
     {
         NONE,
@@ -65,20 +72,28 @@ public class CardEff_Result : MonoBehaviour
     {
         //보이는 위치가 아니므로 gradGroup와 같이 한다.
 
-        txGold            = arrowGold.GetComponentInChildren<Text>();
+        txGold              = arrowGold.GetComponentInChildren<Text>();
         //txJew             = arrowJew.GetComponentInChildren<Text>();
         //txLevel           = arrowLevel.GetComponentInChildren<Text>();
-        txExperienceLevel = experience.transform.Find("Text_LevelNum").GetComponent<Text>();        //경험치 레벨표시
-        txExperienceCount = experience.transform.Find("Text_Value").GetComponent<Text>(); ;         //경험치 레벨카운트
+        txTrophy            = addTrophy.GetComponentInChildren<Text>();
+        txExperienceLevel   = experience.transform.Find("Text_LevelNum").GetComponent<Text>();        //경험치 레벨표시
+        txExperienceCount   = experience.transform.Find("Text_Value").GetComponent<Text>(); ;         //경험치 레벨카운트
         //titleName[0] Title [1] Kinds  [2] Level
         //titleNames        = title.GetComponentsInChildren<Text>();
-        txSpecText        = spec_Text.GetComponentInChildren<Text>();
+        txSpecText          = spec_Text.GetComponentInChildren<Text>();
     }
 
     private void Start()
     {
-        // itemEvent += OnCoinAnime;
+        //itemEvent += OnCoinAnime;
         //GameData.Instance.vicResult
+        txExperienceLevel.text = GameData.Instance.players[1].exp.ToString();
+        string count = GameData.Instance.players[1].expCount.ToString();
+        string defaultExp = playerLevel[GameData.Instance.players[1].exp].ToString();
+        txExperienceCount.text = string.Format("{0} / {1}", count, defaultExp);
+        txGold.text = string.Format("{0}", GameData.Instance.players[1].coin);
+        txTrophy.text = string.Format("{0}", GameData.Instance.players[1].trophy);
+
         //1:컴승리,2: ,3:player승리
         switch (GameData.Instance.vicResult)
         {
@@ -86,15 +101,10 @@ public class CardEff_Result : MonoBehaviour
                      //패배시
                     if (GameData.Instance.players.ContainsKey(1))
                     {   //현재의 캐릭터의 정보를 받아온다.
-                        txExperienceLevel.text = GameData.Instance.players[1].exp.ToString();
-                        string count           = GameData.Instance.players[1].expCount.ToString();
-                        string defaultExp      = playerLevel[GameData.Instance.players[1].exp].ToString();
-                        txExperienceCount.text = string.Format("{0} / {1}", count, defaultExp);
+                       
+                       
 
-                        txGold.text            = string.Format("{0}", GameData.Instance.players[1].coin);
-                        //txJew.text             = string.Format("{0}", GameData.Instance.players[1].jew);
-
-
+                       
                     }
                     StartCoroutine(ChangeSecne(3f));
                 break;
@@ -105,19 +115,8 @@ public class CardEff_Result : MonoBehaviour
                 //승리시
                 if (GameData.Instance.players.ContainsKey(1))
                 {   //현재의 캐릭터의 정보를 받아온다.
-                    txExperienceLevel.text = GameData.Instance.players[1].exp.ToString();
-                    string count           = GameData.Instance.players[1].expCount.ToString();
-                    string defaultExp      = playerLevel[GameData.Instance.players[1].exp].ToString();
-                    txExperienceCount.text = string.Format("{0} / {1}", count, defaultExp);
-
-                    txGold.text            = string.Format("{0}", GameData.Instance.players[1].coin);
-                    //txJew.text             = string.Format("{0}", GameData.Instance.players[1].jew);
-                    //시작과동시에 다시 자신의 골드를 프로퍼티로 사용학 위해서  데이터에 저장한다.
-                    //titleName[0] Title [1] Kinds  [2] Level
-                    //titleNames[0].text     = string.Format("{0}", "");
-                    //titleNames[1].text     = string.Format("{0}", "");
-                    //titleNames[2].text     = string.Format("{0}", "");
-
+                   
+                  
                     int curPanel           = GameData.Instance.PanelItem;
                     //Debug.Log("현재panel:" + curPanel);
                     StartCoroutine(Auto_Step());
@@ -169,6 +168,9 @@ public class CardEff_Result : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         FormationCard();
         yield return new WaitForSeconds(1f);
+        //빅토리시에 프로피도 증가시키는 애니가 발생되어야 한다.
+        OnTrophyAnime();
+        OnExAnime();
         StartCoroutine(VictoryCardAnimation());
         yield return new WaitForSeconds(5f);
         StartCoroutine(DefectCardAnimation());
@@ -177,7 +179,7 @@ public class CardEff_Result : MonoBehaviour
     //승리한 데이터를 바탕으로 오브젝트를 생성한다.
     void FormationCard()
     {
-        // vicCard.ContainsKey(i).Equals(vicCard.Values);
+        //vicCard.ContainsKey(i).Equals(vicCard.Values);
         //딕셔너리를 돌면서 id - card,card,card 를 배열시켜야 한다.
         //vicCard에 정보가 있는가 확인할것
         foreach (KeyValuePair<int, IList<Card>> id in GameData.Instance.playerVic)
@@ -196,10 +198,7 @@ public class CardEff_Result : MonoBehaviour
             // newCard0.GetComponent<VictoryCard>().vicCards = new List<Card>();
             newCard0.transform.localPosition = new Vector3(0, 0, 0);
 
-            //플레이어 승리카드playerVic,컴승리카드 comVic ;
-
-
-
+            //플레이어 승리카드playerVic,컴승리카드 comVic:
             //승리한 카드가 패배시킨 카드들
             IList<Card> cards = new List<Card>();
             if (GameData.Instance.playerVic.TryGetValue(id.Key, out cards))
@@ -333,7 +332,6 @@ public class CardEff_Result : MonoBehaviour
                     //해당 승리한 카드가 가지고 있는 패배한 카드의 수량을 기록한다.
                     int DefectcardsIndex = VicgridGroup.transform.GetChild(vicCount).GetComponent<VictoryCard>().vicCards.Count;
                     cardCountMax         = DefectcardsIndex;
-
                     eDefectState         = eDEFECTCARD.DEFECTCARD;
                     //승한 카드가 없습니다.
                    
@@ -341,7 +339,6 @@ public class CardEff_Result : MonoBehaviour
                 else if (vicCardNum <= 0)
                 {
                     Debug.Log("승리한 카드가 없습니다.");
-
                     //TODO: 메인씬으로이동한다.
                     //TODO:  아니면 좀더 다른 애니를 실행시킨다.
                     SceneManager.LoadScene("2_Main_Scene");
@@ -453,20 +450,53 @@ public class CardEff_Result : MonoBehaviour
     void OnCoinAnime()
     {
         OnCoinEvent(3);
+    }
 
+    void OnTrophyAnime()
+    {
+        OnTrophyEvent(5);
+    }
+
+    void OnExAnime()
+    {
+        OnExEvent(5);
     }
 
     void OnCoinEvent(int amount)
     {
         //스폰될 갯수 이다.
-        CollectingEffectController._instance.CollectItem(amount);
-        //스폰될 갯수의 개당 value;
-        CollectingEffectController._instance.Amount = 100;
+        //CollectingEffectController._instance.CollectItem(amount);
+        collectCoinController.CollectItem(amount);
 
-        if(effectPos != null)
+        //스폰될 갯수의 개당 value;
+        //CollectingEffectController._instance.Amount = 100;
+        collectCoinController.Amount = 100;
+
+        if (effectPos != null)
         AppUIEffect.instance.InstanceVFX(eEFFECT_NAME.GOLD).transform.position = effectPos.position;
         //코인애니메이션실행
     }
+
+    void OnTrophyEvent(int amount)
+    {
+        collectTrophyController.CollectItem(amount);
+        collectTrophyController.Amount = 10;
+
+         if (effectPos != null)
+            AppUIEffect.instance.InstanceVFX(eEFFECT_NAME.GOLD).transform.position = effectPos.position;
+           //코인애니메이션실행
+    }
+
+    void OnExEvent(int amount)
+    {
+        collectExController.CollectItem(amount);
+        collectExController.Amount = 10;
+
+        if (effectPos != null)
+            AppUIEffect.instance.InstanceVFX(eEFFECT_NAME.GOLD).transform.position = effectPos.position;
+        //코인애니메이션실행
+    }
+
 
     IEnumerator CoReturnDefaultGold(float t)
     {
@@ -501,9 +531,14 @@ public class CardEff_Result : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.A))
         {
-            OnCoinAnime();
+             OnCoinAnime();
+             OnTrophyAnime();
+             OnExAnime();
+            txExperienceLevel.text = GameData.Instance.players[1].exp.ToString();
+           
         }
-        //#region AATemp
+
+        #region AATemp
         //if (Input.GetKeyDown(KeyCode.L))
         //{
 
@@ -553,7 +588,7 @@ public class CardEff_Result : MonoBehaviour
         //    {
         //        //StartCoroutine(ResultAnimation());
         //    }
-        //    #endregion
+        //    
 
         //    if (Input.GetKeyDown(KeyCode.P))
         //    {
@@ -565,6 +600,8 @@ public class CardEff_Result : MonoBehaviour
 
         //    }
         //}
+       #endregion
+
     }//UPdate END
 }
 

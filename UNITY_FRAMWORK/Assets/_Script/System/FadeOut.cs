@@ -25,8 +25,7 @@ public class FadeOut : MonoBehaviour {
 
     private void OnEnable()
     {
-       
-        StartFadeAnim();
+       StartFadeAnim();
     }
 
    
@@ -40,7 +39,6 @@ public class FadeOut : MonoBehaviour {
 
         if (isFadeIN)
         {
-          
             StartCoroutine(PlayFadeIn());
         }
         else if (isDelaytime)
@@ -57,7 +55,7 @@ public class FadeOut : MonoBehaviour {
     IEnumerator PlayFadeOut()
     {
 
-        start = 0f; // fade IN 1
+        start = 0f;    // fade IN 1
         end   = 1f;    //fade IN 0
         time  = 0f;
 

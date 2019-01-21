@@ -27,18 +27,17 @@ public class DailySale : MonoBehaviour {
     public float _coolTime ;  //실제로 카운트 되는 시간
     public Text  charName;    //Item의 네임 ID 를 확인해서 얻어와햐 한다.
    
-    public Image arrow;    //화살표
+    public Image arrow;       //화살표
     public Image icon;        //coinImage
     public Image imgTime;     //구매후 타임을 보여주기 위한 타이밍
     public Image imgTimeBack; //구매후 앞면을 가려줄 뒤면
     public Image imgTimeFill; //구매후타임을 보여주기 위한 타이머 이미지
     public Image btnImg;      //구매할수 없을때 색깔변경을 위해서 
     public GameObject set;    //구매됐을때 가려줘야할 부분들
-           bool  isPurchase; //한번 구매했는지 판단
+           bool  isPurchase;  //한번 구매했는지 판단
 
-
-  
     int     curhasGold;        //현재 플레이어가 가지고 있는 코인량
+   
     Button  button;         
     Color   imgbtnColor;
     Color   arrowBaseColor;
@@ -53,9 +52,7 @@ public class DailySale : MonoBehaviour {
             button = GetComponent<Button>();
             button.onClick.AddListener(delegate
             {
-                //Main_Scene.OPenPurchaseBox;
-                CanvasForm.Instance.purchaseBox.SetActive(true);
-                CanvasForm.Instance.Set(itemId, priceCoin, ea,this.gameObject);
+                onClickBtn();
                 AppSound.instance.SE_MENU_OPEN_D.Play();
             });
 
@@ -89,7 +86,7 @@ public class DailySale : MonoBehaviour {
             playerGold = value;
             if (priceCoin > curhasGold)
             {   //event Manager이 작동안함.
-                EventManager.Instance.PostNotification(EVENT_TYPE.GOLD_CHANGE, this, playerGold);
+                //EventManager.Instance.PostNotification(EVENT_TYPE.GOLD_CHANGE, this, playerGold);
             }
                
         }
@@ -105,17 +102,30 @@ public class DailySale : MonoBehaviour {
     }
 
     //TODO: ERROR 작동안함 ..
-    public void StartManager()
-    {
-        EventManager.Instance.AddListener(EVENT_TYPE.GOLD_CHANGE, OnEvent);
-    }
+    //public void StartManager()
+    //{
+    //    EventManager.Instance.AddListener(EVENT_TYPE.GOLD_CHANGE, OnEvent);
+    //}
 
 
     private void OnEnable()
     {
         CanvasForm.eveLevelUp += ReSlider;
+
     }
 
+    //물품을 구매할수 있는지 판단한다.
+    public void onClickBtn()
+    {
+        curhasGold = GameData.Instance.players[1].coin;
+        //살수 있을때
+        if (priceCoin <= curhasGold)
+        {
+            //Main_Scene.OPenPurchaseBox;
+            CanvasForm.Instance.purchaseBox.SetActive(true);
+            CanvasForm.Instance.Set(itemId, priceCoin, ea, this.gameObject);
+        }
+    }
 
     private void OnDestroy()
     {
@@ -127,10 +137,12 @@ public class DailySale : MonoBehaviour {
         CardEff_Open.cardUp += ReSlider;
     }
 
+
     public void CardEff_EventDis()
     {   //nor에서 카드가 업데이트 됐을때 DailySale도 업데이트하기 위해서 
         CardEff_Open.cardUp -= ReSlider;
     }
+
     void ReSlider()
     {
         Slider(ID);
@@ -155,6 +167,7 @@ public class DailySale : MonoBehaviour {
         curhasGold = GameData.Instance.players[1].coin;
         //Debug.Log("curhasGold:" + curhasGold + "  priceCoin:" + priceCoin);
 
+        //가진돈보다 가격이 높을때
         if (priceCoin > curhasGold)
         {
             //구매가 되지 않도록한다.
@@ -218,7 +231,7 @@ public class DailySale : MonoBehaviour {
         {   //UI topGold에서 차감후  현재 돈이 더 많을때
             curhasGold = GameData.Instance.players[1].coin;
             ItemDisplayer.instance_ItemDisplayer.decreaseItem(priceCoin);
-
+            //GameData.Instance.itemDisplayers["GOLD"].decreaseItem(priceCoin);
         }
         else
         {
@@ -258,46 +271,70 @@ public class DailySale : MonoBehaviour {
 
     public  void Slider(int ID)
     {
-        //레벨업되고 남은 카드량
-        int remainCards = LevelUpRemain(ID);
-        int level       = GameData.Instance.hasCard[ID].level;
-
-        //next level의 전체 카드 value 
-        int nextRemainCards = GameData.Instance.Level[level];
-        //현재까지의 레벨로 레벨에 필요한카드숫자로 변환 ex) 5 & 50
-        int curLevel = GameData.Instance.Level[level-1];
-        //현재레벨에서 다음레벨까지  필요한 카드의 value
-        int curRemainCards = nextRemainCards - curLevel;
-       
-        LevelCount.text = string.Format("{0} / {1}", remainCards, nextRemainCards);
-        //value 카드단위당 증가할 vale설정 백분율
-        float uni = 1f / nextRemainCards;
-        //최대값이 1이므로 1실수율로 변환
-        float value = remainCards * uni;
-        //구매시 애니가 작동되어야 한다.
-        slider.value = value;
-
-        if (remainCards >= nextRemainCards)
+     
+        if (GameData.Instance.hasCard.ContainsKey(ID))
         {
-            arrow.sprite   = SpriteManager.GetSpriteByName("Sprite", strArrowUpImg);
-            arrowBaseColor = arrow.color;
-            arrow.color    = Color.yellow;
-            //-------보류 에러원인 모름..
-            //HpImg              = slider.GetComponentInChildren<Image>();
-            //TODO: 이부분ERROR 발생함
-            //hpBarBaseColor    = slider.GetComponentInChildren<Image>().color;
-            //HpImg.color         = new Color(0, 0, 0);
+            //레벨업되고 남은 카드량
+            int remainCards = LevelUpRemain(ID);
+            int level = GameData.Instance.hasCard[ID].level;
+
+            //next level의 전체 카드 value 
+            int nextRemainCards = GameData.Instance.Level[level];
+            //현재까지의 레벨로 레벨에 필요한카드숫자로 변환 ex) 5 & 50
+            int curLevel;
+            if (level > 0)
+            {
+                curLevel = GameData.Instance.Level[level - 1];
+                //현재레벨에서 다음레벨까지  필요한 카드의 value
+                int curRemainCards = nextRemainCards - curLevel;
+                LevelCount.text = string.Format("{0} / {1}", remainCards, nextRemainCards);
+                //value 카드단위당 증가할 vale설정 백분율
+                float uni = 1f / nextRemainCards;
+                //최대값이 1이므로 1실수율로 변환
+                float value = remainCards * uni;
+                //구매시 애니가 작동되어야 한다.
+                slider.value = value;
+            }
+           
+            if (remainCards >= nextRemainCards)
+            {
+                arrow.sprite = SpriteManager.GetSpriteByName("Sprite", strArrowUpImg);
+                arrowBaseColor = arrow.color;
+                arrow.color = Color.yellow;
+                //-------보류 에러원인 모름..
+                //HpImg              = slider.GetComponentInChildren<Image>();
+                //TODO: 이부분ERROR 발생함
+                //hpBarBaseColor    = slider.GetComponentInChildren<Image>().color;
+                //HpImg.color         = new Color(0, 0, 0);
+            }
+            else
+            {
+                arrow.sprite = SpriteManager.GetSpriteByName("Sprite", strArrowImg);
+                arrow.color = Color.white;
+                // Image hp = slider.GetComponentInChildren<Image>();
+                // hp.color = Color.white;
+            }
 
         }
         else
         {
-            arrow.sprite = SpriteManager.GetSpriteByName("Sprite", strArrowImg);
-            arrow.color = Color.white;
-            // Image hp = slider.GetComponentInChildren<Image>();
-            // hp.color = Color.white;
+            //새로운카드일때
+            int newlevel = 1;
+            //next level의 전체 카드 value 
+            int nextRemainCards = GameData.Instance.Level[newlevel];
+            int remainCards = nextRemainCards;
 
+            int curLevel = GameData.Instance.Level[newlevel - 1];
+            //현재레벨에서 다음레벨까지  필요한 카드의 value
+            int curRemainCards = nextRemainCards - curLevel;
+            LevelCount.text = string.Format("{0} / {1}", remainCards, nextRemainCards);
+            //value 카드단위당 증가할 vale설정 백분율
+            float uni = 1f / nextRemainCards;
+            //최대값이 1이므로 1실수율로 변환
+            float value = remainCards * uni;
+            //구매시 애니가 작동되어야 한다.
+            slider.value = value;
         }
-    
     }
 
     //현재 ID의 카드가 레베업되고 남은 카드량
@@ -331,63 +368,70 @@ public class DailySale : MonoBehaviour {
             count++;
             reUseTime              -= Time.deltaTime;
             imgTimeFill.fillAmount -= amount;
-            float data              = imgTimeFill.fillAmount * 100; //소수2번째 자리 없애기 위해곱함
+            float data              = imgTimeFill.fillAmount * 100;   //소수2번째 자리 없애기 위해곱함
             data                    = Mathf.Ceil(data);               //정수만 남긴다.
             int dataInt             = Mathf.RoundToInt(data);
-
-            hours                   = dataInt / 3600;    //시 공식
-            minute                  = dataInt % 3600 / 60;//분을 구하기위해서 입력되고 남은값에서 또 60을 나눈다.
-            second                  = dataInt % 3600 % 60;//마지막 남은 시간
-
+            hours                   = dataInt / 3600;                 //시 공식
+            minute                  = dataInt % 3600 / 60;            //분을 구하기위해서 입력되고 남은값에서 또 60을 나눈다.
+            second                  = dataInt % 3600 % 60;            //마지막 남은 시간
             TimeCount.text             = string.Format(" {0} : {1} : {2}", hours, minute, second);
 
             if ( count >= reUseTime)
             {
                 NewItem();
-              
                 break;
             }
             yield return new WaitForSeconds(t);
         }
     }
 
-    //자신의 프로퍼티값을 호출하지 못한다.따라서 메니저에서대신호출해서 보내주는 역할을함
-    public void OnEvent(EVENT_TYPE Event_Type, Component Sender, object Param = null)
-    {
-        switch (Event_Type)
-        {
-            case EVENT_TYPE.LEVEL_CHANGE:
-                OnGoldChange(Sender, (int)Param);
-                break;
-        }
-    }
+    ////자신의 프로퍼티값을 호출하지 못한다.따라서 메니저에서대신호출해서 보내주는 역할을함
+    //public void OnEvent(EVENT_TYPE Event_Type, Component Sender, object Param = null)
+    //{
+    //    switch (Event_Type)
+    //    {
+    //        case EVENT_TYPE.LEVEL_CHANGE:
+    //            OnGoldChange(Sender, (int)Param);
+    //            break;
+    //    }
+    //}
 
-    //EventManager이 작동안함 이유  징그럽게 모르겠다.
-    void OnGoldChange(Component purchaseCard, int gold)
-    {
-        string aa = purchaseCard.name;
-        Debug.Log("why  why why  : " + aa);
-        CheckAmount();
-        if (this.GetInstanceID() != purchaseCard.GetInstanceID()) return;
-    }
+    ////EventManager이 작동안함 이유  징그럽게 모르겠다.
+    //void OnGoldChange(Component purchaseCard, int gold)
+    //{
+    //    string aa = purchaseCard.name;
+    //    Debug.Log("why  why why  : " + aa);
+    //    CheckAmount();
+    //    if (this.GetInstanceID() != purchaseCard.GetInstanceID()) return;
+    //}
 
     void NewItem()
     {
-        charName.text = string.Format("{0}", "구매완료");
+       
         set.SetActive(true);
-        //현재 가지고있는카드중 하나를 랜덤하게 받는다.
-        int length = GameData.Instance.hasCard.Count;
-        int rnd = UnityEngine.Random.Range(0, length);
-        ID = GameData.Instance.hasCard[rnd].ID;
-        string name = GameData.Instance.UnityDatas[ID - 1].Name;
-        main.sprite = SpriteManager.GetSpriteByName("Sprite", name);
         imgTimeFill.fillAmount = 1;
         imgTime.gameObject.SetActive(false);
         imgTimeFill.gameObject.SetActive(false);
         imgTimeBack.gameObject.SetActive(false);
         TimeCount.gameObject.SetActive(false);
 
-    Slider(ID);
+
+        //TODO :새카드와 새카드가 나올확률을 나중에 수정할것
+        //현재 가지고있는카드중 하나를 랜덤하게 받는다.
+        //가지고 있는카드와 상과없이 랜덤하게 발생시킬때
+        int rnd = UnityEngine.Random.Range(1, 40);
+        string name = GameData.Instance.UnityDatas[rnd].Name;
+        main.sprite = SpriteManager.GetSpriteByName("Sprite", name);
+        charName.text = string.Format("{0}", name);
+        //가지고 있는 카드일때
+        //if (GameData.Instance.hasCard.ContainsKey(rnd))
+        //{
+        //    ID = GameData.Instance.hasCard[rnd].ID;
+        //    string name = GameData.Instance.UnityDatas[rnd].Name;
+        //    main.sprite = SpriteManager.GetSpriteByName("Sprite", name);
+        //}
+
+        Slider(ID);
     }
 
      

@@ -32,7 +32,7 @@ public class CollectingEffectController : MonoBehaviour {
 
 	// This is a list of instanciated _itemPrefab 
 	private List<CollectingAnimation> _itemList = new List<CollectingAnimation>();
-	// Reference to the AudioSource component
+	//Reference to the AudioSource component
 	//private AudioSource _audioSource;
 
 
@@ -69,12 +69,12 @@ public class CollectingEffectController : MonoBehaviour {
 			if(animation == null) {
 				// No free object has been found in pool, so we instantiate a new one
 				GameObject go = Instantiate (_itemPrefab) as GameObject;
-				animation = go.GetComponent<CollectingAnimation>();
+				animation     = go.GetComponent<CollectingAnimation>();
 				_itemList.Add(animation);
 			}
 
 			// Initialize object
-			animation.Initialize(_itemDisplayer, _popPosition, Vector3.zero, Vector3.one, _playSoundMode, _expansionMode,Amount, this);
+			animation.Initialize(_itemDisplayer, _popPosition, Vector3.zero, Vector3.one, _playSoundMode, _expansionMode,Amount,this);
 			// Start animation
 			animation.StartAnimation();
 			yield return delay;

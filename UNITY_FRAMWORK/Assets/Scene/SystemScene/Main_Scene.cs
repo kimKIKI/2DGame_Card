@@ -27,10 +27,10 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     public Transform marketSpecial;      //daily 
     public Transform marketNor;          //상단 특별상자
     public Transform marketRoyal;        //보석으로 살수 있는 상자
-
+    public GameObject cloudManager;      //클라우드 실행구글연동
 
     public Transform TopLabel_experience; //메인상단의 경험치 라벨
-    //public Transform TopLabel_Coins;      //플레이어 보유 전체금액
+    //public Transform TopLabel_Coins;    //플레이어 보유 전체금액
     public Transform TopLabel_Jews;       //플레이어 보유 전체 보석
 
     //public Transform  buttonPanel;      //복사되어 배치될 위치 앞면
@@ -47,7 +47,8 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     //public Transform switchTemp;        //switch의 바뀌는 카드가 임시로 위치할 좌표
     public Text colectCard;               //찾은 카드의 숫자를 표시해준다.
     public Text buttonCollectionLabel;    //카드 정렬이 바뀌었을때 정렬이름을 정해준다.
-   
+    public Text collectionHasCards;       //찾은 카드의 수량
+    public Text textTroPhy;               //트로피카운트 PanelScroll_GameChoice>Viewport>Content>Button_Clan>text_ClanName
 
     public static string nextScene;
     public UnityEvent FADEBUTTON;
@@ -107,6 +108,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     int addGold;                          //증가시키너가 감소시킬 값
                                           //Level 단계 TODO: LEVEL 데이터화 필요 카드 경험치
     float yPos = -400f;                   //카드가 교체되기 위해서 중심으로 이동하는 y좌표
+    int[] cardMarket = new int[40];       //전체 카드종류
    
     int[] playerLevel = { 500, 1000, 2000, 3000, 4000, 6000, 8000, 10000, 20000, 30000, 40000, 50000 };
    
@@ -134,7 +136,17 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         jewText       = TopLabel_Jews.GetComponentInChildren<Text>();
         //DontDestroyOnLoad(this.gameObject);
         //Sound Slider 소리조절
-    
+
+        for (int i = 0; i < 40; i++)
+        {
+            cardMarket[i] = i + 1;
+        }
+
+        //1~40까지 랜덤하게 셔플
+        Utils.ShuffleArray<int>(cardMarket);
+        //Debug.Log("persisten경로:" + Application.persistentDataPath); //현재 프로젝트가 위치한 경로를 얻어오는 명령어
+        //Debug.Log("streamingAssetsPath경로:" + Application.streamingAssetsPath); //현재 프로젝트가 위치한 경로를 얻어오는 명령어
+
     }
 
     void Start() {
@@ -148,7 +160,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         // slot 리스트 좌표임
         //lsSlots       = buttonPanel.GetComponent<UI_GridGroup>().lsrcTransforms;
         //lsSlotsBack   = buttonPanelBack.GetComponent<UI_GridGroup>().lsrcTransforms;
-        StrollVertical.eveVerticalMove += DeleteCopyUnity;
+        //StrollVertical.eveVerticalMove += DeleteCopyUnity;
         StrollVertical.stopMoveTrue    += SwitchCardCancell;
       
         lsSwtichSlots                  = switchPanel.GetComponent<UI_GridGroup>().lsrcTransforms;
@@ -160,15 +172,16 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         if (GameData.Instance.players.ContainsKey(playerindex))
         {
 
-            string exp = GameData.Instance.players[playerindex].exp.ToString();
-            string Num = GameData.Instance.players[playerindex].expCount.ToString();
+            string exp        = GameData.Instance.players[playerindex].exp.ToString();
+            string Num        = GameData.Instance.players[playerindex].expCount.ToString();
             string defaultExp = playerLevel[GameData.Instance.players[playerindex].exp].ToString();
             experinceText[0].text = string.Format("{0}/{1}", Num, defaultExp);
             experinceText[1].text = string.Format("{0}", GameData.Instance.players[playerindex].exp);
             //메인에서 직접 출력해 줄 경우 
             //coinText.text = string.Format("{0}", GameData.Instance.players[1].coin);
-            curGold = GameData.Instance.players[playerindex].coin;
-            jewText.text = string.Format("{0}", GameData.Instance.players[playerindex].jew);
+            curGold         = GameData.Instance.players[playerindex].coin;
+            jewText.text    = string.Format("{0}", GameData.Instance.players[playerindex].jew);
+            textTroPhy.text = string.Format("{0}", GameData.Instance.players[playerindex].trophy);
             //시작과동시에 다시 자신의 골드를 프로퍼티로 사용학 위해서  데이터에 저장한다.
         }
 
@@ -188,20 +201,28 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         UnFindCardSet();
         //Market 생성
         TurnOffPanelItem();
+        //청음시작시 로그인호출함
+        //cloudManager.GetComponent<PlayCloudDataManager>().Login();
+
+        //현재까지 찾은 카드를 보여준다.
+        PersonalHasCards();
+
+
     }
 
-
-
-    //카드가 이동이 완료되기전에 턴이 발생시 원래데로 돌려놓기 초기화 하기 위해서 삭제함
-    void DeleteCopyUnity()
+   public void PersonalHasCards()
     {
-        //ERROR요인 아님..ㅠ.ㅠ
-        // if (switchMove.childCount > 1)
-        //{
-        //    GameObject a = switchMove.transform.Find("ItemCard(Clone)").gameObject;
-        //    Destroy(a);
-        //}
+        //TODO: 전체 카드의 수량? 가지고 있는 카드의수량,현재의 아이디로 플레이어를 확인해야 하는가?
+        //
+        //GameData.Instance.players.Add(1, playerLoad);
+        //int num = jsonUnitydata["hasCard"].Count;
+        //GameData.Instance.hasCards = num;
+        int full = GameData.Instance.UnityDatas.Count;
+        int has = GameData.Instance.hasCards;
+        collectionHasCards.text = string.Format("찾은카드{0} /{1}", has, full);
     }
+
+   
     //void Button_Play(MenuObject_Button button)
     //   {
     //	SaveData.continuePlay 				= false;
@@ -296,13 +317,26 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
 
     //  }
 
+
+        //안드로이드에서 게임을 종료시킨다.
+    public void Quit()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#elif UNITY_WEBPLAYER
+        Application.OpenURL("http://google.com");
+#else
+        Application.Quit();
+#endif
+    }
+
     void Create_FADEOUT(Transform t,float delay)
     {
         GameObject fadeObj = Instantiate(fadeOut,t);
         fadeObj.GetComponent<FadeOut>().animTime = delay;
     }
 
-    #region NotNeedCode1
+#region NotNeedCode1
 
     //public void cardMade()
     //{
@@ -510,11 +544,11 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
 
 
     //}
-    #endregion
+#endregion
     //카드컬렉션에 아이템을 만든다.
 
 
-    #region Not실행시키지 않음
+#region Not실행시키지 않음
 
     //public void UnSameCard()
     //{
@@ -555,7 +589,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     //    }
 
     //}
-    #endregion
+#endregion
     //같은 아이디가 있다면 하나는 삭제하게 한다.
 
     //버튼에 따른 엘릭서 가 바뀌게 한다.
@@ -737,7 +771,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
 
         } //END
 
-        #region Sample
+#region Sample
 
         // if (temp.childCount <= 0)
         // {
@@ -760,11 +794,11 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         //     }
         //    // SetReFormCopy(InDexID);
         // }
-        #endregion
+#endregion
     }
 
 
-
+    //Nor상품의 선택시 현재 가격에서 상품의값을 뺌
     public void SetTopMenu()
     {
         addGold                 = GameData.Instance.curAddGold;
@@ -774,7 +808,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         iTween.Stop(gameObject);
         iTween.ValueTo(gameObject, iTween.Hash("from", curGold, "to", curGold - addGold, "time", .6, "onUpdate", "UpdateGoldDisplay", "oncompletetarget", gameObject));
         curGold                -= addGold;
-        jewText.text            = string.Format("{0}", GameData.Instance.players[playerindex].jew);
+        //jewText.text          = string.Format("{0}", GameData.Instance.players[playerindex].jew);
     }
 
     //-----TODO:개별적으로 작동하게 함
@@ -782,30 +816,31 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     {
         //직접 top의 프러퍼티에 수정한다.이벤트를 위해서 임
         ItemDisplayer.instance_ItemDisplayer.CurhasGold = curGold;
+        //GameData.Instance.itemDisplayers["GOLD"].CurhasGold = curGold;
         //coinText.text = string.Format("{0}", curGold);
     }
 
     void MarketSetDaily()
     {
+        //cardMarket
         GameData.Instance.days = new List<DailySale>();
-
         GameData.Instance.days = marketSpecial.gameObject.GetComponentsInChildren<DailySale>();
 
         //리스트를 딕셔너리화 한다. 지정해서 특별한 기능을 추하또는 판단하기 위해서 
         for (int i = 0; i < GameData.Instance.days.Count; i++)
         {   //list =  파싱된 데이터를 days에 순서대로 대입
             //프로퍼티 ID를 호출해서 네임이 바뀌게 한다.
-            //고유아이디
+            //int TmpId = cardMarket[i];           //랜덤하게 어든
             GameData.Instance.days[i].ID          = GameData.Instance.dailys[i].ID;
             //TODO: Image                                      
-            string name         = GameData.Instance.UnityDatas[GameData.Instance.days[i].ID -1].Name;
+            string name                           = GameData.Instance.UnityDatas[GameData.Instance.days[i].ID -1].Name;
             GameData.Instance.days[i].priceCoin   = GameData.Instance.dailys[i].Gold;
             GameData.Instance.days[i].priceJew    = GameData.Instance.dailys[i].Jew;
             GameData.Instance.days[i].ea          = GameData.Instance.dailys[i].EA;
             GameData.Instance.days[i].main.sprite = SpriteManager.GetSpriteByName("Sprite", name);
             //이벤트 메니저에 등록한다.
             //ERROR 작동안함
-            GameData.Instance.days[i].StartManager();
+            //GameData.Instance.days[i].StartManager();
             GameData.Instance.days[i].Slider(GameData.Instance.dailys[i].ID);
 
             //index 와 스크립트를 어떻게 연결할 것인가?
@@ -813,7 +848,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
 
     }
 
-    //전설상자,행운상자,히어로상자
+    //전설상자,행운상자,히어로상자---error
     void MarketSetNor()
     {
         IList<Button_Base> Nors = new List<Button_Base>();
@@ -840,7 +875,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
 
 
 
-    #region NotNeedCode?
+#region NotNeedCode?
 
     ////Tab 에 아이템을 만든다.
     //void isSelectDeck()
@@ -900,7 +935,7 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
     //    }
     //}
 
-    #endregion
+#endregion
 
     //카드 선택시 중앙으로 이동하여 보여지는  카드 
     public void SwitchSelectCard()
@@ -1180,7 +1215,22 @@ public class Main_Scene : MonoBehaviour, IPointerClickHandler
         CaseItem[0].SetActive(true); 
     }
 
-    
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            FileDataManager.Instance.savees(0,0, 70000,0);
+        }
+    }
 
+    public void ButtonTest()
+    {
+
+        int ex = GameData.Instance.players[1].exp;
+        int exCount = GameData.Instance.players[1].expCount;
+        int trophy = GameData.Instance.players[1].trophy;
+        int coin = GameData.Instance.players[1].coin;
+        FileDataManager.Instance.savees(ex, exCount,coin,trophy);
+    }
 
 }

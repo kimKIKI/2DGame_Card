@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class Button_Base : MonoBehaviour {
 
+    public Main_Scene main_Scene; //메인안의 메소드를 호출하기 위해서 
     Vector2 endScale;
     Vector2 OrigScale;
     RectTransform btn;
@@ -30,7 +31,7 @@ public class Button_Base : MonoBehaviour {
     int curhasGold;        //현재 플레이어가 가지고 있는 코인량
     Button button;         //구매할수없을때 표시해 주기 위해서 
     Color imgbtnColor;
-
+    bool enableOpen = false;//상품을 살수 있나 판단
    
     //플레이어가 구매할수 없을때 비활성화 시켜야 한다.
     //그래서 플레이어의 코인의 변화를 체크한다.
@@ -64,7 +65,7 @@ public class Button_Base : MonoBehaviour {
     {   //기본적으로 처음 시작시에 한번 코인량을 받고
         curhasGold = GameData.Instance.players[1].coin;
        
-        EventManager.Instance.AddListener(EVENT_TYPE.GOLD_CHANGE, OnEvent);
+        //EventManager.Instance.AddListener(EVENT_TYPE.GOLD_CHANGE, OnEvent);
         //TODO: 여기 없으면 다른곳의 ClickCount가 작동하지 않음
         //시작과 동시에 button의 세팅을 적용한다.
         ItemDisplayer.goldEvent += ReCollBackGold;
@@ -82,10 +83,19 @@ public class Button_Base : MonoBehaviour {
 
     public void ButtonClick()
     {   //버튼클릭시 자신의 가격을 전달한다.
+
+        curhasGold = GameData.Instance.players[1].coin;
         if (curhasGold >= costGold)
         {   //UI topGold에서 차감후 GameData에 차감한 값을 전달하게 된다.
             ItemDisplayer.instance_ItemDisplayer.decreaseItem(costGold);
+            //GameData.Instance.itemDisplayers["GOLD"].decreaseItem(costGold);
+            enableOpen = true;
             OnSetCase();
+           
+        }
+        else
+        {
+            enableOpen = false;
         }
     }
 
@@ -115,32 +125,32 @@ public class Button_Base : MonoBehaviour {
 
          //TODO:여기 있음 Button_Base가 비활성화 안되는 문제 발생함
          //원인 모름
-         //costGold      = info.PriceGold;
+         costGold      = info.PriceGold;
 
          if (info.caseName == "LunchyCase")
         {
-            //sprite이름대입
+         //sprite이름대입
              name             = "luckyCase";
-                          //main.sprite.name = name;
+         //main.sprite.name = name;
              main.sprite      = SpriteManager.GetSpriteByName("Sprite",name);
-                          //GameData.Instance.dic_SetItems의 키값
+         //GameData.Instance.dic_SetItems의 키값
              keyName = "lunchyCase";
           
          }
          else if (info.caseName == "legendaryCase")
-         {   //sprite네임
+         { //sprite네임
            
              name             = "legendaryCase";
-                             //main.sprite.name = name;
+           //main.sprite.name = name;
              main.sprite      = SpriteManager.GetSpriteByName("Sprite", name);
              keyName          = "legendaryCase";
          
           }
           else if (info.caseName == "HeroCase")
-          {                    //sprite네임
-                             //Debug.Log("역기 문제 없나요 HeroCase");
+          {//sprite네임
+           //Debug.Log("역기 문제 없나요 HeroCase");
              name             = "HeroCase";
-                             //main.sprite.name = name; 
+          //main.sprite.name = name; 
              main.sprite      = SpriteManager.GetSpriteByName("Sprite", name);
              keyName          = "HeroCase";
           
@@ -155,7 +165,7 @@ public class Button_Base : MonoBehaviour {
         ScaleY = OrigScale.y/4f;
     }
 
-    //시작과 동시에 player의 데이터를 받는다.
+    //시작과 동시에 player의 데이터를 받는다.상품을 살수 있을때 
     public void OnSetCase()
     {
         CardEff_Open.keyName = keyName;
@@ -166,10 +176,12 @@ public class Button_Base : MonoBehaviour {
         //한번더 값을 받아 온다.
         curhasGold                         = GameData.Instance.players[1].coin;
         GameData.Instance.curAddGold       = costGold;
-        
+        //TODO:MainScen에 접근해서 SelectCaseItem,setTopMenu ..호출하기
+        main_Scene.SelectCaseItem();
+        main_Scene.SetTopMenu();
     }
 
-  
+
     void ScaleButton(float size)
     {
         btn.localScale = new Vector3(OrigScale.x, size);

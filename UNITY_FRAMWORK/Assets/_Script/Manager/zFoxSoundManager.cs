@@ -34,7 +34,7 @@ public class zFoxSoundManager : MonoBehaviour {
 
 	public AudioSource LoadResourcesSound(string groupName,string fileName) {
 
-		GameObject 	goSound 	= transform.FindChild (FoxSoundGroupNID + groupName).gameObject;
+		GameObject 	goSound 	= transform.Find (FoxSoundGroupNID + groupName).gameObject;
 		AudioSource audioSource = goSound.AddComponent<AudioSource> ();
 		audioSource.playOnAwake = false;
 
@@ -45,7 +45,7 @@ public class zFoxSoundManager : MonoBehaviour {
 	}
 
 	public AudioSource FindAudioSource(string groupName,string soundName) {
-		GameObject goSound = transform.FindChild (FoxSoundGroupNID + groupName).gameObject;
+		GameObject goSound = transform.Find (FoxSoundGroupNID + groupName).gameObject;
 		AudioSource[] audioSourceList = goSound.GetComponents<AudioSource> ();
 		
 		foreach (AudioSource audioSource in audioSourceList) {
@@ -58,7 +58,7 @@ public class zFoxSoundManager : MonoBehaviour {
 	}
 
 	public AudioSource[] FindAudioSource(string groupName) {
-		GameObject goSound = transform.FindChild (FoxSoundGroupNID + groupName).gameObject;
+		GameObject goSound = transform.Find (FoxSoundGroupNID + groupName).gameObject;
 		return goSound.GetComponents<AudioSource> ();
 	}
 

@@ -32,8 +32,7 @@ public class Card
     public string  Shap;     //카드 모양
     public string  IconName; //카드이미지
     public string  Spable;   //현재 카드가 가지고 있는 특수한 능력
-    
-
+   
 }
 
 public class MarketInfo
@@ -116,11 +115,14 @@ public class PlayerInfo
     public int selectNum = 4;//tab에 선택된 카드의 수
     [HideInInspector]
     public int exp;
+
+    [HideInInspector]
+    public int trophy;
     [HideInInspector]
     public int expCount;
 
     public PlayerInfo(){}
-    public PlayerInfo(string ID,string NAME,string NickName,int join,int hasCards,int Gold,int Jew,int expL,int expCount)
+    public PlayerInfo(string ID,string NAME,string NickName,int join,int hasCards,int Gold,int Jew,int expL,int expCount,int trop)
     {
         id            =ID;
         name          = NAME;
@@ -130,6 +132,7 @@ public class PlayerInfo
         coin          = Gold;
         jew           = Jew;
         exp           = expL;
+        trophy        = trop;
         this.expCount = expCount;
     }
 

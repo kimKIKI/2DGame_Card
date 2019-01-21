@@ -6,6 +6,8 @@ public class CollectingAnimation : MonoBehaviour {
 
 	public enum PLAY_SOUND_MODE { NONE, AT_BEGINNING, AT_THE_END }
     public enum EXPANSION_MODE { UPWARD, EXPLOSION }
+    //화면text의 출력을 위해서 구별한다.
+    public enum DISPLAYER_MODE { NONE,GOLD,TROPHY,EX}
 
     // Factor to adujst upper translation during animation
     [Tooltip("Factor to adujst upper translation during animation")]
@@ -33,21 +35,51 @@ public class CollectingAnimation : MonoBehaviour {
     public int Amount = 1;
 	// Reference to the collecting Effect Controller
 	private CollectingEffectController _collectinEffectController;
+
 	// 상단아이콘표시위치
 	private Transform _itemDisplayerTransform;
 	// Reference to the ItemDisplayer component, showing the amount of item collected
-	private ItemDisplayer _itemDisplayer;
-	// Defines when to play the collecting sound
-	private PLAY_SOUND_MODE _playSoundMode;
+	private ItemDisplayer _itemDisplayer;                //Gold의 수량
+    private ItemDisplayer_Trophy _itemDisplayer_trophy;  //Trophy의 수량
+    private ItemDisplayer_Ex _itemDisplayer_Ex;      //Ex의 수량
+
+
+
+    // Defines when to play the collecting sound
+    private PLAY_SOUND_MODE _playSoundMode;
     // Defines the expansion mode
     private EXPANSION_MODE _expansionMode;
+
+    public DISPLAYER_MODE _displayer = DISPLAYER_MODE.NONE;
+
+
+    
 
     // destination :collection좌표,parent
     public void Initialize(Transform destination, Transform parent, Vector3 localPosition, Vector3 localScale, PLAY_SOUND_MODE playSoundMode, EXPANSION_MODE expansionMode,int amount, CollectingEffectController collectingEffectController)
     {
 		_itemDisplayerTransform = destination;
-		_itemDisplayer = _itemDisplayerTransform.GetComponent<ItemDisplayer> ();
-		transform.SetParent(parent);
+
+        if (_displayer == DISPLAYER_MODE.GOLD)
+        {
+            _itemDisplayer = _itemDisplayerTransform.GetComponent<ItemDisplayer>();
+        }
+        else if (_displayer == DISPLAYER_MODE.TROPHY)
+        {
+            _itemDisplayer_trophy  = _itemDisplayerTransform.GetComponent<ItemDisplayer_Trophy>();
+        }
+        else if (_displayer == DISPLAYER_MODE.EX)
+        {
+            _itemDisplayer_Ex = _itemDisplayerTransform.GetComponent<ItemDisplayer_Ex>();
+        }
+        else if (_displayer == DISPLAYER_MODE.NONE)
+        {
+            Debug.Log("Mode를 선택하여 주십시오");
+        }
+		
+        
+
+        transform.SetParent(parent);
 		transform.localPosition = localPosition;
 		transform.localScale = localScale;
 
@@ -109,19 +141,41 @@ public class CollectingAnimation : MonoBehaviour {
 			transform.localScale = Vector3.Lerp (transform.localScale, scale, t);
 			yield return new WaitForFixedUpdate();
 		}
-
+     
 		// 사운드가 움직임이 끝나고 들리게 한다.
-		if (_playSoundMode == PLAY_SOUND_MODE.AT_THE_END) {
+		if (_playSoundMode == PLAY_SOUND_MODE.AT_THE_END)
+        {
 			_collectinEffectController.PlayCollectingSound ();
 		}
 
-		//인스턴스 리스트에 넣고 이미지를 세팅한다.
+        //인스턴스 리스트에 넣고 이미지를 세팅한다.
         // 코인하나당 증가할 value 가 된다.
-		_itemDisplayer.AddItem (Amount);
-		_animationRunning = false;
-		// Hide this item until next reuse
-		_image.enabled = false;
+
+        if (_displayer == DISPLAYER_MODE.GOLD)
+        {
+            _itemDisplayer.AddItem(Amount);
+        }
+        else if (_displayer == DISPLAYER_MODE.TROPHY)
+        {
+            _itemDisplayer_trophy.AddItem(Amount);
+        }
+        else if (_displayer == DISPLAYER_MODE.EX)
+        {
+            _itemDisplayer_Ex.AddItem(Amount);
+        }
+        else if (_displayer == DISPLAYER_MODE.NONE)
+        {
+            Debug.Log("Mode를 선택하여 주십시오");
+        }
+
+
+            _animationRunning = false;
+       
         StartCoroutine(CheckIfAlive(1.5f));
+       
+        // Hide this item until next reuse
+        _image.enabled = false;
+       
 		yield return null;
 	}
 

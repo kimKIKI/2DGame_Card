@@ -148,7 +148,7 @@ public class UnityForm : Singleton<UnityForm>
 
     public virtual void SetUpdateShow(int id,ref int UpLevel,GameObject obj)
     {
-            ID = id;
+        ID = id;
 
         if (GameData.Instance.hasCard.ContainsKey(ID))
         {   //가지고 있는 카드의 tatal value

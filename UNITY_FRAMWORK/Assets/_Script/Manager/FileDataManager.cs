@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using System.Text;
 using LitJson;
+using Newtonsoft;
 
 //임시
 public  class FileDataManager  {
-
-    static string UnitData = "UnitData";
-
+    //필히 static 여야함
+    static string UnitData       = "UnitData";
+    static string PlayerJsonData = "PlayerJsonData";
+    static string MarketJsonData = "MarketJsonData";
+    
 
     // 싱글톤 인스턴스를 저장.
     private static  FileDataManager uniqueInstance;
@@ -41,19 +45,21 @@ public  class FileDataManager  {
     //각기 다른 파일을 관리할수 있도록 한다.
     //파싱할수 있도록 한다.
 
-   public  JsonData JsonFileLoad(string FileName )
-    {
-        string defaultPath = "/Resources/Data/"+FileName+".json";
-        JsonData jsondata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + defaultPath));
-        return jsondata;
-    }
+   //public  JsonData JsonFileLoad(string FileName )
+   // {
+   //     string defaultPath = "/Resources/Data/"+FileName+".json";
+   //     JsonData jsondata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + defaultPath));
+   //     return jsondata;
+   // }
 
     //UnityInfo 게임에서 사용되는 유닛카드의 정보 
     public void ParsingFirstUnitData()
-    {
+    {   //JsonData는 내부에 설정
+        JsonData jsonUnitydata;
+        LoadJson(out jsonUnitydata, UnitData);
 
-        JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/UnitData.json"));
-   
+        //JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/UnitData.json"));
+
         for (int i = 0; i < jsonUnitydata.Count; i++)
         {
             // {"ID":0,"Name":"Ice Gollum ","ATK_Type":"Top","Kinds":"Unit","Coin":300,
@@ -84,10 +90,12 @@ public  class FileDataManager  {
         }
     }
 
+   
+                                                        
     public void ParsingPlayerData()
     {   //현재 플레이거가 가지고 있는 카드의 상태
-        JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json"));
-        #region tempData
+        // JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json"));
+        //#region tempData
         ////파싱하기전 개별 데이터를 입시로 작성한다.
         //int[] card    = { 1,   2, 5,    8, 9,  11, 12 };
         //int[] cardNum = { 12, 34, 12, 106, 20, 10, 70 };
@@ -96,8 +104,11 @@ public  class FileDataManager  {
         //                                { 1, 12}, { 2, 34}, { 5, 12}, { 8, 106},
         //                                { 9, 20}, { 11, 10}, { 12,70} };
 
-        #endregion
+        //#endregion
 
+
+        JsonData jsonUnitydata;
+        LoadJson(out jsonUnitydata,PlayerJsonData);
 
         //플레이어가 가지고있는 코인, 경험치, TODO: 일단 풀어서 이벤트 음향효과 테스트후 하나의 세이브파이로
         //묶어야 한다.
@@ -108,13 +119,14 @@ public  class FileDataManager  {
         int hasCards      = (int)jsonUnitydata["Info"][0]["hasNum"];
         int Gold          = (int)jsonUnitydata["Info"][0]["coin"];
         int Jew           = (int)jsonUnitydata["Info"][0]["Jew"];
+        int Trophy        = (int)jsonUnitydata["Info"][0]["Trophy"];
 
         string Id         = (string)jsonUnitydata["Info"][0]["ID"];
         string IdName     = jsonUnitydata["Info"][0]["IdName"].ToString();
         string PlayerName = jsonUnitydata["Info"][0]["PlayerName"].ToString();
-        //TODO: Json파일 수정전
-        //string PlayerName = jsonUnitydata["PlayerInfo"]["Info"][0]["PlayerName"].ToString();
-        PlayerInfo playerLoad = new PlayerInfo(Id, IdName, PlayerName, JoinDay, hasCards, Gold, Jew, exp, expCount);
+       
+        PlayerInfo playerLoad = new PlayerInfo(Id, IdName, PlayerName, JoinDay, hasCards, Gold, Jew, exp, expCount,Trophy);
+        //PlayerInfo playerLoad = new PlayerInfo(Id, IdName, PlayerName, JoinDay, hasCards, Gold, Jew, exp, expCount);
         //GameData.Instance.player = playerLoad;
         GameData.Instance.players.Add(1, playerLoad);
 
@@ -128,7 +140,6 @@ public  class FileDataManager  {
          {
             //Dictoinary 에 저장하는 구간
             //public Dictionary<int, Dictionary<int, int>> hasCard = new Dictionary<int, Dictionary<int, int>>();
-    
             Card newInfo    = new Card();
             newInfo.level   = (int)jsonUnitydata["hasCard"][i]["hasLevel"];
             newInfo.hasCard = (int)jsonUnitydata["hasCard"][i]["hasNum"];
@@ -160,10 +171,59 @@ public  class FileDataManager  {
          GameData.Instance.CurTab = (int)jsonUnitydata["SelectTab"][0]["Tab"];
     }
 
+    //public void SaveJsonData()
+    //{
+    //    JsonData jsonUnitydata;
+    //    LoadJson(out jsonUnitydata, PlayerJsonData);
+    //    int num = GameData.Instance.hasCards;
+    //    int loof = 0;
+    //    //주의 key 값이 ID와 일치함.순서 0,1,2가 아님
+    //        foreach (KeyValuePair<int, Card> pair in GameData.Instance.hasCard)
+    //        {
+    //            do
+    //            {
+    //            jsonUnitydata["hasCard"][loof]["item_id"] = pair.Value.ID;
+    //            jsonUnitydata["hasCard"][loof]["hasNum"] = pair.Value.hasCard;
+    //            jsonUnitydata["hasCard"][loof]["hasLevel"] = pair.Value.level;
+
+    //            loof++;
+    //                break;
+    //            }
+    //            while ( loof < num);
+    //        }
+
+    //    //선택창의 숫자는 정해져 있어서 그냥씀
+    //    int selDeckNum = jsonUnitydata["SelectDek"].Count;
+       
+    //    foreach (KeyValuePair<int, int[]> pair in GameData.Instance.playerSelectDecks)
+    //    {
+    //        for (int i = 0; i < selDeckNum; i++)
+    //        {
+    //            if (pair.Key == i)
+    //            {
+    //                jsonUnitydata["SelectDek"][i]["item_id1"] = pair.Value[0];
+    //                jsonUnitydata["SelectDek"][i]["item_id2"] = pair.Value[1];
+    //                jsonUnitydata["SelectDek"][i]["item_id3"] = pair.Value[2];
+    //                jsonUnitydata["SelectDek"][i]["item_id4"] = pair.Value[3];
+    //                jsonUnitydata["SelectDek"][i]["item_id5"] = pair.Value[4];
+    //                jsonUnitydata["SelectDek"][i]["item_id6"] = pair.Value[5];
+    //                jsonUnitydata["SelectDek"][i]["item_id7"] = pair.Value[6];
+    //                jsonUnitydata["SelectDek"][i]["item_id8"] = pair.Value[7];
+    //            }
+    //        }
+           
+    //    }
+    //    JsonData whitedata = JsonMapper.ToJson(jsonUnitydata);
+    //    File.WriteAllText(Application.streamingAssetsPath +"/"+ PlayerJsonData+".json", whitedata.ToString());
+       
+    //}
 
     public void ParsingMarket()
     {
-        JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/MarketJsonData.json"));
+        // JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/MarketJsonData.json"));
+        JsonData jsonUnitydata;
+        LoadJson(out jsonUnitydata,MarketJsonData);
+
         int length =  (int)jsonUnitydata["Market"]["DaySale"].Count;
         for (int i = 0; i < length;i++)
         {
@@ -187,10 +247,6 @@ public  class FileDataManager  {
             newNor.PriceGold = (int)jsonUnitydata["Market"]["NorSale"][i]["PriceGold"];
             GameData.Instance.nors.Add(i, newNor);
         }
-
-
-
-
         int length1 = (int)jsonUnitydata["Market"]["RoyleSale"].Count;
 
         for (int i = 0; i < length1; i++)
@@ -249,18 +305,98 @@ public  class FileDataManager  {
 
     }
 
-    public void SaveES(int exp,int expCount,int Gold,int Jew)
+    public void LoadJson(out JsonData json, string fileName)
     {
-        //JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json"));
-        //jsonUnitydata["Info"][0]["Exprince Num"]   = exp;
-        //jsonUnitydata["Info"][0]["Exprince count"] = expCount;
-        //jsonUnitydata["Info"][0]["coin"]           = Gold;
-        //jsonUnitydata["Info"][0]["Jew"]            = Jew;
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            //string fullpath = Path.Combine("jar:file://" + Application.dataPath + "!/assets", PlayerJsonData);
+            //Application.persistentDataPath로 변경시 안드로이드에서 데이터를 못불러옴
+            string fullpath = System.IO.Path.Combine(Application.streamingAssetsPath, fileName + ".json");
+            WWW reader = new WWW(fullpath);
 
-        //JsonData whitedata = JsonMapper.ToJson(jsonUnitydata);
-        //File.WriteAllText(Application.dataPath + "/Resources/PlayerData.json", whitedata.ToString());
+            while (!reader.isDone) { }
+            string realpath = Application.persistentDataPath + "/" + fileName;
+            //realpath로 reader의데이터를 복사해준다.
+            System.IO.File.WriteAllBytes(realpath, reader.bytes);
+            json = JsonMapper.ToObject(File.ReadAllText(realpath));
+        }
+        else
+        {
+            json = JsonMapper.ToObject(File.ReadAllText(Application.streamingAssetsPath + "/" + fileName + ".json"));
+        }
     }
+    //SaveES 사용시
+    public void savees(int exp, int expcount, int gold,int trophy)
+    {
 
+        //JsonData jsonUnitydata;
+        //LoadJson(out jsonUnitydata, MarketJsonData);
+        //int length = (int)jsonUnitydata["Market"]["DaySale"].Count;
+        
+        //현재 저장되어있는 Json파일로드
+        JsonData jsonDataA = new JsonData();
+        LoadJson(out jsonDataA,@PlayerJsonData); //ToObject
+      
+         //출력된Json에 새로운 value 적용
+        jsonDataA["Info"][0]["ExprinceNum"]   = exp;
+        jsonDataA["Info"][0]["ExprinceCount"] = expcount;
+        jsonDataA["Info"][0]["coin"]          = gold;
+        jsonDataA["Info"][0]["Trophy"]        = trophy;
 
+                 //적용된 객체를 json변형           
+        JsonData whitedata = JsonMapper.ToJson(jsonDataA);
+        //Streaming경로의 파일이름
+        string fullpath = System.IO.Path.Combine(Application.streamingAssetsPath, PlayerJsonData + ".json");
+        //testing -----
+        string path1 = Application.persistentDataPath;
+        path1 = path1.Substring(0, path1.LastIndexOf('/'));
+        string realpath1 = Path.Combine(path1, PlayerJsonData + ".json");
+        Debug.Log("ffff : "+ path1);
+        //-------------
+         //플렛폼 안드로이드 일때 저장
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            string path = Application.persistentDataPath;
+            path = path.Substring(0, path.LastIndexOf('/'));
+            string realpath = Path.Combine(path,PlayerJsonData + ".json");
+            //string realpath = Application.persistentDataPath + "/" + PlayerJsonData;
+            WWW reader = new WWW(realpath);
 
-}
+            while (!reader.isDone) { }
+
+            File.WriteAllText(realpath, whitedata.ToString());
+        }
+        else
+        {
+            File.WriteAllText(fullpath, whitedata.ToString());                                 
+        }
+    }
+        //Path로 했을때 맨마지막에 자동으로 '\'가 추가된다.이걸삭제하고 '/'로 바꾸어야 한다.
+        //TODO:이거 적용안됨
+        public string pathForDocumentsFile(string filename)
+        {
+            if (Application.platform == RuntimePlatform.IPhonePlayer)
+            {
+                string path = Application.dataPath.Substring(0, Application.dataPath.Length - 5);
+                path = path.Substring(0, path.LastIndexOf('/'));
+                return Path.Combine(Path.Combine(path, "Documents"), filename);
+            }
+
+            else if (Application.platform == RuntimePlatform.Android)
+            {
+                string path = Application.persistentDataPath;
+                path = path.Substring(0, path.LastIndexOf('/'));
+                return Path.Combine(path, filename);
+            }
+
+            else
+            {
+                string path = Application.dataPath;
+                path = path.Substring(0, path.LastIndexOf('/'));
+                return Path.Combine(path, filename);
+            }
+        }
+
+   
+
+    }

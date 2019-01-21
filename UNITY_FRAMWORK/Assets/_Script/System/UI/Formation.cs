@@ -53,14 +53,14 @@ public class Formation : MonoBehaviour {
         _slotCardNum = cardsLength.Length;
     }
 
-    private void Start()
-    {
+   // private void Start()
+    //{
         //시작시 모든 게임슬롯을 null로해서 아이콘 이미지를 비활성화 시킨다.
         //FormationCards();
         //FormationCardsArc();
         //TODO: 이벤트 메니저 확장을 위해서 설정함 만약 쓰지 않을 경우 삭제
-        EventManager.Instance.AddListener(EVENT_TYPE.SLOTNUMBER, OnEvent);
-    }
+      //  EventManager.Instance.AddListener(EVENT_TYPE.SLOTNUMBER, OnEvent);
+   // }
 
     //계산식 전체 크기를 벗어나지 않는 메소드 
    public  void FormationCards(eGameCardSize eState)
@@ -104,8 +104,8 @@ public class Formation : MonoBehaviour {
         }
     }
 
-   
-     //EventManager를 통해서 모든UI 요소에 전달하기 위해서 설정
+
+    //EventManager를 통해서 모든UI 요소에 전달하기 위해서 설정
     public int SlotCardNum
     {
         get
@@ -117,11 +117,11 @@ public class Formation : MonoBehaviour {
         {
             //_slotCardNum = value;
             _slotCardNum = Mathf.Clamp(value, 0, 9);
-            EventManager.Instance.PostNotification(EVENT_TYPE.SLOTNUMBER, this, _slotCardNum);
+           // EventManager.Instance.PostNotification(EVENT_TYPE.SLOTNUMBER, this, _slotCardNum);
         }
     }
 
-   
+
 
     //계산식 전체 크기를 벗어나지 않는 메소드 
     public void FormationCardsArc(eGameCardSize eState,eBelong user,eCardType type)

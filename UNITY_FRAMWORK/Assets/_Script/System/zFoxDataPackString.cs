@@ -24,6 +24,7 @@ public class zFoxDataPackString {
 		}
 	}
 
+    //val에 다른 데이터가 키에 입력
 	public void SetData(string key,object val) {		
 		if (val is bool) {
 		} else
@@ -52,8 +53,8 @@ public class zFoxDataPackString {
 
 		string rtnString = FDPSTRING_ID;
 		foreach (KeyValuePair<string,object> data in dataList) {
-			                //rtnString에 키와 값으로 푼다  ,player,80,
-			rtnString +=  "," + data.Key + "," + data.Value;
+            //rtnString에 키와 값으로 푼다  FDPS,player,80,
+            rtnString +=  "," + data.Key + "," + data.Value;
 			                 //FDPSTRING_ID,player,80,int 형태로 rtnstring 저장 
 			if (data.Value is bool) {
 				rtnString +=  ",b";    

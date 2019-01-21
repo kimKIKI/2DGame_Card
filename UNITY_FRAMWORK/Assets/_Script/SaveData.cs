@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
-
+using LitJson;
 
 public static class SaveData {
 
@@ -27,7 +27,16 @@ public static class SaveData {
 	public static bool 		continuePlay 	= false;
 	public static int		newRecord		= -1;
 	public static bool		debug_Invicible	= false;
-	
+
+
+    //처음 한번 게임 시작시 초기값 설정
+    static void InitGame()
+    {
+        string userName = "Guest";
+
+    }
+
+
 	// === 코드(저장 데이터 검사) ========================
 	static void SaveDataHeader(string dataGroupName) {
         //player의 버전으로 reg에 SaveDataVersion | SaveDataVersion
@@ -41,6 +50,7 @@ public static class SaveData {
 		//dataGrounName --- Version,3.0f,2016년 6월,on
 	}
 	
+    //헤더가 데이터 정보 있는지 검사한다.
 	static bool CheckSaveDataHeader(string dataGroupName) {
 		if (!PlayerPrefs.HasKey ("SaveDataVersion")) {
 			Debug.Log("SaveData.CheckData : No Save Data");
@@ -55,68 +65,42 @@ public static class SaveData {
 			return false;
 		}
 
-        //if (!PlayerPrefs.HasKey(GameID))
-        //{
-        //    Debug.Log("SaveData.Check data : GameID");
-        //}
-
         SaveDate = PlayerPrefs.GetString ("SaveDataDate");
 		return true;
 	}
 	
 	public static bool CheckGamePlayData() {
         //"dataGroupName"
-        return CheckSaveDataHeader ("GUEST_GAMEPLAYER"); 
+        return CheckSaveDataHeader ("SDG_GUEST"); 
 	}
 	
 	// === 코드(플레이 데이터·저장, 불러오기) ===================
     // SaveGamePlay() --saveDataHeader(playerName) -세이브시에 자동으로 playerName이 header로 저장
     //                                             -현재State가 LoadLevel이 저장
 	public static bool SaveGamePlay() {
-        currScene = SceneManager.GetActiveScene();
+       
         try {
-			Debug.Log("SaveData.SaveGamePlay : Start");
-			// SaveDataInfo   "SDG_GamePlay"
-			SaveDataHeader("GUEST_GAMEPLAYER");
-			{ // PlayerData------------------------------------------------------------
+			    //Debug.Log("SaveData.SaveGamePlay : Start");
+			    // SaveDataInfo   "SDG_GamePlay"
+			SaveDataHeader("SDG_GUEST");
+			{   // PlayerData------------------------------------------------------------
 				zFoxDataPackString playerData = new zFoxDataPackString();
                 //GameData.,,GoldAmount 프로퍼티로 호출과 동시에 json에 저장된다.
                 //같이 플레이어의 로컬 playerfabs에 저장시킨다.
-				playerData.Add ("Player_COIN", GameData.Instance.GoldAmount);
-				playerData.Add ("Player_JEW", GameData.Instance.JewAmount);
-				playerData.Add ("Player_EXP", GameData.Instance.ExpLevel);
-				playerData.Add ("Player_EXPCOUNT",GameData.Instance.ExpAmount);
-				
-				
-				playerData.PlayerPrefsSetStringUTF8 ("PlayerData", playerData.EncodeDataPackString ());
+				playerData.Add ("Player_COIN",GameData.Instance.players[1].coin);          //현재 코인
+				playerData.Add ("Player_EXP", GameData.Instance.players[1].exp);           //경험치레벨
+				playerData.Add ("Player_EXPCOUNT", GameData.Instance.players[1].expCount); //경험치 카운트 
+                playerData.Add ("Player_CARDHAS", GameData.Instance.players[1].cardHas);   //찾은 카드의 수량
+                playerData.Add("Player_TROPHY", GameData.Instance.players[1].trophy);
+                playerData.PlayerPrefsSetStringUTF8 ("PlayerData", playerData.EncodeDataPackString ());
 				Debug.Log(playerData.EncodeDataPackString ());
 			}
-			{ // StageData
-				zFoxDataPackString stageData = new zFoxDataPackString();
-                //zFoxUID[] uidList = GameObject.Find ("Stage").GetComponentsInChildren<zFoxUID> ();
-                //foreach(zFoxUID uidItem in uidList)
-                //            {
-                //	if (uidItem.uid != null && uidItem.uid != "(non)") { 
-                //		stageData.Add (uidItem.uid,true);
-                //	}
-                //} 
-                
-				stageData.PlayerPrefsSetStringUTF8 ("StageData_" + currScene.name, stageData.EncodeDataPackString ());
-				//Debug.Log(stageData.EncodeDataPackString ());
-			}
-			{ // EventData
-				zFoxDataPackString eventData = new zFoxDataPackString();
-				//eventData.Add ("Event_KeyItem_A", PlayerController.itemKeyA);
-				//eventData.Add ("Event_KeyItem_B", PlayerController.itemKeyB);
-				//eventData.Add ("Event_KeyItem_C", PlayerController.itemKeyC);
-				eventData.PlayerPrefsSetStringUTF8 ("EventData", eventData.EncodeDataPackString ());
-				//Debug.Log(playerData.EncodeDataPackString ());
-			}
-			// Save
-			PlayerPrefs.Save ();
 			
-			Debug.Log("SaveData.SaveGamePlay : End");
-			return true;
+			PlayerPrefs.Save ();
+            //json에  카드및 카드덱 정보를 저장한다.
+           // FileDataManager.Instance.SaveJsonData();
+
+            return true;
 			
 		} catch(System.Exception e) {
 			Debug.LogWarning("SaveData.SaveGamePlay : Failed (" + e.Message + ")");
@@ -127,45 +111,18 @@ public static class SaveData {
 	public static  bool LoadGamePlay(bool allData) {
 		try {
 			// SaveDataInfo
-			if (CheckSaveDataHeader("GUEST_GAMEPLAYER")) {
-				Debug.Log("SaveData.LoadGamePlay : Start");
+			if (CheckSaveDataHeader("SDG_GUEST")) {
+				//Debug.Log("SaveData.LoadGamePlay : Start");
 				SaveDate = PlayerPrefs.GetString ("SaveDataDate");
 				if (allData) { // PlayerData
 					zFoxDataPackString playerData = new zFoxDataPackString();
 					playerData.DecodeDataPackString(playerData.PlayerPrefsGetStringUTF8 ("PlayerData"));
-					//Debug.Log(playerData.PlayerPrefsGetStringUTF8 ("PlayerData"));
-					
-					 GameData.Instance.GoldAmount             = (int)playerData.GetData("Player_Coin");
-					 GameData.Instance.JewAmount              = (int)playerData.GetData("Player_JEW");
-					 GameData.Instance.ExpLevel               = (int)playerData.GetData("Player_EXP");
-					 GameData.Instance.ExpAmount              = (int)playerData.GetData("Player_EXPCOUNT");
-						
-					
-				}
-				// StageData
-				if (PlayerPrefs.HasKey("StageData_" + currScene.name)) {
-					zFoxDataPackString stageData = new zFoxDataPackString();
-					stageData.DecodeDataPackString(stageData.PlayerPrefsGetStringUTF8 ("StageData_" + currScene.name));
-					//Debug.Log(stageData.PlayerPrefsGetStringUTF8 ("StageData_" + Application.loadedLevelName));
-					//zFoxUID[] uidList = GameObject.Find ("Stage").GetComponentsInChildren<zFoxUID> ();
-					//foreach(zFoxUID uidItem in uidList)
-                    //{
-					//	if (uidItem.uid != null && uidItem.uid != "(non)") { 
-					//		if (stageData.GetData (uidItem.uid) == null) {
-					//			uidItem.gameObject.SetActive(false);
-					//		}
-					//	}
-					//}
-				}
-				if (allData) { // EventData
-					zFoxDataPackString eventData = new zFoxDataPackString();
-					eventData.DecodeDataPackString(eventData.PlayerPrefsGetStringUTF8 ("EventData"));
-					//Debug.Log(playerData.PlayerPrefsGetStringUTF8 ("PlayerData"));
-					//PlayerController.itemKeyA 			= (bool)eventData.GetData ("Event_KeyItem_A");
-					//PlayerController.itemKeyB 			= (bool)eventData.GetData ("Event_KeyItem_B");
-					//PlayerController.itemKeyC 			= (bool)eventData.GetData ("Event_KeyItem_C");
-				}
-				Debug.Log("SaveData.LoadGamePlay : End");
+                    GameData.Instance.players[1].coin     = (int)playerData.GetData("Player_Coin");
+                    GameData.Instance.players[1].cardHas  = (int)playerData.GetData("Player_CARDHAS");
+                    GameData.Instance.players[1].exp      = (int)playerData.GetData("Player_EXP");
+                    GameData.Instance.players[1].expCount = (int)playerData.GetData("Player_EXPCOUNT");
+                    GameData.Instance.players[1].expCount = (int)playerData.GetData("Player_TROPHY");
+                }
 				return true;
 			}
 		} catch(System.Exception e) {
@@ -174,24 +131,25 @@ public static class SaveData {
 		return false;
 	}
 	
-	public static string LoadContinueSceneName() {
-		if (CheckSaveDataHeader("GUEST_GAMEPLAYER")) {
-			zFoxDataPackString playerData = new zFoxDataPackString();
-			playerData.DecodeDataPackString(playerData.PlayerPrefsGetStringUTF8 ("PlayerData"));
-			return (string)playerData.GetData ("Player_checkPointSceneName");
-		}
-		continuePlay = false;
-		//여기 필요 없을듯 
-		return "BoombardaFort";
-	}
+	//public static string LoadContinueSceneName() {
+	//	if (CheckSaveDataHeader("GUEST_GAMEPLAYER")) {
+	//		zFoxDataPackString playerData = new zFoxDataPackString();
+	//		playerData.DecodeDataPackString(playerData.PlayerPrefsGetStringUTF8 ("PlayerData"));
+	//		return (string)playerData.GetData ("Player_checkPointSceneName");
+	//	}
+	//	continuePlay = false;
+	//	//여기 필요 없을듯 
+	//	return "BoombardaFort";
+	//}
 	
 	
 	
 	
 	// === 코드(옵션 데이터·저장, 불러오기) ================
+
 	public static bool SaveOption() {
 		try {
-			Debug.Log("SaveData.SaveOption : Start");
+			//Debug.Log("SaveData.SaveOption : Start");
 			// 옵션 디폴트 설정  SaveDataheader --SDG_Option
 			SaveDataHeader("SDG_Option");
 			PlayerPrefs.SetFloat ("SoundBGMVolume", SoundBGMVolume);
@@ -199,7 +157,7 @@ public static class SaveData {
 	
 			// Save
 			PlayerPrefs.Save ();
-			Debug.Log("SaveData.SaveOption : End");
+			//Debug.Log("SaveData.SaveOption : End");
 			return true;
 		} catch(System.Exception e) {
 			Debug.LogWarning("SaveData.SaveOption : Failed (" + e.Message + ")");

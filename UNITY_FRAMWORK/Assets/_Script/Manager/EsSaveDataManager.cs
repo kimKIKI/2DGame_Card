@@ -30,8 +30,8 @@ public   class EsSaveDataManager :MonoBehaviour{
 
 
 
-   //public  void AutoSave()
-   // {
+    public  void AutoSave()
+    {
 
    //     //ES2.Save(123, Application.dataPath + "/Resources/myFile.bytes?tag=myInt");
 
@@ -41,9 +41,9 @@ public   class EsSaveDataManager :MonoBehaviour{
    //     //ES2.Save(GameData.Instance.ExpLevel, "ExpLevel");
    //     //ES2.Save(GameData.Instance.ExpAmount, "ExpAmount");
 
-   //     //JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/UnitData.json"));
+          JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/UnitData.json"));
    //     ////jons파일에 접근해서 개별 플레이어 파일을 수정해야함
-   //     //JsonData saveAmount = JsonMapper.ToJson(GameData.Instance.GoldAmount);
+           //JsonData saveAmount = JsonMapper.ToJson(GameData.Instance.GoldAmount);
 
    //     //jsonUnitydata["PlayerInfo"]["Info"][0]["Exprince Num"] = GameData.Instance.ExpLevel;
    //     //jsonUnitydata["PlayerInfo"]["Info"][0]["Exprince count"] = GameData.Instance.ExpAmount;
@@ -51,7 +51,7 @@ public   class EsSaveDataManager :MonoBehaviour{
    //     //jsonUnitydata["PlayerInfo"]["has"][0]["Jew"] = GameData.Instance.JewAmount;
    //     //변경된 내용 저장?
 
-   // }
+    }
 
     //parsing 이 이루어진다음에 발생할 부분임
     //인터넷에서 체킹은 어제 이루어 지는가?

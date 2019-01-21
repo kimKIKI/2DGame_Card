@@ -301,7 +301,7 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
     public void EventListenrStart()
     {
         //Debug.Log("이벤트 메니저에 등록합니다.");
-        EventManager.Instance.AddListener(EVENT_TYPE.LEVEL_CHANGE, OnEvent);
+        //EventManager.Instance.AddListener(EVENT_TYPE.LEVEL_CHANGE, OnEvent);
         int wonID  = gameObject.GetInstanceID();
         //Debug.Log("unityCard(clone) :" +wonID);
     }
@@ -667,25 +667,25 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
     }
 
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-          bool a =   GameData.Instance.isSwitch;
-          bool b =   GameData.Instance.IsShowCard;
-          // IsOpenbutton
-          //Debug.Log("isSwitch:  "+a+" IsShowCard:"+b +" ISOpenbutton :"+IsOpenbutton);
-        }
-    }
+    //private void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.M))
+    //    {
+    //      bool a =   GameData.Instance.isSwitch;
+    //      bool b =   GameData.Instance.IsShowCard;
+    //      // IsOpenbutton
+    //      //Debug.Log("isSwitch:  "+a+" IsShowCard:"+b +" ISOpenbutton :"+IsOpenbutton);
+    //    }
+    //}
 
     public void OnPointerClick(PointerEventData eventData)
     {
-       
-      
+
+
     }
 
 
-  
+
 
     ////슬롯을 클릭했을때 
     //public void OnPointerDown(PointerEventData eventData)
@@ -858,7 +858,7 @@ public class UnityCard : MonoBehaviour, IPointerClickHandler
             level = value;
             //플레이어의 골드가 바뀔때 마다 체크한다.
             //level = Mathf.Clamp(value, 0, 49);
-            EventManager.Instance.PostNotification(EVENT_TYPE.LEVEL_CHANGE, this, level);
+            //EventManager.Instance.PostNotification(EVENT_TYPE.LEVEL_CHANGE, this, level);
         }
     }
 

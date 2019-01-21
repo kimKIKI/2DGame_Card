@@ -123,6 +123,7 @@ public sealed class GameData
     public Dictionary<int, PlayerInfo> players          = new Dictionary<int, PlayerInfo>();
     //덱의 선택에 필요한 정보를 담는다.
     public Dictionary<int, int[]> playerSelectDecks     = new Dictionary<int, int[]>();
+    public Dictionary<string, ItemDisplayer> itemDisplayers = new Dictionary<string, ItemDisplayer>();
 
     //상품업데이트후 DailySale에 접근할수 있도록 싱글톤으로 
     public IList<DailySale> days;
@@ -208,107 +209,113 @@ public sealed class GameData
     //saveData-----------------------------------------------------
     //TODO: 게임데이터에서  프로퍼티로 이벤트를 발생시킨다면 연구 과제..
     public int    curAddGold;         // 스코어의 애니를 위해서 증가분의 금액을 저장한다.
+    public int    curAddTrophy;       //트로피 증가분을위해서 저장한다.
+    public int    curAddExpLevl;      //현재 경험치레벨
+    public int    curAddExpCount;     //증가되는 경험치 
     //1 로컬에 저장시 
     private int   goldAmount;
     private int   jewAmount;
     private int   expLevel;  //경험치 레벨
     private float expAmount; //경험치 수치
 
+    #region JSON저장시
+    //public int GoldAmount
+    //{
+    //    get
+    //    {
+    //        return goldAmount;
+    //    }
 
-    public int GoldAmount
-    {
-        get
-        {
-            return goldAmount;
-        }
+    //    set
+    //    {
 
-        set
-        {
-           
-            //TODO: ES 시스템 이용
-            if (goldAmount != value)
-            {   //ES2저장
-                //ES2.Save(value,"GoldAmount");
-                //json에 바로 저장시 
-                Debug.Log("GOLD -- GOLD -- GOLD -- GOLD 저장 실행");
-                JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json"));
-                jsonUnitydata["Info"][0]["coin"] = value;
-                JsonData whitedata = JsonMapper.ToJson(jsonUnitydata);
-                File.WriteAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json", whitedata.ToString());
-                goldAmount = value;
-               
-            }
-        }
-    }
+    //        //TODO: ES 시스템 이용
+    //        if (goldAmount != value)
+    //        {   //ES2저장
+    //            //ES2.Save(value,"GoldAmount");
+    //            //json에 바로 저장시 
+    //            Debug.Log("GOLD -- GOLD -- GOLD -- GOLD 저장 실행");
+    //            JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json"));
+    //            jsonUnitydata["Info"][0]["coin"] = value;
+    //            JsonData whitedata = JsonMapper.ToJson(jsonUnitydata);
+    //            File.WriteAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json", whitedata.ToString());
+    //            goldAmount = value;
 
-    public int JewAmount
-    {
-        get
-        {
-            return jewAmount;
-        }
+    //        }
+    //    }
+    //}
 
-        set
-        {
-            jewAmount = value;
-            if (jewAmount != value)
-            {  //ES2저장
-                //ES2.Save(value, "JewAmount");
-                //json에 바로 저장시 
-                JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json"));
-                jsonUnitydata["Info"][0]["Jew"] = value;
-                JsonData whitedata = JsonMapper.ToJson(jsonUnitydata);
-                File.WriteAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json", whitedata.ToString());
-            }
-        }
-    }
 
-    public int ExpLevel
-    {
-        get
-        {
-            return expLevel;
-        }
+    //public int JewAmount
+    //{
+    //    get
+    //    {
+    //        return jewAmount;
+    //    }
 
-        set
-        {
-            expLevel = value;
-        
-            if (expLevel != value)
-            {  //ES2저장
-                //ES2.Save(value, "ExpLevel");
-                //Json저장
-                JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json"));
-                jsonUnitydata["Info"][0]["ExprinceNum"] = value;
-                JsonData whitedata = JsonMapper.ToJson(jsonUnitydata);
-                File.WriteAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json", whitedata.ToString());
-            }
-        }
-    }
+    //    set
+    //    {
+    //        jewAmount = value;
+    //        if (jewAmount != value)
+    //        {  //ES2저장
+    //            //ES2.Save(value, "JewAmount");
+    //            //json에 바로 저장시 
+    //            JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json"));
+    //            jsonUnitydata["Info"][0]["Jew"] = value;
+    //            JsonData whitedata = JsonMapper.ToJson(jsonUnitydata);
+    //            File.WriteAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json", whitedata.ToString());
+    //        }
+    //    }
+    //}
 
-    public float ExpAmount
-    {
-        get
-        {
-            return expAmount;
-        }
+    //public int ExpLevel
+    //{
+    //    get
+    //    {
+    //        return expLevel;
+    //    }
 
-        set
-        {
-            expAmount = value;
+    //    set
+    //    {
+    //        expLevel = value;
 
-            if (expAmount != value)
-            {   //ES2저장
-                //ES2.Save(value, "ExpAmount");
-                //JSON저장
-                JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json"));
-                jsonUnitydata["Info"][0]["ExprinceCount"] = value;
-                JsonData whitedata = JsonMapper.ToJson(jsonUnitydata);
-                File.WriteAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json", whitedata.ToString());
-            }
-        }
-    }
+    //        if (expLevel != value)
+    //        {  //ES2저장
+    //            //ES2.Save(value, "ExpLevel");
+    //            //Json저장
+    //            JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json"));
+    //            jsonUnitydata["Info"][0]["ExprinceNum"] = value;
+    //            JsonData whitedata = JsonMapper.ToJson(jsonUnitydata);
+    //            File.WriteAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json", whitedata.ToString());
+    //        }
+    //    }
+    //}
+
+    //public float ExpAmount
+    //{
+    //    get
+    //    {
+    //        return expAmount;
+    //    }
+
+    //    set
+    //    {
+    //        expAmount = value;
+
+    //        if (expAmount != value)
+    //        {   //ES2저장
+    //            //ES2.Save(value, "ExpAmount");
+    //            //JSON저장
+    //            JsonData jsonUnitydata = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json"));
+    //            jsonUnitydata["Info"][0]["ExprinceCount"] = value;
+    //            JsonData whitedata = JsonMapper.ToJson(jsonUnitydata);
+    //            File.WriteAllText(Application.dataPath + "/Resources/Data/PlayerJsonData.json", whitedata.ToString());
+    //        }
+    //    }
+    //}
     //-------------------------------------------------------------
+    #endregion
+
     public eGameState gameState    = eGameState.NONE;
     // temp.GetComponent<UnityCard>().mainICon.sprite = SpriteManager.GetSpriteByName("Sprite", "Sample_UI_1");
     //전체 테두리

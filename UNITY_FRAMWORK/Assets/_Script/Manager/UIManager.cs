@@ -59,48 +59,52 @@ public class UIManager : MonoBehaviour {
 
     
  
-    public void JsonParsing(string FileName="PlayerJsonData")
-    {
-        JsonData  jsonUnit = FileDataManager.Instance.JsonFileLoad(FileName);
-        //여기서 파싱 테스트 함
-        string TempID = jsonUnit["PlayerInfo"]["SelectDek"][3]["item-id"].ToString();
-        print(TempID);
-    }
+    //public void JsonParsing(string FileName="PlayerJsonData")
+    //{
+    //    //JsonData  jsonUnit = FileDataManager.Instance.JsonFileLoad(FileName);
+    //    //여기서 파싱 테스트 함
+
+    //    JsonData jsonUnitydata;
+    //    LoadJson(out jsonUnitydata, UnitData);
+
+    //    string TempID = jsonUnit["PlayerInfo"]["SelectDek"][3]["item-id"].ToString();
+    //    print(TempID);
+    //}
 
 
-    //UnitData 파싱
-    public void JsonParsingUnit()
-    {
-        string FileName = "UnitData";
-        JsonData jsonUnit = FileDataManager.Instance.JsonFileLoad(FileName);
-        //여기서 파싱 테스트 함
-        int num = jsonUnit.Count; //11
-                                  //string TempID = jsonUnit["PlayerInfo"]["SelectDek"][3]["item-id"].ToString();
+    ////UnitData 파싱
+    //public void JsonParsingUnit()
+    //{
+    //    string FileName = "UnitData";
+    //    JsonData jsonUnit = FileDataManager.Instance.JsonFileLoad(FileName);
+    //    //여기서 파싱 테스트 함
+    //    int num = jsonUnit.Count; //11
+    //                              //string TempID = jsonUnit["PlayerInfo"]["SelectDek"][3]["item-id"].ToString();
                            
-        for (int i = 0; i < jsonUnit.Count; i++)
-        {
-            // {"ID":0,"Name":"Ice Gollum ","ATK_Type":"Top","Kinds":"Unit","Coin":300,
-            //  "Jew":10,"Elixir":2,"HP":400,"Speed":"Slow","Attack":4,"Atk_Zone":100,"BuildTime":1,
-            //"Sp_atk":4,"Up_Hp":10,"Up_atk":10,"Life":0,"EA":1},
-            UnityInfo unit = new UnityInfo();
-            unit.Id = i;
-            unit.Name = jsonUnit[i]["Name"].ToString();
-            unit.Atk_Type = jsonUnit[i]["ATK_Type"].ToString(); //유닛타입 지상,공중
-            unit.Kinds = jsonUnit[i]["Kinds"].ToString();
-            unit.Coin = (int)jsonUnit[i]["Coin"];
-            unit.Jew = (int)jsonUnit[i]["Jew"];
-            unit.HP = (int)jsonUnit[i]["HP"];
-            unit.Speed = (int)jsonUnit[i]["Speed"];
-            unit.Attack =(int)jsonUnit[i]["Attack"];
-            unit.Atk_Zone = (int)jsonUnit[i]["Atk_Zone"];
-            unit.Build = (int)jsonUnit[i]["BuildTime"];
-            unit.Life = (int)jsonUnit[i]["Life"];
-            unit.Up_atk = (int)jsonUnit[i]["Up_atk"];
-            unit.SpawnEA = (int)jsonUnit[i]["EA"];
-           //파일의 내용을 딕셔너리에 저장한다.
-            dicUnityData.Add(i,unit);
-        }
-    }
+    //    for (int i = 0; i < jsonUnit.Count; i++)
+    //    {
+    //        // {"ID":0,"Name":"Ice Gollum ","ATK_Type":"Top","Kinds":"Unit","Coin":300,
+    //        //  "Jew":10,"Elixir":2,"HP":400,"Speed":"Slow","Attack":4,"Atk_Zone":100,"BuildTime":1,
+    //        //"Sp_atk":4,"Up_Hp":10,"Up_atk":10,"Life":0,"EA":1},
+    //        UnityInfo unit = new UnityInfo();
+    //        unit.Id = i;
+    //        unit.Name = jsonUnit[i]["Name"].ToString();
+    //        unit.Atk_Type = jsonUnit[i]["ATK_Type"].ToString(); //유닛타입 지상,공중
+    //        unit.Kinds = jsonUnit[i]["Kinds"].ToString();
+    //        unit.Coin = (int)jsonUnit[i]["Coin"];
+    //        unit.Jew = (int)jsonUnit[i]["Jew"];
+    //        unit.HP = (int)jsonUnit[i]["HP"];
+    //        unit.Speed = (int)jsonUnit[i]["Speed"];
+    //        unit.Attack =(int)jsonUnit[i]["Attack"];
+    //        unit.Atk_Zone = (int)jsonUnit[i]["Atk_Zone"];
+    //        unit.Build = (int)jsonUnit[i]["BuildTime"];
+    //        unit.Life = (int)jsonUnit[i]["Life"];
+    //        unit.Up_atk = (int)jsonUnit[i]["Up_atk"];
+    //        unit.SpawnEA = (int)jsonUnit[i]["EA"];
+    //       //파일의 내용을 딕셔너리에 저장한다.
+    //        dicUnityData.Add(i,unit);
+    //    }
+    //}
 
     // 아이템 추가.
     public void AddItem(UnityInfo _cInfo)

@@ -181,12 +181,44 @@ public partial class GameManager : MonoBehaviour {
 
                     //1이 끝날때 까지 어떻게 기다리게 하는가?
                     yield return new WaitForSeconds(5.5f+delayAdd);
-                    //슬롯이 비어있지 안다면 판정및 삭제애니 실행됨
-                    // TODO : 타워의 인원이나 피가 다 됐는지 판단한다.
 
+                    //슬롯이 비어있지 안다면 판정및 삭제애니 실행됨 센터자리별 판단
                     Victory_Result(Victory_pntEMPT(i));
 
                     //판별중 게임이 승부가 나오면 게임을 중지한다.
+                    //전체 카드 판단
+                    //TODO: true일때 모무 비었다는 뜻
+                    bool playerEMPT = EMP(1); //player
+                    bool comEMPT    = EMP(2); //com
+
+                    if (playerEMPT)
+                    {//player가 카드가 없을때
+                     //1:컴승리,2: ,3:player승리
+                     //  GameData.Instance.vicResult = stageVictory;
+                     //GameData.Instance.vicResult = 1;
+                        stageVictory = 1;
+                       
+                        StartCoroutine(VICTORY_OR_DEFEAT());
+                        break;
+                    }
+                    else if (comEMPT)
+                    {//com카드가 비었을때
+                     //GameData.Instance.vicResult = 3;
+                        stageVictory = 3;
+                        StartCoroutine(VICTORY_OR_DEFEAT());
+                        break;
+                    }
+                    else if (playerEMPT && comEMPT)
+                    {//모두 비었을때
+
+                    }
+                    else if (!playerEMPT && !comEMPT)
+                    {//모두 있을때
+                     //계속 게임진행
+                    }
+
+
+                    //kingTower의 Hp,숫자 판단
                     if (isDecision != KingTowerCheck())
                     {
                         StartCoroutine(VICTORY_OR_DEFEAT());

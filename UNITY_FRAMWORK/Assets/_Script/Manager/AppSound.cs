@@ -217,12 +217,12 @@ public class AppSound : MonoBehaviour {
            // }
             else
             {
-                if (!BGM_STAGEB.isPlaying)
-                {
-                    fm.Stop("BGM");
-                    BGM_STAGEB.loop = true;
-                    BGM_STAGEB.Play();
-                }
+                //if (!BGM_STAGEB.isPlaying)
+                //{
+                //    fm.Stop("BGM");
+                //    BGM_STAGEB.loop = true;
+                //    BGM_STAGEB.Play();
+                //}
             }
 		}
 	}

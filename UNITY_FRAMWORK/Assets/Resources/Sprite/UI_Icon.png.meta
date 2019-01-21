@@ -130,9 +130,9 @@ TextureImporter:
     21300250: UI_Icon_BtnImg31
     21300252: UI_Icon_BtnImg32
     21300254: UI_Icon_BtnImg33
-    21300256: supplies_coin
-    21300258: supplies_Tentacle
-    21300260: supplies_carrot
+    21300256: coin
+    21300258: Tentacle
+    21300260: carrot
     21300262: UI_cardBacks3
     21300264: UI_cardBacks4
     21300266: UI_Icon_133
@@ -142,52 +142,52 @@ TextureImporter:
     21300274: UI_cardBacks
     21300276: UI_com
     21300278: UI_player
-    21300280: supplies_HP
-    21300282: supplies_Ice_fish
-    21300284: supplies_fish
+    21300280: HP
+    21300282: Ice_fish
+    21300284: fish
     21300286: UI_cardBacks2
     21300288: legendaryCase_top
     21300290: legendaryCase
-    21300292: troops_Invisibility
-    21300294: troops_insect
-    21300296: troops_M_bot
-    21300298: troops_yeti
-    21300300: troops_werewolf
-    21300302: supplies_pancakes
+    21300292: Invisibility
+    21300294: insect
+    21300296: M_bot
+    21300298: yeti
+    21300300: werewolf
+    21300302: pancakes
     21300304: UI_ground
     21300306: UI_ground2
     21300308: legendaryCase_bottom
     21300310: luckyCase
-    21300312: troops_spear
-    21300314: troops_warrior_bot
-    21300316: troops_swordsman
-    21300318: troops_mercenary
-    21300320: "troops_sea \u200B_dog"
+    21300312: spear
+    21300314: warrior_bot
+    21300316: swordsman
+    21300318: mercenary
+    21300320: "sea \u200B_dog"
     21300322: luckyCase_top
-    21300324: troops_frost_weapon
-    21300326: troops_Adventurer
-    21300328: troops_Artifact
-    21300330: troops_ghoul
-    21300332: troops_Demon
-    21300334: troops_Marauder
+    21300324: frost_weapon
+    21300326: Adventurer
+    21300328: Artifact
+    21300330: ghoul
+    21300332: Demon
+    21300334: Marauder
     21300336: troops_diver
     21300338: troops_telekinesis
     21300340: troops_golem
     21300342: UI_Icon_171
     21300344: luckyCase_bottom
-    21300346: troops_cultist
-    21300348: supplies_Box
-    21300350: supplies_Beer
-    21300352: castles_shell_house
-    21300354: castles_chapel
-    21300356: castles_archery_yard
-    21300358: castles_Tower
-    21300360: castles_Infernal_nest
-    21300362: castles_Barracks
-    21300364: castles_old_tower
-    21300366: castles_obelisk_02
-    21300368: castles_tavern
-    21300370: castles_sentry_post
+    21300346: cultist
+    21300348: Box
+    21300350: Beer
+    21300352: shell_house
+    21300354: chapel
+    21300356: archery_yard
+    21300358: Tower
+    21300360: Infernal_nest
+    21300362: Barracks
+    21300364: old_tower
+    21300366: obelisk_02
+    21300368: tavern
+    21300370: sentry_post
     21300372: UI_Icon_BtnImg21
     21300374: UI_Icon_btnBackCir
     21300376: UI_Icon_btnPlus2
@@ -212,7 +212,7 @@ TextureImporter:
     21300414: UI_Icon_205
     21300416: UI_Icon_fight
     21300418: UI_Icon_f
-    21300420: troops_Warlock
+    21300420: Warlock
     21300422: UI_shap02
   externalObjects: {}
   serializedVersion: 7
@@ -2567,7 +2567,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: supplies_coin
+      name: coin
       rect:
         serializedVersion: 2
         x: 907
@@ -2587,7 +2587,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: supplies_Tentacle
+      name: Tentacle
       rect:
         serializedVersion: 2
         x: 1069
@@ -2607,7 +2607,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: supplies_carrot
+      name: carrot
       rect:
         serializedVersion: 2
         x: 1227
@@ -2767,7 +2767,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: supplies_HP
+      name: HP
       rect:
         serializedVersion: 2
         x: 905
@@ -2787,7 +2787,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: supplies_fish
+      name: fish
       rect:
         serializedVersion: 2
         x: 1234
@@ -2847,7 +2847,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: troops_Invisibility
+      name: Invisibility
       rect:
         serializedVersion: 2
         x: 563
@@ -2867,7 +2867,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: troops_insect
+      name: insect
       rect:
         serializedVersion: 2
         x: 731
@@ -2887,7 +2887,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: troops_yeti
+      name: yeti
       rect:
         serializedVersion: 2
         x: 1054
@@ -2907,7 +2907,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: troops_werewolf
+      name: werewolf
       rect:
         serializedVersion: 2
         x: 1211
@@ -2927,7 +2927,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: supplies_pancakes
+      name: pancakes
       rect:
         serializedVersion: 2
         x: 1377
@@ -3007,7 +3007,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: troops_spear
+      name: spear
       rect:
         serializedVersion: 2
         x: 544
@@ -3027,7 +3027,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: troops_warrior_bot
+      name: warrior_bot
       rect:
         serializedVersion: 2
         x: 713
@@ -3047,7 +3047,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: troops_swordsman
+      name: swordsman
       rect:
         serializedVersion: 2
         x: 1036
@@ -3067,7 +3067,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: troops_mercenary
+      name: mercenary
       rect:
         serializedVersion: 2
         x: 1199
@@ -3087,7 +3087,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "troops_sea \u200B_dog"
+      name: "sea \u200B_dog"
       rect:
         serializedVersion: 2
         x: 1380
@@ -3127,7 +3127,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: troops_frost_weapon
+      name: frost_weapon
       rect:
         serializedVersion: 2
         x: 387
@@ -3147,7 +3147,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: troops_Adventurer
+      name: Adventurer
       rect:
         serializedVersion: 2
         x: 546
@@ -3167,7 +3167,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: troops_Artifact
+      name: Artifact
       rect:
         serializedVersion: 2
         x: 711
@@ -3187,7 +3187,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: troops_ghoul
+      name: ghoul
       rect:
         serializedVersion: 2
         x: 1028
@@ -3207,7 +3207,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: troops_Demon
+      name: Demon
       rect:
         serializedVersion: 2
         x: 1207
@@ -3227,7 +3227,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: troops_Marauder
+      name: Marauder
       rect:
         serializedVersion: 2
         x: 1384
@@ -3347,7 +3347,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: troops_cultist
+      name: cultist
       rect:
         serializedVersion: 2
         x: 885
@@ -3367,7 +3367,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: supplies_Box
+      name: Box
       rect:
         serializedVersion: 2
         x: 58
@@ -3387,7 +3387,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: supplies_Beer
+      name: Beer
       rect:
         serializedVersion: 2
         x: 222
@@ -3407,7 +3407,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: castles_archery_yard
+      name: archery_yard
       rect:
         serializedVersion: 2
         x: 710
@@ -3427,7 +3427,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: castles_obelisk_02
+      name: obelisk_02
       rect:
         serializedVersion: 2
         x: 1555
@@ -3447,7 +3447,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: castles_tavern
+      name: tavern
       rect:
         serializedVersion: 2
         x: 1722
@@ -3907,7 +3907,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: castles_Infernal_nest
+      name: Infernal_nest
       rect:
         serializedVersion: 2
         x: 1034
@@ -3927,7 +3927,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: castles_Tower
+      name: Tower
       rect:
         serializedVersion: 2
         x: 870
@@ -3947,7 +3947,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: troops_M_bot
+      name: M_bot
       rect:
         serializedVersion: 2
         x: 880
@@ -3967,7 +3967,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: supplies_Ice_fish
+      name: Ice_fish
       rect:
         serializedVersion: 2
         x: 1069
@@ -4027,7 +4027,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: castles_chapel
+      name: chapel
       rect:
         serializedVersion: 2
         x: 545
@@ -4047,7 +4047,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: castles_shell_house
+      name: shell_house
       rect:
         serializedVersion: 2
         x: 386
@@ -4067,7 +4067,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: castles_old_tower
+      name: old_tower
       rect:
         serializedVersion: 2
         x: 1369
@@ -4087,7 +4087,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: castles_sentry_post
+      name: sentry_post
       rect:
         serializedVersion: 2
         x: 1888
@@ -4127,7 +4127,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: troops_Warlock
+      name: Warlock
       rect:
         serializedVersion: 2
         x: 873
@@ -4187,7 +4187,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: castles_Barracks
+      name: Barracks
       rect:
         serializedVersion: 2
         x: 1197

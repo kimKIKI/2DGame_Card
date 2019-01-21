@@ -12,7 +12,7 @@ public class Title_Scene : MonoBehaviour {
     FadeOut fadeOut;
 	void Start ()
     {
-        nextScene = "2_Main_Scene";
+        nextScene = "1_Login_Scene";
         fadeOut = GameObject.Find("FadeOut").GetComponent<FadeOut>();
 		StartCoroutine ("LogoWork");
         StartCoroutine(LoadScene());
@@ -20,8 +20,8 @@ public class Title_Scene : MonoBehaviour {
 
 	IEnumerator LogoWork() {
 
-        fadeOut.isFadeIN = true;
-        fadeOut.StartFadeAnim();
+        //fadeOut.isFadeIN = true;
+        //fadeOut.StartFadeAnim();
       
         yield return new WaitForSeconds (3.0f);
         fadeOut.isFadeIN = false;
